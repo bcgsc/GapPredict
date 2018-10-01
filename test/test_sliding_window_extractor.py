@@ -13,16 +13,15 @@ class TestSlidingWindowExtractor(TestCase):
         try:
             extractor = SlidingWindowExtractor(0, 1, 1)
         except SlidingWindowParamException:
-            return
+            pass
         except:
             self.fail()
-
 
     def test_nonpositive_spacing_length(self):
         try:
             extractor = SlidingWindowExtractor(1, 0, 1)
         except SlidingWindowParamException:
-            return
+            pass
         except:
             self.fail()
 
@@ -30,7 +29,7 @@ class TestSlidingWindowExtractor(TestCase):
         try:
             extractor = SlidingWindowExtractor(1, 1, 0)
         except SlidingWindowParamException:
-            return
+            pass
         except:
             self.fail()
 

@@ -3,7 +3,7 @@ import numpy as np
 
 class BaseQualityConverter:
     def __init__(self):
-        return
+        pass
 
     def convert_quality_to_phred(self, quality_string):
         seq_length = len(quality_string)

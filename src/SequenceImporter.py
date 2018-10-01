@@ -7,7 +7,7 @@ from SequenceParser import SequenceParser
 class SequenceImporter:
     def __init__(self):
         self.parser = SequenceParser()
-        return
+        pass
 
     def import_fastq(self, path):
         reads = []
