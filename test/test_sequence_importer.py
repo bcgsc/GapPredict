@@ -34,7 +34,8 @@ class TestSequenceImporter(TestCase):
     def test_bogus_file(self):
         try:
             self.importer.import_fastq('data/blahblahblah.fastq')
+            self.fail()
         except FileNotFoundError as e:
             pass
-        except:
+        except Exception as e:
             self.fail()
