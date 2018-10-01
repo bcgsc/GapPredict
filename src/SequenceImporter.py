@@ -1,6 +1,8 @@
-import mimetypes
 import gzip
+import mimetypes
+
 from SequenceParser import SequenceParser
+
 
 class SequenceImporter:
     def __init__(self):
@@ -26,5 +28,5 @@ class SequenceImporter:
 
             line = file.readline()
             line_num = (line_num + 1) % 4
-
+        file.close()
         return reads
