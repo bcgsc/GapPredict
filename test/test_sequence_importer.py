@@ -36,5 +36,5 @@ class TestSequenceImporter(TestCase):
             self.importer.import_fastq('data/blahblahblah.fastq')
         except FileNotFoundError as e:
             return
-        except:
+        except Exception:
             self.fail()
