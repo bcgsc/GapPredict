@@ -35,6 +35,45 @@ class TestSlidingWindowExtractor(TestCase):
         except:
             self.fail()
 
+    def test_extract_input_output_from_sequence_zero_spacing(self):
+        extractor = SlidingWindowExtractor(4, 0, 4)
+        input_output = extractor.extract_input_output_from_sequence(self.parsed_fastqs)
+        input_matrix = input_output[0]
+        input_quality_matrix = input_output[1]
+        output_matrix = input_output[2]
+        output_quality_matrix = input_output[3]
+
+        self.assertEqual(len(input_matrix), 3)
+        self.assertEqual(len(input_matrix[0]), 4)
+        self.assertEqual(input_quality_matrix.shape, (3, 4))
+        self.assertEqual(len(output_matrix), 3)
+        self.assertEqual(len(output_matrix[0]), 4)
+        self.assertEqual(output_quality_matrix.shape, (3, 4))
+        expected_input = np.array([
+            ["A", "A", "T", "T"],
+            ["A", "T", "T", "G"],
+            ["T", "T", "G", "A"]
+        ])
+        expected_input_quality = [
+            [28, 28, 28, 10],
+            [28, 28, 10, 28],
+            [28, 10, 28, 32]
+        ]
+        expected_output = [
+            ["G", "A", "G", "T"],
+            ["A", "G", "T", "C"],
+            ["G", "T", "C", "G"]
+        ]
+        expected_output_quality = np.array([
+            [28, 32, 32, 28],
+            [32, 32, 28, 32],
+            [32, 28, 32, 35]
+        ])
+        np.testing.assert_array_equal(input_matrix, expected_input)
+        np.testing.assert_array_equal(input_quality_matrix, expected_input_quality)
+        np.testing.assert_array_equal(output_matrix, expected_output)
+        np.testing.assert_array_equal(output_quality_matrix, expected_output_quality)
+
     def test_extract_input_output_from_sequence_minimal_spacing(self):
         extractor = SlidingWindowExtractor(1, 1, 1)
         input_output = extractor.extract_input_output_from_sequence(self.parsed_fastqs)

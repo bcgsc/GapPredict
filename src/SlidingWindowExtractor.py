@@ -7,9 +7,10 @@ class SlidingWindowParamException(Exception):
 
 class SlidingWindowExtractor:
     def __init__(self, input_length, spacing, output_length):
-        if input_length <= 0 or spacing <= 0 or output_length <= 0:
+        if input_length <= 0 or output_length <= 0:
             raise SlidingWindowParamException("Lengths must be positive")
-
+        if spacing < 0:
+            raise SlidingWindowParamException("Spacing cannot be negative")
         self.input_length = input_length
         self.spacing = spacing
         self.output_length = output_length
