@@ -1,8 +1,6 @@
 import numpy as np
 
-
-class SlidingWindowParamException(Exception):
-    pass
+from exceptions.SlidingWindowParamException import SlidingWindowParamException
 
 
 class SlidingWindowExtractor:

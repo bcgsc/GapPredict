@@ -1,0 +1,2 @@
+class NonpositiveLengthException(Exception):
+    pass

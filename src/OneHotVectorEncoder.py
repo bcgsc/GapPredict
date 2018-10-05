@@ -1,11 +1,11 @@
 from sklearn.preprocessing import OneHotEncoder
 
-class NonpositiveLengthException(Exception):
-    pass
+from exceptions.NonpositiveLengthException import NonpositiveLengthException
+
 
 class OneHotVectorEncoder:
     def __init__(self, input_length):
-        if(input_length < 1):
+        if input_length < 1:
             raise NonpositiveLengthException
         self.encoder = OneHotEncoder(sparse=False)
         self.input_length = input_length

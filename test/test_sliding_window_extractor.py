@@ -1,8 +1,8 @@
 import numpy as np
 from unittest import TestCase
 
-from SequenceParser import ParsedFastqRecord
 from SlidingWindowExtractor import SlidingWindowExtractor, SlidingWindowParamException
+from models.ParsedFastqRecord import ParsedFastqRecord
 
 
 class TestSlidingWindowExtractor(TestCase):

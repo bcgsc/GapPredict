@@ -1,9 +1,8 @@
 import numpy as np
 from sklearn import preprocessing
 
+from exceptions.NonpositiveLengthException import NonpositiveLengthException
 
-class NonpositiveLengthException(Exception):
-    pass
 
 class OneHotMatrixEncoder:
     def __init__(self, input_length):

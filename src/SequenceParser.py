@@ -1,15 +1,6 @@
-import numpy as np
-
 from BaseQualityConverter import BaseQualityConverter
+from models.ParsedFastqRecord import ParsedFastqRecord
 
-
-class ParsedFastqRecord:
-    def __init__(self, sequence, phred_quality):
-        self.sequence = sequence
-        self.phred_quality = phred_quality
-
-    def __eq__(self, other):
-        return self.sequence == other.sequence and np.array_equal(self.phred_quality, other.phred_quality)
 
 class SequenceParser:
     def __init__(self):
@@ -17,7 +8,7 @@ class SequenceParser:
         return
 
     def strip_terminal_newline(self, string):
-        if(string[len(string) - 1] == "\n"):
+        if string[len(string) - 1] == "\n":
             return string[0:len(string)-1]
         else:
             return string
