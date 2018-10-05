@@ -1,0 +1,2 @@
+class SlidingWindowParamException(Exception):
+    pass

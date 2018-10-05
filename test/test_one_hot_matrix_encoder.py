@@ -1,7 +1,8 @@
 import numpy as np
 from unittest import TestCase
 
-from OneHotMatrixEncoder import OneHotMatrixEncoder, NonpositiveLengthException
+from OneHotMatrixEncoder import OneHotMatrixEncoder
+from exceptions.NonpositiveLengthException import NonpositiveLengthException
 
 
 class TestOneHotMatrixEncoder(TestCase):
