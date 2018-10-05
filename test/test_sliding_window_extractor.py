@@ -14,25 +14,28 @@ class TestSlidingWindowExtractor(TestCase):
     def test_nonpositive_input_length(self):
         try:
             extractor = SlidingWindowExtractor(0, 1, 1)
-        except SlidingWindowParamException:
+            self.fail()
+        except SlidingWindowParamException as e:
             pass
-        except:
+        except Exception as e:
             self.fail()
 
     def test_nonpositive_spacing_length(self):
         try:
-            extractor = SlidingWindowExtractor(1, 0, 1)
-        except SlidingWindowParamException:
+            extractor = SlidingWindowExtractor(1, -1, 1)
+            self.fail()
+        except SlidingWindowParamException as e:
             pass
-        except:
+        except Exception as e:
             self.fail()
 
     def test_nonpositive_output_length(self):
         try:
             extractor = SlidingWindowExtractor(1, 1, 0)
-        except SlidingWindowParamException:
+            self.fail()
+        except SlidingWindowParamException as e:
             pass
-        except:
+        except Exception as e:
             self.fail()
 
     def test_extract_input_output_from_sequence_zero_spacing(self):
