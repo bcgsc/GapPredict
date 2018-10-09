@@ -1,8 +1,8 @@
 import numpy as np
 from unittest import TestCase
 
-from OneHotVectorEncoder import OneHotVectorEncoder
 from exceptions.NonpositiveLengthException import NonpositiveLengthException
+from onehot.OneHotVectorEncoder import OneHotVectorEncoder
 
 
 class TestOneHotVectorEncoder(TestCase):

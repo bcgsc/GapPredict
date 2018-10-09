@@ -3,12 +3,19 @@ from sklearn import preprocessing
 
 from exceptions.NonpositiveLengthException import NonpositiveLengthException
 
+BASE_ENCODING_IDX_MAP = {
+    "A": 0,
+    "C": 1,
+    "G": 2,
+    "T": 3
+}
 
 class OneHotMatrixEncoder:
-    def __init__(self, input_length):
-        if input_length < 1:
+    def __init__(self, sequence_length, bases_to_predict=0):
+        if sequence_length < 1:
             raise NonpositiveLengthException
-        self.input_length = input_length
+        self.sequence_length = sequence_length
+        self.bases_to_predict = bases_to_predict
         self.labeler = preprocessing.LabelEncoder()
         self.encoder = preprocessing.OneHotEncoder(sparse=False, categories="auto")
         self._train_labeler()
@@ -27,29 +34,37 @@ class OneHotMatrixEncoder:
         ])
         self.encoder.fit(encoder_train_matrix)
 
+    def _encoding_idx(self, base):
+        return BASE_ENCODING_IDX_MAP[base]
+
+    def _encode_base(self, base, quality):
+        if quality is not None:
+            encoding_vector = np.zeros(5)
+            encoding_vector[4] = quality
+        else:
+            encoding_vector = np.zeros(4)
+        encoding_vector[self._encoding_idx(base)] = 1
+        return encoding_vector
+
     def encode_sequences(self, sequences, qualities=None):
         has_qualities = True if qualities is not None else False
         encoding_length = 5 if has_qualities else 4
+        total_sequence_length = self.sequence_length + self.bases_to_predict
         num_sequences = len(sequences)
-        cube = np.zeros((num_sequences, self.input_length, encoding_length))
+        cube = np.zeros((num_sequences, total_sequence_length, encoding_length))
         for i in range(num_sequences):
             sequence_vector = sequences[i]
-            int_column_vector = self.labeler.transform(sequence_vector).reshape(self.input_length, 1)
-            one_hot_matrix = self.encoder.transform(int_column_vector)
-
-            if has_qualities:
-                quality_vector = qualities[i]
-                quality_column_vector = quality_vector.reshape(self.input_length, 1)
-                one_hot_matrix = np.append(one_hot_matrix, quality_column_vector, axis=1)
-                #TODO: there are several ways to append columns, this is probably a slow way so rethink this later
-
-            cube[i] = one_hot_matrix
+            for j in range(len(sequence_vector)):
+                base = sequence_vector[j]
+                quality = qualities[i][j] if has_qualities else None
+                encoded_vector = self._encode_base(base, quality)
+                cube[i][j] = encoded_vector
         return cube
 
     def decode_sequences(self, encoded_sequences):
         sequences = []
         for sequence_matrix in encoded_sequences:
-            decoded_int_vector = self.encoder.inverse_transform(sequence_matrix).reshape(self.input_length)
+            decoded_int_vector = self.encoder.inverse_transform(sequence_matrix).reshape(self.sequence_length)
             decoded_bases = self.labeler.inverse_transform(decoded_int_vector)
             sequences.append(decoded_bases)
         return sequences
