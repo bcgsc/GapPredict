@@ -1,5 +1,6 @@
-import numpy as np
 from unittest import TestCase
+
+import numpy as np
 
 from SlidingWindowExtractor import SlidingWindowExtractor, SlidingWindowParamException
 from models.ParsedFastqRecord import ParsedFastqRecord
@@ -57,16 +58,16 @@ class TestSlidingWindowExtractor(TestCase):
             ["A", "T", "T", "G"],
             ["T", "T", "G", "A"]
         ])
-        expected_input_quality = [
+        expected_input_quality = np.array([
             [28, 28, 28, 10],
             [28, 28, 10, 28],
             [28, 10, 28, 32]
-        ]
-        expected_output = [
+        ])
+        expected_output = np.array([
             ["G", "A", "G", "T"],
             ["A", "G", "T", "C"],
             ["G", "T", "C", "G"]
-        ]
+        ])
         expected_output_quality = np.array([
             [28, 32, 32, 28],
             [32, 32, 28, 32],
@@ -101,7 +102,7 @@ class TestSlidingWindowExtractor(TestCase):
             ["G"],
             ["T"]
         ])
-        expected_input_quality = [
+        expected_input_quality = np.array([
             [28],
             [28],
             [28],
@@ -110,8 +111,8 @@ class TestSlidingWindowExtractor(TestCase):
             [32],
             [32],
             [28]
-        ]
-        expected_output = [
+        ])
+        expected_output = np.array([
             ["T"],
             ["T"],
             ["G"],
@@ -120,7 +121,7 @@ class TestSlidingWindowExtractor(TestCase):
             ["T"],
             ["C"],
             ["G"]
-        ]
+        ])
         expected_output_quality = np.array([
             [28],
             [10],
@@ -150,18 +151,18 @@ class TestSlidingWindowExtractor(TestCase):
         self.assertEqual(len(output_matrix), 2)
         self.assertEqual(len(output_matrix[0]), 2)
         self.assertEqual(output_quality_matrix.shape, (2, 2))
-        expected_input = [
+        expected_input = np.array([
             ["A", "A", "T", "T"],
             ["A", "T", "T", "G"]
-        ]
+        ])
         expected_input_quality = np.array([
             [28, 28, 28, 10],
             [28, 28, 10, 28]
         ])
-        expected_output = [
+        expected_output = np.array([
             ["T", "C"],
             ["C", "G"]
-        ]
+        ])
         expected_output_quality = np.array([
             [28, 32],
             [32, 35]
