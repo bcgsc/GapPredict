@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn import preprocessing
 
+from exceptions.NegativePredictionLengthException import NegativePredictionLengthException
 from exceptions.NonpositiveLengthException import NonpositiveLengthException
 
 BASE_ENCODING_IDX_MAP = {
@@ -10,12 +11,11 @@ BASE_ENCODING_IDX_MAP = {
     "T": 3
 }
 
-class OneHotMatrixEncoder:
-    def __init__(self, sequence_length, bases_to_predict=0):
+class _OneHotMatrixUtil:
+    def __init__(self, sequence_length):
         if sequence_length < 1:
             raise NonpositiveLengthException
         self.sequence_length = sequence_length
-        self.bases_to_predict = bases_to_predict
         self.labeler = preprocessing.LabelEncoder()
         self.encoder = preprocessing.OneHotEncoder(sparse=False, categories="auto")
         self._train_labeler()
@@ -33,6 +33,27 @@ class OneHotMatrixEncoder:
             [3]
         ])
         self.encoder.fit(encoder_train_matrix)
+
+
+class OneHotMatrixDecoder(_OneHotMatrixUtil):
+    def __init__(self, sequence_length):
+        super().__init__(sequence_length)
+
+    def decode_sequences(self, encoded_sequences):
+        sequences = []
+        for sequence_matrix in encoded_sequences:
+            decoded_int_vector = self.encoder.inverse_transform(sequence_matrix).reshape(self.sequence_length)
+            decoded_bases = self.labeler.inverse_transform(decoded_int_vector)
+            sequences.append(decoded_bases)
+        return sequences
+
+
+class OneHotMatrixEncoder(_OneHotMatrixUtil):
+    def __init__(self, sequence_length, bases_to_predict=0):
+        if bases_to_predict < 0:
+            raise NegativePredictionLengthException
+        super().__init__(sequence_length)
+        self.bases_to_predict = bases_to_predict
 
     def _encoding_idx(self, base):
         return BASE_ENCODING_IDX_MAP[base]
@@ -60,11 +81,3 @@ class OneHotMatrixEncoder:
                 encoded_vector = self._encode_base(base, quality)
                 cube[i][j] = encoded_vector
         return cube
-
-    def decode_sequences(self, encoded_sequences):
-        sequences = []
-        for sequence_matrix in encoded_sequences:
-            decoded_int_vector = self.encoder.inverse_transform(sequence_matrix).reshape(self.sequence_length)
-            decoded_bases = self.labeler.inverse_transform(decoded_int_vector)
-            sequences.append(decoded_bases)
-        return sequences

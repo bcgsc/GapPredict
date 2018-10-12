@@ -1,8 +1,10 @@
-import numpy as np
 from unittest import TestCase
 
+import numpy as np
+
+from exceptions.NegativePredictionLengthException import NegativePredictionLengthException
 from exceptions.NonpositiveLengthException import NonpositiveLengthException
-from onehot.OneHotMatrixEncoder import OneHotMatrixEncoder
+from onehot.OneHotMatrix import OneHotMatrixEncoder
 
 
 class TestOneHotMatrixEncoder(TestCase):
@@ -10,6 +12,14 @@ class TestOneHotMatrixEncoder(TestCase):
         try:
             encoder = OneHotMatrixEncoder(0)
         except NonpositiveLengthException as e:
+            pass
+        except Exception as e:
+            self.fail()
+
+    def test_encode_bad_prediction_length(self):
+        try:
+            encoder = OneHotMatrixEncoder(1, -1)
+        except NegativePredictionLengthException as e:
             pass
         except Exception as e:
             self.fail()
@@ -213,44 +223,4 @@ class TestOneHotMatrixEncoder(TestCase):
             ]
         ])
         np.testing.assert_array_equal(encoded_vectors, expected_vectors)
-
-    def test_decode_char(self):
-        encoder = OneHotMatrixEncoder(1)
-        encoded_sequences = np.array([
-            [
-                [1, 0, 0, 0]
-            ],
-            [
-                [0, 0, 0, 1]
-            ]
-        ])
-        decoded_sequences = encoder.decode_sequences(encoded_sequences)
-        expected_sequences = [
-            ["A"],
-            ["T"]
-        ]
-        np.testing.assert_array_equal(decoded_sequences, expected_sequences)
-
-    def test_decode_sequences(self):
-        encoder = OneHotMatrixEncoder(4)
-        encoded_sequences = np.array([
-            [
-                [0, 1, 0, 0],
-                [1, 0, 0, 0],
-                [0, 0, 0, 1],
-                [0, 0, 1, 0]
-            ],
-            [
-                [1, 0, 0, 0],
-                [0, 0, 0, 1],
-                [0, 0, 1, 0],
-                [0, 1, 0, 0]
-            ]
-        ])
-        decoded_sequences = encoder.decode_sequences(encoded_sequences)
-        expected_sequences = [
-            ["C", "A", "T", "G"],
-            ["A", "T", "G", "C"]
-        ]
-        np.testing.assert_array_equal(decoded_sequences, expected_sequences)
 
