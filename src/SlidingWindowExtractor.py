@@ -24,7 +24,7 @@ class SlidingWindowExtractor:
         # TODO: assumes that the sequence and quality are the same length
         rows = self._calculate_matrix_rows(parsed_fastqs)
         input_seq = []
-        input_quality = np.zeros((rows, self.input_length))
+        input_quality = []
         output_seq = []
 
         curr_row = 0
@@ -36,15 +36,21 @@ class SlidingWindowExtractor:
             for i in range(length - self.k + 1):
                 input_seq_vector = []
                 output_seq_vector = []
+                quality_vector = []
                 for j in range(self.input_length):
                     input_seq_vector.append(sequence[i+j])
-                    input_quality[curr_row][j] = quality[i+j]
+                    quality_vector.append(quality[i+j])
 
                 output_offset = i + self.input_length + self.spacing
                 for j in range(self.output_length):
                     output_seq_vector.append(sequence[output_offset + j])
+
+                curr_row += 1
+                if "N" in input_seq_vector or "N" in output_seq_vector:
+                    continue
+
                 input_seq.append(input_seq_vector)
                 output_seq.append(input_seq_vector + output_seq_vector)
-                curr_row += 1
+                input_quality.append(quality_vector)
 
-        return input_seq, input_quality, output_seq
+        return input_seq, np.array(input_quality), output_seq

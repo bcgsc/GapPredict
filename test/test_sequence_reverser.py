@@ -8,6 +8,10 @@ class TestSequenceReverser(TestCase):
     def setUp(self):
         self.reverser = SequenceReverser()
 
+    def test_reverse_complement_with_n(self):
+        reverse_complement = self.reverser.reverse_complement("ATCGNT")
+        self.assertEqual(reverse_complement, "ANCGAT")
+
     def test_reverse_complement(self):
         reverse_complement = self.reverser.reverse_complement("ATGCCGT")
         self.assertEqual(reverse_complement, "ACGGCAT")

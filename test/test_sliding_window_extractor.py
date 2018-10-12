@@ -11,6 +11,9 @@ class TestSlidingWindowExtractor(TestCase):
         self.parsed_fastqs = [
             ParsedFastqRecord("AATTGAGTCG", np.array([28, 28, 28, 10, 28, 32, 32, 28, 32, 35]))
         ]
+        self.erroneous_parsed_fastqs = [
+            ParsedFastqRecord("AANTGNCG", np.array([28, 28, 28, 10, 28, 10, 13, 15]))
+        ]
 
     def test_nonpositive_input_length(self):
         try:
@@ -38,6 +41,34 @@ class TestSlidingWindowExtractor(TestCase):
             pass
         except Exception as e:
             self.fail()
+
+    def test_extract_input_output_from_sequence_with_N(self):
+        extractor = SlidingWindowExtractor(1, 1, 1)
+        input_output = extractor.extract_input_output_from_sequence(self.erroneous_parsed_fastqs)
+        input_matrix = input_output[0]
+        input_quality_matrix = input_output[1]
+        output_matrix = input_output[2]
+
+        self.assertEqual(len(input_matrix), 2)
+        self.assertEqual(len(input_matrix[0]), 1)
+        self.assertEqual(input_quality_matrix.shape, (2, 1))
+        self.assertEqual(len(output_matrix), 2)
+        self.assertEqual(len(output_matrix[0]), 2)
+        expected_input = np.array([
+            ["A"],
+            ["G"]
+        ])
+        expected_input_quality = np.array([
+            [28],
+            [28]
+        ])
+        expected_output = np.array([
+            ["A", "T"],
+            ["G", "C"]
+        ])
+        np.testing.assert_array_equal(input_matrix, expected_input)
+        np.testing.assert_array_equal(input_quality_matrix, expected_input_quality)
+        np.testing.assert_array_equal(output_matrix, expected_output)
 
     def test_extract_input_output_from_sequence_zero_spacing(self):
         extractor = SlidingWindowExtractor(4, 0, 4)
