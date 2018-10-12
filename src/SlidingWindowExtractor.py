@@ -26,7 +26,6 @@ class SlidingWindowExtractor:
         input_seq = []
         input_quality = np.zeros((rows, self.input_length))
         output_seq = []
-        output_quality = np.zeros((rows, self.output_length))
 
         curr_row = 0
 
@@ -44,9 +43,8 @@ class SlidingWindowExtractor:
                 output_offset = i + self.input_length + self.spacing
                 for j in range(self.output_length):
                     output_seq_vector.append(sequence[output_offset + j])
-                    output_quality[curr_row][j] = quality[output_offset + j]
                 input_seq.append(input_seq_vector)
-                output_seq.append(output_seq_vector)
+                output_seq.append(input_seq_vector + output_seq_vector)
                 curr_row += 1
 
-        return input_seq, input_quality, output_seq, output_quality
+        return input_seq, input_quality, output_seq
