@@ -4,7 +4,8 @@ COMPLEMENT_MAP = {
     "A": "T",
     "T": "A",
     "G": "C",
-    "C": "G"
+    "C": "G",
+    "N": "N"
 }
 
 class SequenceReverser:
