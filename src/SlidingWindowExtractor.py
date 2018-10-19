@@ -46,6 +46,8 @@ class SlidingWindowExtractor:
                     output_seq_vector.append(sequence[output_offset + j])
 
                 curr_row += 1
+                #TODO: might be better to put this in the onehotmatrix after we do the rolling hash,
+                #also need to generalize to anything that isn't one of the one-hot accepted characters
                 if "N" in input_seq_vector or "N" in output_seq_vector:
                     continue
 
