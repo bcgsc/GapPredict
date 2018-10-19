@@ -22,10 +22,12 @@ class SlidingWindowExtractor:
 
     def extract_input_output_from_sequence(self, parsed_fastqs):
         # TODO: assumes that the sequence and quality are the same length
+        #TODO: it appears i forgot the case where k > sequence
         rows = self._calculate_matrix_rows(parsed_fastqs)
         input_seq = []
         input_quality = []
         output_seq = []
+        shifted_output_seq = []
 
         curr_row = 0
 
@@ -52,7 +54,12 @@ class SlidingWindowExtractor:
                     continue
 
                 input_seq.append(input_seq_vector)
-                output_seq.append(input_seq_vector + output_seq_vector)
                 input_quality.append(quality_vector)
 
-        return input_seq, np.array(input_quality), output_seq
+                full_output_seq_vector = input_seq_vector + output_seq_vector
+                output_seq.append(full_output_seq_vector)
+
+                shifted_output_seq_vector = ["!"] + full_output_seq_vector[:-1]
+                shifted_output_seq.append(shifted_output_seq_vector)
+
+        return input_seq, np.array(input_quality), output_seq, shifted_output_seq
