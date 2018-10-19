@@ -28,15 +28,19 @@ class TestOneHotMatrixEncoder(TestCase):
         encoder = OneHotMatrixEncoder(1)
         sequences = [
             ["A"],
-            ["T"]
+            ["T"],
+            ["!"]
         ]
         encoded_vectors = encoder.encode_sequences(sequences)
         expected_vectors = np.array([
             [
-                [1, 0, 0, 0]
+                [0, 1, 0, 0, 0]
             ],
             [
-                [0, 0, 0, 1]
+                [0, 0, 0, 0, 1]
+            ],
+            [
+                [1, 0, 0, 0, 0]
             ]
         ])
         np.testing.assert_array_equal(encoded_vectors, expected_vectors)
@@ -45,19 +49,24 @@ class TestOneHotMatrixEncoder(TestCase):
         encoder = OneHotMatrixEncoder(1)
         sequences = [
             ["A"],
-            ["T"]
+            ["T"],
+            ["!"]
         ]
         quality = np.array([
             [28],
-            [29]
+            [29],
+            [30]
         ])
         encoded_vectors = encoder.encode_sequences(sequences, quality)
         expected_vectors = np.array([
             [
-                [1, 0, 0, 0, 28]
+                [0, 1, 0, 0, 0, 28]
             ],
             [
-                [0, 0, 0, 1, 29]
+                [0, 0, 0, 0, 1, 29]
+            ],
+            [
+                [1, 0, 0, 0, 0, 30]
             ]
         ])
         np.testing.assert_array_equal(encoded_vectors, expected_vectors)
@@ -66,21 +75,28 @@ class TestOneHotMatrixEncoder(TestCase):
         encoder = OneHotMatrixEncoder(4)
         sequences = [
             ["C", "A", "T", "G"],
-            ["A", "T", "G", "C"]
+            ["A", "T", "G", "C"],
+            ["A", "T", "!", "C"]
         ]
         encoded_vectors = encoder.encode_sequences(sequences)
         expected_vectors = np.array([
             [
-                [0, 1, 0, 0],
-                [1, 0, 0, 0],
-                [0, 0, 0, 1],
-                [0, 0, 1, 0]
+                [0, 0, 1, 0, 0],
+                [0, 1, 0, 0, 0],
+                [0, 0, 0, 0, 1],
+                [0, 0, 0, 1, 0]
             ],
             [
-                [1, 0, 0, 0],
-                [0, 0, 0, 1],
-                [0, 0, 1, 0],
-                [0, 1, 0, 0]
+                [0, 1, 0, 0, 0],
+                [0, 0, 0, 0, 1],
+                [0, 0, 0, 1, 0],
+                [0, 0, 1, 0, 0]
+            ],
+            [
+                [0, 1, 0, 0, 0],
+                [0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0],
+                [0, 0, 1, 0, 0]
             ]
         ])
         np.testing.assert_array_equal(encoded_vectors, expected_vectors)
@@ -89,25 +105,33 @@ class TestOneHotMatrixEncoder(TestCase):
         encoder = OneHotMatrixEncoder(4)
         sequences = [
             ["C", "A", "T", "G"],
-            ["A", "T", "G", "C"]
+            ["A", "T", "G", "C"],
+            ["A", "T", "!", "C"]
         ]
         quality = np.array([
             [19, 23, 25, 30],
-            [35, 40, 12, 10]
+            [35, 40, 12, 10],
+            [35, 40, 13, 10]
         ])
         encoded_vectors = encoder.encode_sequences(sequences, quality)
         expected_vectors = np.array([
             [
-                [0, 1, 0, 0, 19],
-                [1, 0, 0, 0, 23],
-                [0, 0, 0, 1, 25],
-                [0, 0, 1, 0, 30]
+                [0, 0, 1, 0, 0, 19],
+                [0, 1, 0, 0, 0, 23],
+                [0, 0, 0, 0, 1, 25],
+                [0, 0, 0, 1, 0, 30]
             ],
             [
-                [1, 0, 0, 0, 35],
-                [0, 0, 0, 1, 40],
-                [0, 0, 1, 0, 12],
-                [0, 1, 0, 0, 10]
+                [0, 1, 0, 0, 0, 35],
+                [0, 0, 0, 0, 1, 40],
+                [0, 0, 0, 1, 0, 12],
+                [0, 0, 1, 0, 0, 10]
+            ],
+            [
+                [0, 1, 0, 0, 0, 35],
+                [0, 0, 0, 0, 1, 40],
+                [1, 0, 0, 0, 0, 13],
+                [0, 0, 1, 0, 0, 10]
             ]
         ])
         np.testing.assert_array_equal(encoded_vectors, expected_vectors)
@@ -116,21 +140,28 @@ class TestOneHotMatrixEncoder(TestCase):
         encoder = OneHotMatrixEncoder(1, 3)
         sequences = [
             ["A"],
-            ["T"]
+            ["T"],
+            ["!"]
         ]
         encoded_vectors = encoder.encode_sequences(sequences)
         expected_vectors = np.array([
             [
-                [1, 0, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
+                [0, 1, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0]
             ],
             [
-                [0, 0, 0, 1],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
+                [0, 0, 0, 0, 1],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0]
+            ],
+            [
+                [1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0]
             ]
         ])
         np.testing.assert_array_equal(encoded_vectors, expected_vectors)
@@ -139,25 +170,33 @@ class TestOneHotMatrixEncoder(TestCase):
         encoder = OneHotMatrixEncoder(1, 3)
         sequences = [
             ["A"],
-            ["T"]
+            ["T"],
+            ["!"]
         ]
         quality = np.array([
             [28],
-            [29]
+            [29],
+            [30]
         ])
         encoded_vectors = encoder.encode_sequences(sequences, quality)
         expected_vectors = np.array([
             [
-                [1, 0, 0, 0, 28],
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0]
+                [0, 1, 0, 0, 0, 28],
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0]
             ],
             [
-                [0, 0, 0, 1, 29],
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0]
+                [0, 0, 0, 0, 1, 29],
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0]
+            ],
+            [
+                [1, 0, 0, 0, 0, 30],
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0]
             ]
         ])
         np.testing.assert_array_equal(encoded_vectors, expected_vectors)
@@ -166,27 +205,37 @@ class TestOneHotMatrixEncoder(TestCase):
         encoder = OneHotMatrixEncoder(4, 3)
         sequences = [
             ["C", "A", "T", "G"],
-            ["A", "T", "G", "C"]
+            ["A", "T", "G", "C"],
+            ["A", "T", "!", "C"]
         ]
         encoded_vectors = encoder.encode_sequences(sequences)
         expected_vectors = np.array([
             [
-                [0, 1, 0, 0],
-                [1, 0, 0, 0],
-                [0, 0, 0, 1],
-                [0, 0, 1, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
+                [0, 0, 1, 0, 0],
+                [0, 1, 0, 0, 0],
+                [0, 0, 0, 0, 1],
+                [0, 0, 0, 1, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0]
             ],
             [
-                [1, 0, 0, 0],
-                [0, 0, 0, 1],
-                [0, 0, 1, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
+                [0, 1, 0, 0, 0],
+                [0, 0, 0, 0, 1],
+                [0, 0, 0, 1, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0]
+            ],
+            [
+                [0, 1, 0, 0, 0],
+                [0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0],
+                [0, 0, 1, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0]
             ]
         ])
         np.testing.assert_array_equal(encoded_vectors, expected_vectors)
@@ -195,31 +244,42 @@ class TestOneHotMatrixEncoder(TestCase):
         encoder = OneHotMatrixEncoder(4, 3)
         sequences = [
             ["C", "A", "T", "G"],
-            ["A", "T", "G", "C"]
+            ["A", "T", "G", "C"],
+            ["A", "T", "!", "C"]
         ]
         quality = np.array([
             [19, 23, 25, 30],
-            [35, 40, 12, 10]
+            [35, 40, 12, 10],
+            [35, 40, 13, 10]
         ])
         encoded_vectors = encoder.encode_sequences(sequences, quality)
         expected_vectors = np.array([
             [
-                [0, 1, 0, 0, 19],
-                [1, 0, 0, 0, 23],
-                [0, 0, 0, 1, 25],
-                [0, 0, 1, 0, 30],
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0]
+                [0, 0, 1, 0, 0, 19],
+                [0, 1, 0, 0, 0, 23],
+                [0, 0, 0, 0, 1, 25],
+                [0, 0, 0, 1, 0, 30],
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0]
             ],
             [
-                [1, 0, 0, 0, 35],
-                [0, 0, 0, 1, 40],
-                [0, 0, 1, 0, 12],
-                [0, 1, 0, 0, 10],
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0]
+                [0, 1, 0, 0, 0, 35],
+                [0, 0, 0, 0, 1, 40],
+                [0, 0, 0, 1, 0, 12],
+                [0, 0, 1, 0, 0, 10],
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0]
+            ],
+            [
+                [0, 1, 0, 0, 0, 35],
+                [0, 0, 0, 0, 1, 40],
+                [1, 0, 0, 0, 0, 13],
+                [0, 0, 1, 0, 0, 10],
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0]
             ]
         ])
         np.testing.assert_array_equal(encoded_vectors, expected_vectors)

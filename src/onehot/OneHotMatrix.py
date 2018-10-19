@@ -5,10 +5,11 @@ from exceptions.NegativePredictionLengthException import NegativePredictionLengt
 from exceptions.NonpositiveLengthException import NonpositiveLengthException
 
 BASE_ENCODING_IDX_MAP = {
-    "A": 0,
-    "C": 1,
-    "G": 2,
-    "T": 3
+    "A": 1,
+    "C": 2,
+    "G": 3,
+    "T": 4,
+    "!": 0
 }
 
 class _OneHotMatrixUtil:
@@ -22,7 +23,7 @@ class _OneHotMatrixUtil:
         self._train_encoder()
 
     def _train_labeler(self):
-        encoder_train_vector = ["A", "C", "G", "T"]
+        encoder_train_vector = ["!", "A", "C", "G", "T"]
         self.labeler.fit(encoder_train_vector)
 
     def _train_encoder(self):
@@ -30,7 +31,8 @@ class _OneHotMatrixUtil:
             [0],
             [1],
             [2],
-            [3]
+            [3],
+            [4]
         ])
         self.encoder.fit(encoder_train_matrix)
 
@@ -58,26 +60,24 @@ class OneHotMatrixEncoder(_OneHotMatrixUtil):
     def _encoding_idx(self, base):
         return BASE_ENCODING_IDX_MAP[base]
 
-    def _encode_base(self, base, quality):
+    def _encode_base(self, char, quality):
+        encoding_vector = np.zeros(self.encoding_length)
         if quality is not None:
-            encoding_vector = np.zeros(5)
-            encoding_vector[4] = quality
-        else:
-            encoding_vector = np.zeros(4)
-        encoding_vector[self._encoding_idx(base)] = 1
+            encoding_vector[5] = quality
+        encoding_vector[self._encoding_idx(char)] = 1
         return encoding_vector
 
     def encode_sequences(self, sequences, qualities=None):
         has_qualities = True if qualities is not None else False
-        encoding_length = 5 if has_qualities else 4
+        self.encoding_length = len(BASE_ENCODING_IDX_MAP) + 1 if has_qualities else len(BASE_ENCODING_IDX_MAP)
         total_sequence_length = self.sequence_length + self.bases_to_predict
         num_sequences = len(sequences)
-        cube = np.zeros((num_sequences, total_sequence_length, encoding_length))
+        cube = np.zeros((num_sequences, total_sequence_length, self.encoding_length))
         for i in range(num_sequences):
             sequence_vector = sequences[i]
             for j in range(len(sequence_vector)):
-                base = sequence_vector[j]
+                char = sequence_vector[j]
                 quality = qualities[i][j] if has_qualities else None
-                encoded_vector = self._encode_base(base, quality)
+                encoded_vector = self._encode_base(char, quality)
                 cube[i][j] = encoded_vector
         return cube

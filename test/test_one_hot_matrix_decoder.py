@@ -22,15 +22,19 @@ class TestOneHotMatrixDecoder(TestCase):
         encoder = OneHotMatrixDecoder(1)
         encoded_sequences = np.array([
             [
-                [1, 0, 0, 0]
+                [1, 0, 0, 0, 0]
             ],
             [
-                [0, 0, 0, 1]
+                [0, 0, 0, 1, 0]
+            ],
+            [
+                [0, 0, 0, 0, 1]
             ]
         ])
         decoded_sequences = encoder.decode_sequences(encoded_sequences)
         expected_sequences = [
-            ["A"],
+            ["!"],
+            ["G"],
             ["T"]
         ]
         np.testing.assert_array_equal(decoded_sequences, expected_sequences)
@@ -39,21 +43,28 @@ class TestOneHotMatrixDecoder(TestCase):
         encoder = OneHotMatrixDecoder(4)
         encoded_sequences = np.array([
             [
-                [0, 1, 0, 0],
-                [1, 0, 0, 0],
-                [0, 0, 0, 1],
-                [0, 0, 1, 0]
+                [0, 1, 0, 0, 0],
+                [1, 0, 0, 0, 0],
+                [0, 0, 0, 1, 0],
+                [0, 0, 1, 0, 0]
             ],
             [
-                [1, 0, 0, 0],
-                [0, 0, 0, 1],
-                [0, 0, 1, 0],
-                [0, 1, 0, 0]
+                [1, 0, 0, 0, 0],
+                [0, 0, 0, 1, 0],
+                [0, 0, 1, 0, 0],
+                [0, 1, 0, 0, 0]
+            ],
+            [
+                [1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1],
+                [0, 0, 1, 0, 0],
+                [0, 1, 0, 0, 0]
             ]
         ])
         decoded_sequences = encoder.decode_sequences(encoded_sequences)
         expected_sequences = [
-            ["C", "A", "T", "G"],
-            ["A", "T", "G", "C"]
+            ["A", "!", "G", "C"],
+            ["!", "G", "C", "A"],
+            ["!", "T", "C", "A"]
         ]
         np.testing.assert_array_equal(decoded_sequences, expected_sequences)
