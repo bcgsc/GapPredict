@@ -14,16 +14,10 @@ class SlidingWindowExtractor:
         self.output_length = output_length
         self.k = self.input_length + self.spacing + self.output_length
 
-    def _calculate_matrix_rows(self, parsed_fastqs):
-        rows = 0
-        for fastq in parsed_fastqs:
-            rows += len(fastq.sequence) - self.k + 1
-        return max(rows, 0)
-
-    def extract_input_output_from_sequence(self, parsed_fastqs):
+    #TODO: consider removing this parameter once we don't need it (eg. we decide on if we want to pad or not)
+    def extract_input_output_from_sequence(self, parsed_fastqs, pad_output_with_input=True):
         # TODO: assumes that the sequence and quality are the same length
         #TODO: it appears i forgot the case where k > sequence
-        rows = self._calculate_matrix_rows(parsed_fastqs)
         input_seq = []
         input_quality = []
         output_seq = []
@@ -56,10 +50,13 @@ class SlidingWindowExtractor:
                 input_seq.append(input_seq_vector)
                 input_quality.append(quality_vector)
 
-                full_output_seq_vector = input_seq_vector + output_seq_vector
-                output_seq.append(full_output_seq_vector)
+                if pad_output_with_input:
+                    output_seq_vector = input_seq_vector + output_seq_vector
+                    output_seq.append(output_seq_vector)
+                else:
+                    output_seq.append(output_seq_vector)
 
-                shifted_output_seq_vector = ["!"] + full_output_seq_vector[:-1]
+                shifted_output_seq_vector = ["!"] + output_seq_vector[:-1]
                 shifted_output_seq.append(shifted_output_seq_vector)
 
         return input_seq, np.array(input_quality), output_seq, shifted_output_seq
