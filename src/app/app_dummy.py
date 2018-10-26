@@ -2,6 +2,7 @@ import time
 
 import numpy as np
 
+from KmerLabelEncoder import KmerLabelEncoder
 from SequenceImporter import SequenceImporter
 from SequenceMatchCalculator import SequenceMatchCalculator
 from SlidingWindowExtractor import SlidingWindowExtractor
@@ -12,6 +13,7 @@ from predict.RandomPredictModel import RandomPredictModel
 def extract_read_matrix(paths, input_length, spacing, bases_to_predict):
     importer = SequenceImporter()
     extractor = SlidingWindowExtractor(input_length, spacing, bases_to_predict)
+    encoder = KmerLabelEncoder()
 
     start_time = time.clock()
     reads = importer.import_fastq(paths, True)
@@ -19,15 +21,19 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict):
     print("Import took " + str(end_time - start_time) + "s")
 
     start_time = time.clock()
-    input_seq, input_quality, output_seq, shifted_output_seq = extractor.extract_input_output_from_sequence(reads)
+    input_kmers, output_kmers, quality_vectors = extractor.extract_kmers_from_sequence(reads)
     end_time = time.clock()
     print("Extraction took " + str(end_time - start_time) + "s")
+
+    start_time = time.clock()
+    input_seq, input_quality, output_seq, shifted_output_seq = encoder.encode_kmers(input_kmers, output_kmers, quality_vectors, fill_in_the_blanks=True)
+    end_time = time.clock()
+    print("Label Encoding took " + str(end_time - start_time) + "s")
     return input_seq, input_quality, output_seq
 
 def encode_reads(paths, input_length, spacing, bases_to_predict):
     input_encoder = OneHotMatrixEncoder(input_length, bases_to_predict)
     output_encoder = OneHotMatrixEncoder(input_length + bases_to_predict)
-    #TODO is it fine that we're just discarding output_quality when we care quite a bit about input quality?
     input_seq, input_quality, output_seq = extract_read_matrix(paths, input_length, spacing, bases_to_predict)
 
     start_time = time.clock()
@@ -39,7 +45,7 @@ def encode_reads(paths, input_length, spacing, bases_to_predict):
     output_one_hot_cube = output_encoder.encode_sequences(output_seq)
     end_time = time.clock()
     print("Output encoding took " + str(end_time - start_time) + "s")
-    return input_one_hot_cube, output_one_hot_cube, output_seq
+    return input_one_hot_cube, output_one_hot_cube
 
 global_start_time = time.clock()
 input_length = 50
@@ -50,7 +56,7 @@ k = 1
 match_calculator = SequenceMatchCalculator()
 
 paths = ['data/read_1_1000.fastq', 'data/read_2_1000.fastq']
-input_one_hot_cube, output_one_hot_cube, output_seq = encode_reads(paths, input_length, spacing, bases_to_predict)
+input_one_hot_cube, output_one_hot_cube = encode_reads(paths, input_length, spacing, bases_to_predict)
 
 output_decoder = OneHotMatrixDecoder(input_length + bases_to_predict)
 model = RandomPredictModel(k)
@@ -67,6 +73,7 @@ print("Predicting took " + str(end_time - start_time) + "s")
 
 start_time = time.clock()
 decoded_predicted_output = output_decoder.decode_sequences(predicted_output)
+decoded_actual_output = output_decoder.decode_sequences(output_one_hot_cube)
 end_time = time.clock()
 print("Decoding took " + str(end_time - start_time) + "s")
 
@@ -76,7 +83,7 @@ match_score = np.zeros(num_predictions)
 
 for i in range(num_predictions):
     predicted_sequence = decoded_predicted_output[i]
-    actual_sequence = output_seq[i]
+    actual_sequence = decoded_actual_output[i]
     assert len(predicted_sequence) == len(actual_sequence)
 
     total_bases = len(actual_sequence)

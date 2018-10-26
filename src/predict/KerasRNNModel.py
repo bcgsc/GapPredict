@@ -2,7 +2,7 @@ import numpy as np
 from keras.layers import LSTM, Input, Dense
 from keras.models import Model
 
-from onehot.OneHotMatrix import BASE_ENCODING_IDX_MAP
+from constants import EncodingConstants as CONSTANTS
 
 
 #TODO: https://github.com/keras-team/keras/blob/master/examples/lstm_seq2seq.py
@@ -79,11 +79,14 @@ class KerasRNNModel:
 
     def __init__(self, has_quality, prediction_length, batch_size=64, epochs=10, latent_dim=100):
         #TODO: 3 hyperparameters here
+        self.encoding = CONSTANTS.ONE_HOT_QUALITY_ENCODING if has_quality else CONSTANTS.ONE_HOT_ENCODING
+        encoding_length = self.encoding.shape[1]
+
         self.batch_size = batch_size  # Batch size for training.
         self.epochs = epochs  # Number of epochs to train for.
         self.latent_dim = latent_dim  # Latent dimensionality of the encoding space.
-        self.one_hot_encoding_length = len(BASE_ENCODING_IDX_MAP) + 1 if has_quality else len(BASE_ENCODING_IDX_MAP)
-        self.one_hot_decoding_length = len(BASE_ENCODING_IDX_MAP)
+        self.one_hot_encoding_length = encoding_length
+        self.one_hot_decoding_length = encoding_length - 1 if has_quality else encoding_length
         self.prediction_length = prediction_length
         self._initialize_models()
 
@@ -97,9 +100,10 @@ class KerasRNNModel:
     def predict(self, X):
         states_to_feed = self.encoder_inference_model.predict(X)
         #(num_sequences, sequence_length, one_hot_length)
-        character_to_feed = np.zeros((1, 1, self.one_hot_decoding_length))
+
         # # Populate the first character of target sequence with the start character.
-        character_to_feed[0, 0, BASE_ENCODING_IDX_MAP['!']] = 1
+        character_to_feed = np.zeros((1, 1, self.one_hot_decoding_length))
+        character_to_feed[0, 0, CONSTANTS.INTEGER_ENCODING_MAP["!"]] = 1 #TODO: refactor to use the other map one day
         decoding = np.zeros((1, self.prediction_length, self.one_hot_decoding_length))
 
         for i in range(self.prediction_length):
