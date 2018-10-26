@@ -1,5 +1,4 @@
 import numpy as np
-from sklearn import preprocessing
 
 from exceptions.NegativePredictionLengthException import NegativePredictionLengthException
 from exceptions.NonpositiveLengthException import NonpositiveLengthException
@@ -11,30 +10,13 @@ BASE_ENCODING_IDX_MAP = {
     "T": 4,
     "!": 0
 }
+REVERSE_ENCODING = np.array(["!", "A", "C", "G", "T"])
 
 class _OneHotMatrixUtil:
     def __init__(self, sequence_length):
         if sequence_length < 1:
             raise NonpositiveLengthException
         self.sequence_length = sequence_length
-        self.labeler = preprocessing.LabelEncoder()
-        self.encoder = preprocessing.OneHotEncoder(sparse=False, categories="auto")
-        self._train_labeler()
-        self._train_encoder()
-
-    def _train_labeler(self):
-        encoder_train_vector = ["!", "A", "C", "G", "T"]
-        self.labeler.fit(encoder_train_vector)
-
-    def _train_encoder(self):
-        encoder_train_matrix = np.array([
-            [0],
-            [1],
-            [2],
-            [3],
-            [4]
-        ])
-        self.encoder.fit(encoder_train_matrix)
 
 
 class OneHotMatrixDecoder(_OneHotMatrixUtil):
@@ -44,8 +26,8 @@ class OneHotMatrixDecoder(_OneHotMatrixUtil):
     def decode_sequences(self, encoded_sequences):
         sequences = []
         for sequence_matrix in encoded_sequences:
-            decoded_int_vector = self.encoder.inverse_transform(sequence_matrix).reshape(self.sequence_length)
-            decoded_bases = self.labeler.inverse_transform(decoded_int_vector)
+            decoded_int_vector = np.argmax(sequence_matrix, axis=1)
+            decoded_bases = REVERSE_ENCODING[decoded_int_vector[:]]
             sequences.append(decoded_bases)
         return sequences
 
