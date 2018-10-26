@@ -19,7 +19,7 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict):
     print("Import took " + str(end_time - start_time) + "s")
 
     start_time = time.clock()
-    input_seq, input_quality, output_seq = extractor.extract_input_output_from_sequence(reads)
+    input_seq, input_quality, output_seq, shifted_output_seq = extractor.extract_input_output_from_sequence(reads)
     end_time = time.clock()
     print("Extraction took " + str(end_time - start_time) + "s")
     return input_seq, input_quality, output_seq
