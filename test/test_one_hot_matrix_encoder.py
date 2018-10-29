@@ -26,11 +26,11 @@ class TestOneHotMatrixEncoder(TestCase):
 
     def test_encode_char(self):
         encoder = OneHotMatrixEncoder(1)
-        sequences = [
-            ["A"],
-            ["T"],
-            ["!"]
-        ]
+        sequences = np.array([
+            [1],
+            [4],
+            [0]
+        ])
         encoded_vectors = encoder.encode_sequences(sequences)
         expected_vectors = np.array([
             [
@@ -47,11 +47,11 @@ class TestOneHotMatrixEncoder(TestCase):
 
     def test_encode_char_with_quality(self):
         encoder = OneHotMatrixEncoder(1)
-        sequences = [
-            ["A"],
-            ["T"],
-            ["!"]
-        ]
+        sequences = np.array([
+            [1],
+            [4],
+            [0]
+        ])
         quality = np.array([
             [28],
             [29],
@@ -73,11 +73,11 @@ class TestOneHotMatrixEncoder(TestCase):
 
     def test_encode_sequences(self):
         encoder = OneHotMatrixEncoder(4)
-        sequences = [
-            ["C", "A", "T", "G"],
-            ["A", "T", "G", "C"],
-            ["A", "T", "!", "C"]
-        ]
+        sequences = np.array([
+            [2, 1, 4, 3],
+            [1, 4, 3, 2],
+            [1, 4, 0, 2]
+        ])
         encoded_vectors = encoder.encode_sequences(sequences)
         expected_vectors = np.array([
             [
@@ -103,11 +103,11 @@ class TestOneHotMatrixEncoder(TestCase):
 
     def test_encode_sequences_with_quality(self):
         encoder = OneHotMatrixEncoder(4)
-        sequences = [
-            ["C", "A", "T", "G"],
-            ["A", "T", "G", "C"],
-            ["A", "T", "!", "C"]
-        ]
+        sequences = np.array([
+            [2, 1, 4, 3],
+            [1, 4, 3, 2],
+            [1, 4, 0, 2]
+        ])
         quality = np.array([
             [19, 23, 25, 30],
             [35, 40, 12, 10],
@@ -138,11 +138,11 @@ class TestOneHotMatrixEncoder(TestCase):
 
     def test_encode_char_and_base_placeholders(self):
         encoder = OneHotMatrixEncoder(1, 3)
-        sequences = [
-            ["A"],
-            ["T"],
-            ["!"]
-        ]
+        sequences = np.array([
+            [1],
+            [4],
+            [0]
+        ])
         encoded_vectors = encoder.encode_sequences(sequences)
         expected_vectors = np.array([
             [
@@ -168,11 +168,11 @@ class TestOneHotMatrixEncoder(TestCase):
 
     def test_encode_char_with_quality_and_base_placeholders(self):
         encoder = OneHotMatrixEncoder(1, 3)
-        sequences = [
-            ["A"],
-            ["T"],
-            ["!"]
-        ]
+        sequences = np.array([
+            [1],
+            [4],
+            [0]
+        ])
         quality = np.array([
             [28],
             [29],
@@ -203,11 +203,11 @@ class TestOneHotMatrixEncoder(TestCase):
 
     def test_encode_sequences_and_base_placeholders(self):
         encoder = OneHotMatrixEncoder(4, 3)
-        sequences = [
-            ["C", "A", "T", "G"],
-            ["A", "T", "G", "C"],
-            ["A", "T", "!", "C"]
-        ]
+        sequences = np.array([
+            [2, 1, 4, 3],
+            [1, 4, 3, 2],
+            [1, 4, 0, 2]
+        ])
         encoded_vectors = encoder.encode_sequences(sequences)
         expected_vectors = np.array([
             [
@@ -242,11 +242,11 @@ class TestOneHotMatrixEncoder(TestCase):
 
     def test_encode_sequences_with_quality_and_base_placeholders(self):
         encoder = OneHotMatrixEncoder(4, 3)
-        sequences = [
-            ["C", "A", "T", "G"],
-            ["A", "T", "G", "C"],
-            ["A", "T", "!", "C"]
-        ]
+        sequences = np.array([
+            [2, 1, 4, 3],
+            [1, 4, 3, 2],
+            [1, 4, 0, 2]
+        ])
         quality = np.array([
             [19, 23, 25, 30],
             [35, 40, 12, 10],

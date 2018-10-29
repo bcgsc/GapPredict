@@ -1,5 +1,4 @@
-import numpy as np
-
+from constants import EncodingConstants as CONSTANTS
 from exceptions.SlidingWindowParamException import SlidingWindowParamException
 
 
@@ -14,49 +13,38 @@ class SlidingWindowExtractor:
         self.output_length = output_length
         self.k = self.input_length + self.spacing + self.output_length
 
-    #TODO: consider removing this parameter once we don't need it (eg. we decide on if we want to pad or not)
-    def extract_input_output_from_sequence(self, parsed_fastqs, pad_output_with_input=True):
-        # TODO: assumes that the sequence and quality are the same length
-        #TODO: it appears i forgot the case where k > sequence
-        input_seq = []
-        input_quality = []
-        output_seq = []
-        shifted_output_seq = []
-
-        curr_row = 0
-
+    def extract_kmers_from_sequence(self, parsed_fastqs):
+        input_kmers = []
+        output_kmers = []
+        quality_vectors = []
+        BASES = CONSTANTS.BASES
         for fastq in parsed_fastqs:
             sequence = fastq.sequence
             quality = fastq.phred_quality
             length = len(sequence)
             for i in range(length - self.k + 1):
-                input_seq_vector = []
-                output_seq_vector = []
-                quality_vector = []
-                for j in range(self.input_length):
-                    input_seq_vector.append(sequence[i+j])
-                    quality_vector.append(quality[i+j])
+                input_seq = sequence[i:i+self.input_length]
 
                 output_offset = i + self.input_length + self.spacing
-                for j in range(self.output_length):
-                    output_seq_vector.append(sequence[output_offset + j])
+                output_seq = sequence[output_offset:output_offset+self.output_length]
 
-                curr_row += 1
-                #TODO: might be better to put this in the onehotmatrix after we do the rolling hash,
-                #also need to generalize to anything that isn't one of the one-hot accepted characters
-                if "N" in input_seq_vector or "N" in output_seq_vector:
+                quality_vector = quality[i:i+self.input_length]
+
+                skip_kmer = False
+                for l in range(self.input_length):
+                    if input_seq[l] not in BASES:
+                        skip_kmer = True
+                        break
+
+                for l in range(self.output_length):
+                    if output_seq[l] not in BASES:
+                        skip_kmer = True
+                        break
+
+                if skip_kmer:
                     continue
 
-                input_seq.append(input_seq_vector)
-                input_quality.append(quality_vector)
-
-                if pad_output_with_input:
-                    output_seq_vector = input_seq_vector + output_seq_vector
-                    output_seq.append(output_seq_vector)
-                else:
-                    output_seq.append(output_seq_vector)
-
-                shifted_output_seq_vector = ["!"] + output_seq_vector[:-1]
-                shifted_output_seq.append(shifted_output_seq_vector)
-
-        return input_seq, np.array(input_quality), output_seq, shifted_output_seq
+                input_kmers.append(input_seq)
+                output_kmers.append(output_seq)
+                quality_vectors.append(quality_vector)
+        return input_kmers, output_kmers, quality_vectors
