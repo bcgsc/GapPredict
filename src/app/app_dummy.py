@@ -41,6 +41,7 @@ def encode_reads(paths, input_length, spacing, bases_to_predict):
     print("Output encoding took " + str(end_time - start_time) + "s")
     return input_one_hot_cube, output_one_hot_cube, output_seq
 
+global_start_time = time.clock()
 input_length = 50
 bases_to_predict = 1
 spacing = 0
@@ -88,3 +89,4 @@ mean_match = np.mean(match_score)
 print("Mean Match = " + str(mean_match))
 end_time = time.clock()
 print("Validation took " + str(end_time - start_time) + "s")
+print("Total time = " + str(end_time - global_start_time) + "s")
