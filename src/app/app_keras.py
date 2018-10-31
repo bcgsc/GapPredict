@@ -17,13 +17,13 @@ def get_stats(inputs, outputs):
     freq_map.load_input_outputs(inputs, outputs)
     print(str(freq_map.get_inputs_with_redundant_mappings()))
 
-def extract_read_matrix(paths, input_length, spacing, bases_to_predict):
+def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_reverse_complement):
     importer = SequenceImporter()
     extractor = SlidingWindowExtractor(input_length, spacing, bases_to_predict)
     encoder = KmerLabelEncoder()
 
     start_time = time.clock()
-    reads = importer.import_fastq(paths, True)
+    reads = importer.import_fastq(paths, include_reverse_complement)
     end_time = time.clock()
     print("Import took " + str(end_time - start_time) + "s")
 
@@ -41,7 +41,7 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict):
     input_seq, input_quality, output_seq, shifted_output_seq = \
         encoder.encode_kmers(input_kmers, output_kmers, quality_vectors, fill_in_the_blanks=False)
     end_time = time.clock()
-    print("Label Encoding took " + str(end_time - start_time) + "s")
+    print("Label Integer Encoding took " + str(end_time - start_time) + "s")
     return input_seq, input_quality, output_seq, shifted_output_seq
 
 
@@ -52,17 +52,17 @@ def encode_reads(input_length, bases_to_predict, input_seq, input_quality, outpu
     start_time = time.clock()
     input_one_hot_cube = input_encoder.encode_sequences(input_seq, input_quality)
     end_time = time.clock()
-    print("Input encoding took " + str(end_time - start_time) + "s")
+    print("Input one-hot encoding took " + str(end_time - start_time) + "s")
 
     start_time = time.clock()
     output_one_hot_cube = output_encoder.encode_sequences(output_seq)
     end_time = time.clock()
-    print("Output encoding took " + str(end_time - start_time) + "s")
+    print("Output one-hot encoding took " + str(end_time - start_time) + "s")
 
     start_time = time.clock()
     shifted_output_seq_cube = output_encoder.encode_sequences(shifted_output_seq)
     end_time = time.clock()
-    print("Shifted output encoding took " + str(end_time - start_time) + "s")
+    print("Shifted one-hot output encoding took " + str(end_time - start_time) + "s")
     return input_one_hot_cube, output_one_hot_cube, shifted_output_seq_cube
 
 
@@ -100,7 +100,8 @@ def predict_and_validate(input, output_seq_cube, model, decoder, validator):
 
 
 def main():
-    input_length = 50
+    include_reverse_complement = True
+    input_length = 26
     bases_to_predict = 1
     spacing = 0
     k = 1
@@ -109,7 +110,7 @@ def main():
 
     paths = ['data/read_1_1000.fastq', 'data/read_2_1000.fastq']
     input_seq, input_quality, output_seq, shifted_output_seq = extract_read_matrix(paths, input_length, spacing,
-                                                                                   bases_to_predict)
+                                                                                   bases_to_predict, include_reverse_complement)
     #TODO: kind of long...
     input_seq_train, input_seq_valid, input_quality_train, input_quality_valid, output_seq_train, output_seq_valid, shifted_output_train, shifted_output_valid = model_selection.train_test_split(input_seq, input_quality, output_seq, shifted_output_seq, test_size=0.15, random_state=123)
     print("Encoding training set")
@@ -118,7 +119,7 @@ def main():
     input_one_hot_cube_valid, output_one_hot_cube_valid, shifted_output_seq_cube_valid = encode_reads(input_length, bases_to_predict, input_seq_valid, input_quality_valid, output_seq_valid, shifted_output_valid)
 
     output_decoder = OneHotMatrixDecoder(bases_to_predict)
-    model = KerasRNNModel(has_quality=True, prediction_length=k, batch_size=64, epochs=10, latent_dim=100)
+    model = KerasRNNModel(has_quality=True, prediction_length=k, batch_size=64, epochs=3, latent_dim=100)
 
     start_time = time.clock()
     model.fit(input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train)
