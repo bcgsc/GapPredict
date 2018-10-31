@@ -8,7 +8,13 @@ from SequenceMatchCalculator import SequenceMatchCalculator
 from SlidingWindowExtractor import SlidingWindowExtractor
 from onehot.OneHotMatrix import OneHotMatrixEncoder, OneHotMatrixDecoder
 from predict.RandomPredictModel import RandomPredictModel
+from stats.InputOutputFrequencyMap import InputOutputFrequencyMap
 
+
+def get_stats(inputs, outputs):
+    freq_map = InputOutputFrequencyMap()
+    freq_map.load_input_outputs(inputs, outputs)
+    print(str(freq_map.get_inputs_with_redundant_mappings()))
 
 def extract_read_matrix(paths, input_length, spacing, bases_to_predict):
     importer = SequenceImporter()
@@ -26,6 +32,11 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict):
     print("Extraction took " + str(end_time - start_time) + "s")
 
     start_time = time.clock()
+    get_stats(input_kmers, output_kmers)
+    end_time = time.clock()
+    print("Stats took " + str(end_time - start_time) + "s")
+
+    start_time = time.clock()
     input_seq, input_quality, output_seq, shifted_output_seq = encoder.encode_kmers(input_kmers, output_kmers, quality_vectors, fill_in_the_blanks=True)
     end_time = time.clock()
     print("Label Encoding took " + str(end_time - start_time) + "s")
@@ -39,12 +50,12 @@ def encode_reads(paths, input_length, spacing, bases_to_predict):
     start_time = time.clock()
     input_one_hot_cube = input_encoder.encode_sequences(input_seq, input_quality)
     end_time = time.clock()
-    print("Input encoding took " + str(end_time - start_time) + "s")
+    print("Input one-hot encoding took " + str(end_time - start_time) + "s")
 
     start_time = time.clock()
     output_one_hot_cube = output_encoder.encode_sequences(output_seq)
     end_time = time.clock()
-    print("Output encoding took " + str(end_time - start_time) + "s")
+    print("Output one-hot encoding took " + str(end_time - start_time) + "s")
     return input_one_hot_cube, output_one_hot_cube
 
 global_start_time = time.clock()
