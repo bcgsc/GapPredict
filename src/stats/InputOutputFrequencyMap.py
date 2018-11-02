@@ -27,5 +27,28 @@ class InputOutputFrequencyMap:
                 redundants.add(key)
         return redundants
 
+    def _sum_map(self, map):
+        acc = 0
+        for key in map:
+            acc += map[key]
+        return acc
+
+    def get_input_stats(self):
+        input_stats = {}
+        for key in self.map:
+            input_stats[key] = self._sum_map(self.map[key])
+        return input_stats
+
+    def get_output_stats(self):
+        output_stats = {}
+        for key in self.map:
+            inner_map = self.map[key]
+            for inner_key in inner_map:
+                if inner_key not in output_stats:
+                    output_stats[inner_key] = inner_map[inner_key]
+                else:
+                    output_stats[inner_key] += inner_map[inner_key]
+        return output_stats
+
     def get_map(self):
         return self.map
