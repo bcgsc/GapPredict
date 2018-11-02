@@ -45,12 +45,12 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_
     return input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map
 
 
-def encode_reads(input_length, bases_to_predict, input_seq, input_quality, output_seq, shifted_output_seq):
+def encode_reads(input_length, bases_to_predict, input_seq, input_quality, output_seq, shifted_output_seq, has_quality=False):
     input_encoder = OneHotMatrixEncoder(input_length)
     output_encoder = OneHotMatrixEncoder(bases_to_predict)
 
     start_time = time.clock()
-    input_one_hot_cube = input_encoder.encode_sequences(input_seq, input_quality)
+    input_one_hot_cube = input_encoder.encode_sequences(input_seq, input_quality if has_quality else None)
     end_time = time.clock()
     print("Input one-hot encoding took " + str(end_time - start_time) + "s")
 
@@ -112,6 +112,7 @@ def main():
     bases_to_predict = 1
     spacing = 0
     k = 1
+    has_quality = False
 
     match_calculator = SequenceMatchCalculator()
 
@@ -121,12 +122,12 @@ def main():
     #TODO: kind of long...
     input_seq_train, input_seq_valid, input_quality_train, input_quality_valid, output_seq_train, output_seq_valid, shifted_output_train, shifted_output_valid = model_selection.train_test_split(input_seq, input_quality, output_seq, shifted_output_seq, test_size=0.15, random_state=123)
     print("Encoding training set")
-    input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train = encode_reads(input_length, bases_to_predict, input_seq_train, input_quality_train, output_seq_train, shifted_output_train)
+    input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train = encode_reads(input_length, bases_to_predict, input_seq_train, input_quality_train, output_seq_train, shifted_output_train, has_quality=has_quality)
     print("Encoding validation set")
-    input_one_hot_cube_valid, output_one_hot_cube_valid, shifted_output_seq_cube_valid = encode_reads(input_length, bases_to_predict, input_seq_valid, input_quality_valid, output_seq_valid, shifted_output_valid)
+    input_one_hot_cube_valid, output_one_hot_cube_valid, shifted_output_seq_cube_valid = encode_reads(input_length, bases_to_predict, input_seq_valid, input_quality_valid, output_seq_valid, shifted_output_valid, has_quality=has_quality)
 
     output_decoder = OneHotMatrixDecoder(bases_to_predict)
-    model = KerasRNNModel(has_quality=True, prediction_length=k, batch_size=64, epochs=5, latent_dim=100)
+    model = KerasRNNModel(has_quality=has_quality, prediction_length=k, batch_size=64, epochs=5, latent_dim=100)
 
     start_time = time.clock()
     model.fit(input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train)

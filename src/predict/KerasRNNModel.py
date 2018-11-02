@@ -1,3 +1,4 @@
+import keras.optimizers as optimizers
 import numpy as np
 from keras.layers import LSTM, Input, Dense
 from keras.models import Model
@@ -10,7 +11,7 @@ from constants import EncodingConstants as CONSTANTS
 #TODO: https://machinelearningmastery.com/define-encoder-decoder-sequence-sequence-model-neural-machine-translation-keras/
 class KerasRNNModel:
     def _encoder_model(self):
-        # TODO: shape = (None, n) implies that there is a variable number of rows, but k is technically fixed for us
+        # shape = (None, n) implies that there is a variable number of rows
         encoder_inputs = Input(shape=(None, self.one_hot_encoding_length))
         encoder = LSTM(self.latent_dim, return_state=True)
         encoder_outputs, state_h, state_c = encoder(encoder_inputs)
@@ -75,7 +76,9 @@ class KerasRNNModel:
         # plot_model(self.decoder_inference_model, to_file='decoder_model.png', show_shapes=True)
 
         # Run training
-        self.model.compile(optimizer='rmsprop', loss='categorical_crossentropy') #TODO: 2 hyperparameters here, try learning rate = 0.0001
+        optimizer = optimizers.Adam()
+        self.model.compile(optimizer=optimizer,
+                           loss='categorical_crossentropy')  # TODO: 2 hyperparameters here, try learning rate = 0.0001
 
     def __init__(self, has_quality, prediction_length, batch_size=64, epochs=10, latent_dim=100):
         #TODO: 3 hyperparameters here
@@ -94,13 +97,12 @@ class KerasRNNModel:
         self.model.fit([X, shifted_Y], Y,
                   batch_size=self.batch_size,
                   epochs=self.epochs)
-                  # validation_split=0.2) #TODO: validation_split is a hyperparameter
         # self.model.save('my_model.h5')
 
     def predict(self, X):
         states_to_feed = self.encoder_inference_model.predict(X)
-        #(num_sequences, sequence_length, one_hot_length)
 
+        #(num_sequences, sequence_length, one_hot_length)
         # # Populate the first character of target sequence with the start character.
         character_to_feed = np.zeros((1, 1, self.one_hot_decoding_length))
         character_to_feed[0, 0, CONSTANTS.INTEGER_ENCODING_MAP["!"]] = 1 #TODO: refactor to use the other map one day
