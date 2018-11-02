@@ -13,38 +13,76 @@ class SlidingWindowExtractor:
         self.output_length = output_length
         self.k = self.input_length + self.spacing + self.output_length
 
-    def extract_kmers_from_sequence(self, parsed_fastqs):
+    def _validate_input_output(self, input, output):
+        is_invalid = False
+        for l in range(self.input_length):
+            if input[l] not in CONSTANTS.BASES:
+                is_invalid = True
+                break
+
+        for l in range(self.output_length):
+            if output[l] not in CONSTANTS.BASES:
+                is_invalid = True
+                break
+
+        return is_invalid
+
+
+    def _extract_all_kmers_from_sequence(self, parsed_fastqs):
         input_kmers = []
         output_kmers = []
         quality_vectors = []
-        BASES = CONSTANTS.BASES
         for fastq in parsed_fastqs:
             sequence = fastq.sequence
             quality = fastq.phred_quality
-            length = len(sequence)
-            for i in range(length - self.k + 1):
-                input_seq = sequence[i:i+self.input_length]
+            for i in range(len(sequence) - self.k + 1):
+                input_seq = sequence[i:i + self.input_length]
 
                 output_offset = i + self.input_length + self.spacing
-                output_seq = sequence[output_offset:output_offset+self.output_length]
+                output_seq = sequence[output_offset:output_offset + self.output_length]
 
-                quality_vector = quality[i:i+self.input_length]
+                quality_vector = quality[i:i + self.input_length]
 
-                skip_kmer = False
-                for l in range(self.input_length):
-                    if input_seq[l] not in BASES:
-                        skip_kmer = True
-                        break
+                is_invalid = self._validate_input_output(input_seq, output_seq)
 
-                for l in range(self.output_length):
-                    if output_seq[l] not in BASES:
-                        skip_kmer = True
-                        break
-
-                if skip_kmer:
+                if is_invalid:
                     continue
 
                 input_kmers.append(input_seq)
                 output_kmers.append(output_seq)
                 quality_vectors.append(quality_vector)
         return input_kmers, output_kmers, quality_vectors
+
+    def _extract_unique_kmers_from_sequence(self, parsed_fastqs):
+        input_kmers = []
+        output_kmers = []
+        quality_vectors = []
+        read_set = set()
+        for fastq in parsed_fastqs:
+            sequence = fastq.sequence
+            quality = fastq.phred_quality
+            for i in range(len(sequence) - self.k + 1):
+                output_offset = i + self.input_length + self.spacing
+                input_seq = sequence[i:i + self.input_length]
+                output_seq = sequence[output_offset:output_offset + self.output_length]
+                input_output = input_seq + output_seq
+                if input_output not in read_set:
+                    read_set.add(input_output)
+                    quality_vector = quality[i:i + self.input_length]
+
+                    is_invalid = self._validate_input_output(input_seq, output_seq)
+
+                    if is_invalid:
+                        continue
+
+                    input_kmers.append(input_seq)
+                    output_kmers.append(output_seq)
+                    quality_vectors.append(quality_vector)
+        return input_kmers, output_kmers, quality_vectors
+
+
+    def extract_kmers_from_sequence(self, parsed_fastqs, unique=False):
+        if unique:
+            return self._extract_unique_kmers_from_sequence(parsed_fastqs)
+        else:
+            return self._extract_all_kmers_from_sequence(parsed_fastqs)
