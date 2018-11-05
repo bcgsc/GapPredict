@@ -43,9 +43,10 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_
     return input_seq, input_quality, output_seq
 
 def encode_reads(paths, input_length, spacing, bases_to_predict):
+    extract_reverse_complement = True
     input_encoder = OneHotMatrixEncoder(input_length, bases_to_predict)
     output_encoder = OneHotMatrixEncoder(input_length + bases_to_predict)
-    input_seq, input_quality, output_seq = extract_read_matrix(paths, input_length, spacing, bases_to_predict)
+    input_seq, input_quality, output_seq = extract_read_matrix(paths, input_length, spacing, bases_to_predict, extract_reverse_complement)
 
     start_time = time.clock()
     input_one_hot_cube = input_encoder.encode_sequences(input_seq, input_quality)
@@ -60,9 +61,8 @@ def encode_reads(paths, input_length, spacing, bases_to_predict):
 
 global_start_time = time.clock()
 input_length = 50
-bases_to_predict = 1
+bases_to_predict = 2
 spacing = 0
-k = 1
 
 match_calculator = SequenceMatchCalculator()
 
@@ -70,7 +70,7 @@ paths = ['data/read_1_1000.fastq', 'data/read_2_1000.fastq']
 input_one_hot_cube, output_one_hot_cube = encode_reads(paths, input_length, spacing, bases_to_predict)
 
 output_decoder = OneHotMatrixDecoder(input_length + bases_to_predict)
-model = RandomPredictModel(k)
+model = RandomPredictModel(bases_to_predict)
 
 start_time = time.clock()
 model.fit(input_one_hot_cube, output_one_hot_cube)
@@ -89,21 +89,11 @@ end_time = time.clock()
 print("Decoding took " + str(end_time - start_time) + "s")
 
 start_time = time.clock()
-num_predictions = len(decoded_predicted_output)
-match_score = np.zeros(num_predictions)
+total_bases = input_length + bases_to_predict
+start_idx = total_bases - bases_to_predict
+matches = match_calculator.compare_sequences(decoded_predicted_output, decoded_actual_output, start_idx=start_idx, bases_to_check=bases_to_predict)
 
-for i in range(num_predictions):
-    predicted_sequence = decoded_predicted_output[i]
-    actual_sequence = decoded_actual_output[i]
-    assert len(predicted_sequence) == len(actual_sequence)
-
-    total_bases = len(actual_sequence)
-    bases_to_check = 1
-    start_idx = total_bases - bases_to_check
-    num_mismatches = match_calculator.compare_sequences(predicted_sequence, actual_sequence, start_idx=start_idx, bases_to_check=bases_to_check)
-    match_score[i] = bases_to_check - num_mismatches
-
-mean_match = np.mean(match_score)
+mean_match = np.mean(matches, axis=0)
 print("Mean Match = " + str(mean_match))
 end_time = time.clock()
 print("Validation took " + str(end_time - start_time) + "s")
