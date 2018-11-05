@@ -81,10 +81,9 @@ def predict_and_validate(input, output_seq_cube, model, decoder, validator):
     stats = {}
     start_time = time.clock()
     num_predictions = len(input)
-    match_score = np.zeros(num_predictions)
     decoded_actual_output = decoder.decode_sequences(output_seq_cube)
 
-    #TODO: I need to rethink how to implement predict - right now things are definitely not working because predict isn't like what a DNN would do
+    decoded_predictions = []
     for i in range(num_predictions):
         predicted_output = model.predict(input[i:i+1])
         decoded_predicted_output = decoder.decode_sequences(predicted_output)
@@ -94,11 +93,11 @@ def predict_and_validate(input, output_seq_cube, model, decoder, validator):
         else:
             stats[decoded_sequence] += 1
 
-        actual_sequence = decoded_actual_output[i]
+        decoded_predictions.append(decoded_predicted_output)
 
-        match_score[i] = validate_sequences(decoded_predicted_output, actual_sequence, validator)
+    matches = validator.compare_sequences(decoded_predictions, decoded_actual_output)
 
-    mean_match = np.mean(match_score)
+    mean_match = np.mean(matches, axis=0)
     print("Mean Match = " + str(mean_match))
     print("Stats = " + str(stats))
 
@@ -118,7 +117,7 @@ def main():
 
     paths = ['data/read_1_300.fastq', 'data/read_2_300.fastq']
     input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = extract_read_matrix(paths, input_length, spacing,
-                                                                                   bases_to_predict, include_reverse_complement)
+                                                                                   bases_to_predict, include_reverse_complement=include_reverse_complement)
     #TODO: kind of long...
     input_seq_train, input_seq_valid, input_quality_train, input_quality_valid, output_seq_train, output_seq_valid, shifted_output_train, shifted_output_valid = model_selection.train_test_split(input_seq, input_quality, output_seq, shifted_output_seq, test_size=0.15, random_state=123)
     print("Encoding training set")

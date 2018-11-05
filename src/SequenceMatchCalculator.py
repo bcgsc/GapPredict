@@ -1,20 +1,34 @@
+import numpy as np
+
 class SequenceMatchCalculator:
     def __init__(self):
         pass
 
-    def compare_sequences(self, seq1, seq2, start_idx=0, bases_to_check=None):
-        #TODO: assumes equal length
-        mismatches = 0
-        length = len(seq1) - max(start_idx, 0)
+    def compare_sequences(self, seq_matrix1, seq_matrix2, start_idx=0, bases_to_check=None):
+        #TODO: assumes matrices have equal dimensions
+        if len(seq_matrix1) == 0:
+            return np.array([[]])
+        num_seq = len(seq_matrix1)
+        seq_length = len(seq_matrix1[0])
+        fixed_start_idx = max(start_idx, 0)
 
         if bases_to_check != None:
-            length = min(len(seq1) - start_idx, max(bases_to_check, 0))
+            fixed_bases_to_check = max(bases_to_check, 0)
+            seq_length = min(max(seq_length - fixed_start_idx, 0), fixed_bases_to_check)
+        else:
+            seq_length = max(seq_length - fixed_start_idx, 0)
 
-        for i in range(length):
-            idx = i + start_idx
-            if seq1[idx] != seq2[idx]:
-                mismatches += 1
-        return mismatches
+        match_matrix = np.zeros((num_seq, seq_length))
+
+        for i in range(num_seq):
+            seq1 = seq_matrix1[i]
+            seq2 = seq_matrix2[i]
+            for j in range(seq_length):
+                base_idx = j + start_idx
+                if seq1[base_idx] == seq2[base_idx]:
+                    match_matrix[i][j] = 1
+
+        return match_matrix
 
 
 
