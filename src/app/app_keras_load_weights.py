@@ -143,10 +143,9 @@ def main():
     model = KerasRNNModel(has_quality=has_quality, prediction_length=k, batch_size=64, epochs=1, latent_dim=100)
 
     start_time = time.clock()
-    model.fit(input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train)
-    model.save_weights('weights/my_model_weights.h5')
+    model.load_weights('weights/my_model_weights.h5')
     end_time = time.clock()
-    print("Fitting took " + str(end_time - start_time) + "s")
+    print("Loading weights took " + str(end_time - start_time) + "s")
 
     print()
     print("Computing input statistics...")
