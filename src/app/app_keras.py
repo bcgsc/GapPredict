@@ -119,12 +119,25 @@ def main():
     paths = ['data/read_1_300.fastq', 'data/read_2_300.fastq']
     input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = extract_read_matrix(paths, input_length, spacing,
                                                                                    bases_to_predict, include_reverse_complement, unique)
-    #TODO: kind of long...
-    input_seq_train, input_seq_valid, input_quality_train, input_quality_valid, output_seq_train, output_seq_valid, shifted_output_train, shifted_output_valid = model_selection.train_test_split(input_seq, input_quality, output_seq, shifted_output_seq, test_size=0.15, random_state=123)
+
+    input_seq_train, input_seq_valid, input_quality_train, input_quality_valid, output_seq_train, output_seq_valid, shifted_output_train, shifted_output_valid = model_selection.train_test_split(
+        input_seq, input_quality, output_seq, shifted_output_seq, test_size=0.15, random_state=123)
     print("Encoding training set")
-    input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train = encode_reads(input_length, bases_to_predict, input_seq_train, input_quality_train, output_seq_train, shifted_output_train, has_quality=has_quality)
+    input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train = encode_reads(input_length,
+                                                                                                      bases_to_predict,
+                                                                                                      input_seq_train,
+                                                                                                      input_quality_train,
+                                                                                                      output_seq_train,
+                                                                                                      shifted_output_train,
+                                                                                                      has_quality=has_quality)
     print("Encoding validation set")
-    input_one_hot_cube_valid, output_one_hot_cube_valid, shifted_output_seq_cube_valid = encode_reads(input_length, bases_to_predict, input_seq_valid, input_quality_valid, output_seq_valid, shifted_output_valid, has_quality=has_quality)
+    input_one_hot_cube_valid, output_one_hot_cube_valid, shifted_output_seq_cube_valid = encode_reads(input_length,
+                                                                                                      bases_to_predict,
+                                                                                                      input_seq_valid,
+                                                                                                      input_quality_valid,
+                                                                                                      output_seq_valid,
+                                                                                                      shifted_output_valid,
+                                                                                                      has_quality=has_quality)
 
     output_decoder = OneHotMatrixDecoder(bases_to_predict)
     model = KerasRNNModel(has_quality=has_quality, prediction_length=k, batch_size=64, epochs=10, latent_dim=100)
