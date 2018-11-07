@@ -1,0 +1,118 @@
+model = KerasRNNModel(has_quality=True, prediction_length=k, batch_size=64, epochs=5, latent_dim=100)
+Predicting training set
+Mean Match = 0.3480046259826023
+Predicting and Validation took 279.53999999999996s
+Predicting validation set
+Mean Match = 0.35112546300693326
+Predicting and Validation took 51.460000000000036s
+
+
+
+model = KerasRNNModel(has_quality=True, prediction_length=k, batch_size=64, epochs=3, latent_dim=100)
+Fitting took 224.17999999999998s
+Predicting training set
+Mean Match = 0.3260312086217589
+Predicting and Validation took 273.53999999999996s
+Predicting validation set
+Mean Match = 0.32795137240003797
+Predicting and Validation took 47.83000000000004s
+
+
+model = KerasRNNModel(has_quality=True, prediction_length=k, batch_size=64, epochs=3, latent_dim=50)
+Predicting training set
+Mean Match = 0.3202319695623753
+Predicting and Validation took 254.64s
+Predicting validation set
+Mean Match = 0.330325766929433
+Predicting and Validation took 45.14000000000004s
+
+model = KerasRNNModel(has_quality=True, prediction_length=k, batch_size=64, epochs=3, latent_dim=25)
+Mean Match = 0.3127566498499908
+Predicting and Validation took 242.19s
+Predicting validation set
+Mean Match = 0.31361002944249217
+Predicting and Validation took 42.70999999999998s
+
+model = KerasRNNModel(has_quality=True, prediction_length=k, batch_size=64, epochs=3, latent_dim=150)
+Fitting took 411.86999999999995s
+Predicting training set
+Mean Match = 0.32794194056618003
+Predicting and Validation took 315.83s
+Predicting validation set
+Mean Match = 0.32272770443536897
+Predicting and Validation took 53.620000000000005s
+
+>Started using Adam, input length=26
+model = KerasRNNModel(has_quality=True, prediction_length=k, batch_size=64, epochs=10, latent_dim=100)
+Predicting training set
+Mean Match = 0.3603405795886898
+Stats = {'A': 14164, 'G': 17714, 'C': 21141, 'T': 6644}
+Predicting and Validation took 266.14s
+Predicting validation set
+Mean Match = 0.35520942159749264
+Stats = {'C': 3739, 'T': 1148, 'A': 2431, 'G': 3211}
+Predicting and Validation took 47.26999999999998s
+
+model = KerasRNNModel(has_quality=False, prediction_length=k, batch_size=64, epochs=10, latent_dim=100)
+Predicting training set
+Mean Match = 0.3757772824028292
+Stats = {'A': 12589, 'G': 17777, 'T': 8329, 'C': 20968}
+Predicting and Validation took 275.4599999999999s
+Predicting validation set
+Mean Match = 0.36147782315509547
+Stats = {'C': 3647, 'T': 1468, 'A': 2184, 'G': 3230}
+Predicting and Validation took 47.12999999999988s
+
+Same parameters as above but no reverse complement:
+Predicting training set
+Mean Match = 0.3573128624585163
+Stats = {'A': 5402, 'G': 6845, 'T': 4052, 'C': 13532}
+Predicting and Validation took 135.25s
+Predicting validation set
+Mean Match = 0.35327635327635326
+Stats = {'C': 2337, 'T': 709, 'A': 978, 'G': 1241}
+Predicting and Validation took 23.470000000000027s	
+
+100 contig
+Predicting training set
+Mean Match = 0.9974709856227265
+Stats = {'A': 29873, 'C': 28709, 'G': 27750, 'T': 29128}
+Predicting and Validation took 528.8999999999999s
+Predicting validation set
+Mean Match = 0.9947978013349038
+Stats = {'C': 5001, 'T': 5133, 'G': 4895, 'A': 5347}
+Predicting and Validation took 91.19000000000028s	
+
+1000 contig
+Predicting training set
+Mean Match = 0.9963231811292156
+Stats = {'G': 123465, 'C': 124860, 'A': 129983, 'T': 128380}
+Predicting and Validation took 2303.66s
+Predicting validation set
+Mean Match = 0.9913550147624586
+Stats = {'A': 23034, 'C': 22034, 'T': 22659, 'G': 21689}
+Predicting and Validation took 400.84000000000015s
+
+Train on 0-30, 40-70, 80-100
+Predict on 30-40, 70-80 (validation set)
+Predicting training set
+Mean Match = [0.99796549]
+Stats = {'A': 56507, 'T': 56489, 'C': 52035, 'G': 49763}
+Predicting and Validation took 976.3400000000001s
+Predicting validation set
+Mean Match = [0.99851309]
+Stats = {'A': 28792, 'G': 24009, 'T': 29839, 'C': 25638}
+Predicting and Validation took 489.4699999999998s
+(Oops, I think my read lengths were too short)
+
+Train on 0-400, 600-1000
+Predict on 400-600 (validation set)
+Predicting training set
+Mean Match = [0.9959355]
+Stats = {'A': 145686, 'T': 144376, 'C': 141939, 'G': 140025}
+Predicting and Validation took 2558.83s
+Predicting validation set
+Mean Match = [0.95926097]
+Stats = {'A': 35423, 'T': 33915, 'C': 37195, 'G': 36033}
+Predicting and Validation took 637.0100000000002s
+TODO: Probably want to check how many of the reads were identical between the sets
