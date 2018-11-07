@@ -97,7 +97,12 @@ class KerasRNNModel:
         self.model.fit([X, shifted_Y], Y,
                   batch_size=self.batch_size,
                   epochs=self.epochs)
-        # self.model.save('my_model.h5')
+
+    def save_weights(self, path):
+        self.model.save_weights(path)
+
+    def load_weights(self, path):
+        self.model.load_weights(path)
 
     def predict(self, X):
         states_to_feed = self.encoder_inference_model.predict(X)
