@@ -28,7 +28,7 @@ def main():
                                                                                                     spacing,
                                                                                                     bases_to_predict,
                                                                                                     include_reverse_complement,
-                                                                                                    unique)
+                                                                                                    unique, fill_in_the_blanks)
     print("Encoding training set")
     input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train = helper.encode_reads(input_length,
                                                                                                       bases_to_predict,
