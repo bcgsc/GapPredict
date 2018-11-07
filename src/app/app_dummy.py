@@ -2,19 +2,14 @@ import time
 
 import numpy as np
 
+import app.app_helper as helper
 from KmerLabelEncoder import KmerLabelEncoder
 from SequenceImporter import SequenceImporter
 from SequenceMatchCalculator import SequenceMatchCalculator
 from SlidingWindowExtractor import SlidingWindowExtractor
 from onehot.OneHotMatrix import OneHotMatrixEncoder, OneHotMatrixDecoder
 from predict.RandomPredictModel import RandomPredictModel
-from stats.InputOutputFrequencyMap import InputOutputFrequencyMap
 
-
-def get_stats(inputs, outputs):
-    freq_map = InputOutputFrequencyMap()
-    freq_map.load_input_outputs(inputs, outputs)
-    print(str(freq_map.get_inputs_with_redundant_mappings()))
 
 def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_reverse_complement):
     importer = SequenceImporter()
@@ -32,7 +27,7 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_
     print("Extraction took " + str(end_time - start_time) + "s")
 
     start_time = time.clock()
-    get_stats(input_kmers, output_kmers)
+    helper.get_stats(input_kmers, output_kmers)
     end_time = time.clock()
     print("Stats took " + str(end_time - start_time) + "s")
 
