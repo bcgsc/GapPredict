@@ -73,17 +73,14 @@ def validate_sequences(predicted_sequence, actual_sequence, validator):
                                                  start_idx=start_idx, bases_to_check=bases_to_check)
     return bases_to_check - num_mismatches
 
-def predict_and_validate(input, output_seq_cube, model, bases_to_predict):
-    decoder = OneHotMatrixDecoder(bases_to_predict)
-    validator = SequenceMatchCalculator()
+def predict(input, model, bases_to_predict):
     stats = {}
-    start_time = time.clock()
-    num_predictions = len(input)
-    decoded_actual_output = decoder.decode_sequences(output_seq_cube)
-
     decoded_predictions = []
+
+    num_predictions = len(input)
+    decoder = OneHotMatrixDecoder(bases_to_predict)
     for i in range(num_predictions):
-        predicted_output = model.predict(input[i:i+1])
+        predicted_output = model.predict(input[i:i + 1])
         decoded_predicted_output = decoder.decode_sequences(predicted_output)
         decoded_sequence = ''.join(decoded_predicted_output[0])
         if decoded_sequence not in stats:
@@ -93,11 +90,22 @@ def predict_and_validate(input, output_seq_cube, model, bases_to_predict):
 
         decoded_predictions.append(decoded_predicted_output)
 
+    print("Stats = " + str(stats))
+    return decoded_predictions
+
+def predict_and_validate(input, output_seq_cube, model, bases_to_predict):
+    decoder = OneHotMatrixDecoder(bases_to_predict)
+    validator = SequenceMatchCalculator()
+
+    start_time = time.clock()
+    decoded_actual_output = decoder.decode_sequences(output_seq_cube)
+
+    decoded_predictions = predict(input, model, bases_to_predict)
+
     matches = validator.compare_sequences(decoded_predictions, decoded_actual_output)
 
     mean_match = np.mean(matches, axis=0)
     print("Mean Match = " + str(mean_match))
-    print("Stats = " + str(stats))
 
     end_time = time.clock()
     print("Predicting and Validation took " + str(end_time - start_time) + "s")

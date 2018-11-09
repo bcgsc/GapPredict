@@ -9,7 +9,6 @@ def main():
     input_length = 26
     bases_to_predict = 1
     spacing = 0
-    k = 1
     has_quality = False
     unique = False
     fill_in_the_blanks = False
@@ -46,7 +45,7 @@ def main():
                                                                                                       shifted_output_valid,
                                                                                                       has_quality=has_quality)
 
-    model = KerasRNNModel(has_quality=has_quality, prediction_length=k, batch_size=64, epochs=10, latent_dim=100)
+    model = KerasRNNModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=10, latent_dim=100)
 
     start_time = time.clock()
     model.fit(input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train)
