@@ -17,12 +17,8 @@ class OneHotMatrixDecoder(_OneHotMatrixUtil):
         super().__init__(sequence_length)
 
     def decode_sequences(self, encoded_sequences):
-        sequences = []
         REVERSE_ONE_HOT_ENCODING = CONSTANTS.REVERSE_INTEGER_ENCODING
-        for sequence_matrix in encoded_sequences:
-            decoded_int_vector = np.argmax(sequence_matrix, axis=1)
-            decoded_bases = REVERSE_ONE_HOT_ENCODING[decoded_int_vector[:]]
-            sequences.append(decoded_bases)
+        sequences = REVERSE_ONE_HOT_ENCODING[np.argmax(encoded_sequences, axis=2)]
         return sequences
 
 

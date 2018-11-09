@@ -19,7 +19,7 @@ class TestOneHotMatrixDecoder(TestCase):
         self.fail()
 
     def test_decode_char(self):
-        encoder = OneHotMatrixDecoder(1)
+        decoder = OneHotMatrixDecoder(1)
         encoded_sequences = np.array([
             [
                 [1, 0, 0, 0, 0]
@@ -31,7 +31,7 @@ class TestOneHotMatrixDecoder(TestCase):
                 [0, 0, 0, 0, 1]
             ]
         ])
-        decoded_sequences = encoder.decode_sequences(encoded_sequences)
+        decoded_sequences = decoder.decode_sequences(encoded_sequences)
         expected_sequences = [
             ["!"],
             ["G"],
@@ -40,7 +40,7 @@ class TestOneHotMatrixDecoder(TestCase):
         np.testing.assert_array_equal(decoded_sequences, expected_sequences)
 
     def test_decode_sequences(self):
-        encoder = OneHotMatrixDecoder(4)
+        decoder = OneHotMatrixDecoder(4)
         encoded_sequences = np.array([
             [
                 [0, 1, 0, 0, 0],
@@ -61,7 +61,7 @@ class TestOneHotMatrixDecoder(TestCase):
                 [0, 1, 0, 0, 0]
             ]
         ])
-        decoded_sequences = encoder.decode_sequences(encoded_sequences)
+        decoded_sequences = decoder.decode_sequences(encoded_sequences)
         expected_sequences = [
             ["A", "!", "G", "C"],
             ["!", "G", "C", "A"],
