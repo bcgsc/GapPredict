@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 import time
 
 import app.app_helper as helper

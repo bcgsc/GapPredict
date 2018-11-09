@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 import numpy as np
 
 import app.app_helper as helper
