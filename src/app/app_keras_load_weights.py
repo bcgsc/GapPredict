@@ -18,20 +18,13 @@ def main():
     unique = False
     fill_in_the_blanks = False
 
-    paths = ['data/ecoli_contigs/ecoli-400-600.fastq']
+    paths = ['data/ecoli_contigs/ecoli-0-400.fastq', 'data/ecoli_contigs/ecoli-600-1000.fastq']
     input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = helper.extract_read_matrix(paths, input_length, spacing,
                                                                                    bases_to_predict, include_reverse_complement, unique, fill_in_the_blanks)
 
     input_seq_train, input_seq_valid, input_quality_train, input_quality_valid, output_seq_train, output_seq_valid, shifted_output_train, shifted_output_valid = model_selection.train_test_split(
-        input_seq, input_quality, output_seq, shifted_output_seq, test_size=0.15, random_state=123)
-    print("Encoding training set")
-    input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train = helper.encode_reads(input_length,
-                                                                                                      bases_to_predict,
-                                                                                                      input_seq_train,
-                                                                                                      input_quality_train,
-                                                                                                      output_seq_train,
-                                                                                                      shifted_output_train,
-                                                                                                      has_quality=has_quality)
+        input_seq, input_quality, output_seq, shifted_output_seq, test_size=0.01, random_state=123)
+    #hack to get a random shuffle of some size TODO: make this use numpy random so we can do 0% or 100% as well
     print("Encoding validation set")
     input_one_hot_cube_valid, output_one_hot_cube_valid, shifted_output_seq_cube_valid = helper.encode_reads(input_length,
                                                                                                       bases_to_predict,
@@ -54,8 +47,6 @@ def main():
     print("Output stats: " + str(input_stats_map.get_output_stats()))
     print()
 
-    print("Predicting training set")
-    helper.predict_and_validate(input_one_hot_cube_train, output_one_hot_cube_train, model, bases_to_predict)
     print("Predicting validation set")
     helper.predict_and_validate(input_one_hot_cube_valid, output_one_hot_cube_valid, model, bases_to_predict)
 
