@@ -18,7 +18,7 @@ def main():
     unique = False
     fill_in_the_blanks = False
 
-    paths = ['data/read_1_300.fastq', 'data/read_2_300.fastq']
+    paths = ['data/ecoli_contigs/ecoli-400-600.fastq']
     input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = helper.extract_read_matrix(paths, input_length, spacing,
                                                                                    bases_to_predict, include_reverse_complement, unique, fill_in_the_blanks)
 
