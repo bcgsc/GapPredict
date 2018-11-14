@@ -68,4 +68,6 @@ def main():
     helper.predict_and_validate(input_one_hot_cube_valid, output_one_hot_cube_valid, model, bases_to_predict)
 
 
-main()
+if __name__ == "__main__":
+    main()
+

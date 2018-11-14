@@ -18,7 +18,8 @@ def main():
     unique = False
     fill_in_the_blanks = False
 
-    paths = ['data/ecoli_contigs/ecoli-0-400.fastq', 'data/ecoli_contigs/ecoli-600-1000.fastq']
+    arguments = sys.argv[1:]
+    paths = arguments if len(arguments) > 0 else ['data/ecoli_contigs/ecoli-0-400.fastq', 'data/ecoli_contigs/ecoli-600-1000.fastq']
     input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = helper.extract_read_matrix(paths, input_length, spacing,
                                                                                    bases_to_predict, include_reverse_complement, unique, fill_in_the_blanks)
 
@@ -51,4 +52,6 @@ def main():
     helper.predict_and_validate(input_one_hot_cube_valid, output_one_hot_cube_valid, model, bases_to_predict)
 
 
-main()
+if __name__ == "__main__":
+    main()
+

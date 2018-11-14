@@ -54,4 +54,6 @@ def main():
 
         print("Predicted: " + np.array_str(decoded_prediction[0]) + " from " + kmer)
 
-main()
+
+if __name__ == "__main__":
+    main()
