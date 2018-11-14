@@ -116,3 +116,47 @@ Mean Match = [0.95926097]
 Stats = {'A': 35423, 'T': 33915, 'C': 37195, 'G': 36033}
 Predicting and Validation took 637.0100000000002s
 TODO: Probably want to check how many of the reads were identical between the sets
+-----------------------------------
+Nov 13
+
+Take 1% of our total dataset (for the sake of speed)
+Predicting 1 base:
+Predicting took 7.570155328405228s
+Mean Match = [0.99510575]
+Validation took 0.007041550247913975s
+
+Predicting 3 bases:
+Predicting took 10.849231984066153s
+Mean Match = [0.9953229  0.29861486 0.27019248]
+Validation took 0.013865438525485274s
+
+
+Predicting 10 bases:
+Predicting took 21.65394776669234s (Runtime does not seem to scale linearly for this)
+Mean Match = [0.99559383 0.29461246 0.2655718  0.24454236 0.25035049 0.26256759
+ 0.24113759 0.26156619 0.25015021 0.23993591]
+Validation took 0.032266222850612536s
+#TODO: I am not sure why the statistics change a little based on the value of d (eg. sometimes its 0.9951, othertimes 0.9953 for the first base)
+
+Training a model to read in 26 bases and predict the next 1:
+Fitting took 1128.41082243761s
+
+Training a model to read in 26 bases and predict the next 3:
+Fitting took 1228.3204924107392s
+
+Predicting 1 base:
+Predicting took 7.677277481601536s
+Mean Match = [0.99458137]
+Validation took 0.007905396192709802s
+
+Predicting 3 bases:
+Predicting took 12.36334337443455s
+Mean Match = [0.99316424 0.99388379 0.9937039 ]
+Validation took 0.030029313254839707s
+
+Predicting 10 bases:
+Predicting took 21.339792287407793s
+Mean Match = [0.99439215 0.99559383 0.99359103 0.71179652 0.42058882 0.30262367
+ 0.28419788 0.25615862 0.26296816 0.24013619]
+Validation took 0.03432257194825894s
+#TODO: look at base 4 and 5. I need to test this on a bigger sample I believe but that looks interesting, it doesn't immediately drop to 30% when we prime it with 3 bases rather than 1
