@@ -10,13 +10,14 @@ from onehot.OneHotMatrix import OneHotMatrixEncoder, OneHotMatrixDecoder
 from stats.InputOutputFrequencyMap import InputOutputFrequencyMap
 
 
-def get_stats(inputs, outputs):
+def get_stats(inputs, outputs, verbose = False):
     freq_map = InputOutputFrequencyMap()
     freq_map.load_input_outputs(inputs, outputs)
-    print(str(freq_map.get_inputs_with_redundant_mappings()))
+    if verbose:
+        print(str(freq_map.get_inputs_with_redundant_mappings()))
     return freq_map
 
-def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique, fill_in_the_blanks):
+def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique, fill_in_the_blanks, verbose):
     importer = SequenceImporter()
     extractor = SlidingWindowExtractor(input_length, spacing, bases_to_predict)
     encoder = KmerLabelEncoder()
@@ -32,7 +33,7 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_
     print("Extraction took " + str(end_time - start_time) + "s")
 
     start_time = time.clock()
-    input_stats_map = get_stats(input_kmers, output_kmers)
+    input_stats_map = get_stats(input_kmers, output_kmers, verbose)
     end_time = time.clock()
     print("Stats took " + str(end_time - start_time) + "s")
 

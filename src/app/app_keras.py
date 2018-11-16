@@ -19,7 +19,7 @@ def main():
     fill_in_the_blanks = False
 
     arguments = sys.argv[1:]
-    paths = arguments if len(arguments) > 0 else ['data/read_1_300.fastq', 'data/read_2_300.fastq']
+    paths = arguments if len(arguments) > 0 else ['data/ecoli_contigs/ecoli_contig_10000.fastq']
     input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = helper.extract_read_matrix(paths, input_length, spacing,
                                                                                    bases_to_predict, include_reverse_complement, unique, fill_in_the_blanks)
 
@@ -42,7 +42,7 @@ def main():
                                                                                                       shifted_output_valid,
                                                                                                       has_quality=has_quality)
 
-    model = KerasRNNModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=1, latent_dim=100)
+    model = KerasRNNModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=10, latent_dim=100)
 
     start_time = time.clock()
     model.fit(input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train)
@@ -52,7 +52,7 @@ def main():
 
     print()
     print("Computing input statistics...")
-    print("Redundant mappings: " + str(input_stats_map.get_inputs_with_redundant_mappings()))
+    # print("Redundant mappings: " + str(input_stats_map.get_inputs_with_redundant_mappings())) #TODO
     print("Output stats: " + str(input_stats_map.get_output_stats()))
     print()
 
