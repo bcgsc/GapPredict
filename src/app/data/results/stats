@@ -160,3 +160,29 @@ Mean Match = [0.99439215 0.99559383 0.99359103 0.71179652 0.42058882 0.30262367
  0.28419788 0.25615862 0.26296816 0.24013619]
 Validation took 0.03432257194825894s
 #TODO: look at base 4 and 5. I need to test this on a bigger sample I believe but that looks interesting, it doesn't immediately drop to 30% when we prime it with 3 bases rather than 1
+
+
+--------------
+#TODO: currently we're doing this on HPCE with Tensorflow 1.5 which is kind of dumb because it looks like we're
+CPU instruction optimizations. Since HPCE actually supports these, I'd like to run this job again on Monday to see
+what happens to runtime.
+
+In addition, need to test the 1000 bp contig in HPCE and locally to compare how much HPCE drops the runtime.
+
+10000 bp contig
+Import took 2.9800000000000004s
+Extraction took 44.14s
+Stats took 4.789999999999999s
+Label Integer Encoding took 60.88000000000001s
+Encoding training set
+Input one-hot encoding took 6.1299999999999955s
+Output one-hot encoding took 0.21999999999999886s
+Shifted one-hot output encoding took 0.2400000000000091s
+Encoding validation set
+Input one-hot encoding took 1.0900000000000034s
+Output one-hot encoding took 0.020000000000010232s
+Shifted one-hot output encoding took 0.030000000000001137s
+
+5730341 kmers extracted
+
+

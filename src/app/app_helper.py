@@ -17,7 +17,7 @@ def get_stats(inputs, outputs, verbose = False):
         print(str(freq_map.get_inputs_with_redundant_mappings()))
     return freq_map
 
-def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique, fill_in_the_blanks, verbose):
+def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique, fill_in_the_blanks, verbose=False):
     importer = SequenceImporter()
     extractor = SlidingWindowExtractor(input_length, spacing, bases_to_predict)
     encoder = KmerLabelEncoder()
