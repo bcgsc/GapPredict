@@ -7,7 +7,7 @@ import app.app_helper as helper
 from KmerLabelEncoder import KmerLabelEncoder
 from constants import EncodingConstants as CONSTANTS
 from onehot.OneHotMatrix import OneHotMatrixEncoder
-from predict.KerasRNNModel import KerasRNNModel
+from predict.KerasLSTMModel import KerasLSTMModel
 
 
 def validate_kmer(kmer, bases_to_predict):
@@ -31,7 +31,7 @@ def main():
     label_encoder = KmerLabelEncoder()
     one_hot_encoder = OneHotMatrixEncoder(input_length)
 
-    model = KerasRNNModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=1, latent_dim=100)
+    model = KerasLSTMModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=1, latent_dim=100)
 
     model.load_weights('weights/my_model_weights.h5')
 

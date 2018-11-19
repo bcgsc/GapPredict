@@ -6,7 +6,7 @@ import time
 from sklearn import model_selection
 
 import app.app_helper as helper
-from predict.KerasRNNModel import KerasRNNModel
+from predict.KerasLSTMModel import KerasLSTMModel
 
 
 def main():
@@ -35,7 +35,7 @@ def main():
                                                                                                       shifted_output_valid,
                                                                                                       has_quality=has_quality)
 
-    model = KerasRNNModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=1, latent_dim=100)
+    model = KerasLSTMModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=1, latent_dim=100)
 
     start_time = time.clock()
     model.load_weights('weights/my_model_weights.h5')

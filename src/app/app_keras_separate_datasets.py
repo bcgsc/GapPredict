@@ -4,7 +4,7 @@ sys.path.append('../')
 import time
 
 import app.app_helper as helper
-from predict.KerasRNNModel import KerasRNNModel
+from predict.KerasLSTMModel import KerasLSTMModel
 
 
 def main():
@@ -48,7 +48,7 @@ def main():
                                                                                                       shifted_output_valid,
                                                                                                       has_quality=has_quality)
 
-    model = KerasRNNModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=10, latent_dim=100)
+    model = KerasLSTMModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=10, latent_dim=100)
 
     start_time = time.clock()
     model.fit(input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train)

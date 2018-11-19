@@ -9,7 +9,7 @@ from constants import EncodingConstants as CONSTANTS
 #TODO: https://github.com/keras-team/keras/blob/master/examples/lstm_seq2seq.py
 #TODO: https://github.com/keras-team/keras/blob/master/examples/lstm_seq2seq.py
 #TODO: https://machinelearningmastery.com/define-encoder-decoder-sequence-sequence-model-neural-machine-translation-keras/
-class KerasRNNModel:
+class KerasLSTMModel:
     def _encoder_model(self):
         # shape = (None, n) implies that there is a variable number of rows
         encoder_inputs = Input(shape=(None, self.one_hot_encoding_length))
@@ -60,7 +60,7 @@ class KerasRNNModel:
         # Define the model that will turn
         # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
         self.model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
-        # plot_model(self.model, to_file='model.png', show_shapes=True)
+        # plot_model(self.model, to_file='viz/model.png', show_shapes=True)
 
         # Next: inference mode (sampling).
         # Here's the drill:
@@ -72,8 +72,8 @@ class KerasRNNModel:
         self.encoder_inference_model = self._encoder_inference_model(encoder_inputs, encoder_states)
         self.decoder_inference_model = self._decoder_inference_model(decoder_lstm, decoder_inputs, decoder_dense)
 
-        # plot_model(self.encoder_inference_model, to_file='encoder_model.png', show_shapes=True)
-        # plot_model(self.decoder_inference_model, to_file='decoder_model.png', show_shapes=True)
+        # plot_model(self.encoder_inference_model, to_file='viz/encoder_model.png', show_shapes=True)
+        # plot_model(self.decoder_inference_model, to_file='viz/decoder_model.png', show_shapes=True)
 
         # Run training
         optimizer = optimizers.Adam()
