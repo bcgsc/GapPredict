@@ -37,9 +37,9 @@ def main():
 
     model = KerasLSTMModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=1, latent_dim=100)
 
-    start_time = time.clock()
+    start_time = time.time()
     model.load_weights('weights/my_model_weights.h5')
-    end_time = time.clock()
+    end_time = time.time()
     print("Loading weights took " + str(end_time - start_time) + "s")
 
     print()

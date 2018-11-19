@@ -42,12 +42,12 @@ def main():
                                                                                                       shifted_output_valid,
                                                                                                       has_quality=has_quality)
 
-    model = KerasLSTMModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=10, latent_dim=100)
+    model = KerasLSTMModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=5, latent_dim=100)
 
-    start_time = time.clock()
+    start_time = time.time()
     model.fit(input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train)
     model.save_weights('weights/my_model_weights.h5')
-    end_time = time.clock()
+    end_time = time.time()
     print("Fitting took " + str(end_time - start_time) + "s")
 
     print()
@@ -56,10 +56,10 @@ def main():
     print("Output stats: " + str(input_stats_map.get_output_stats()))
     print()
 
-    print("Predicting training set")
-    helper.predict_and_validate(input_one_hot_cube_train, output_one_hot_cube_train, model, bases_to_predict)
-    print("Predicting validation set")
-    helper.predict_and_validate(input_one_hot_cube_valid, output_one_hot_cube_valid, model, bases_to_predict)
+    # print("Predicting training set")
+    # helper.predict_and_validate(input_one_hot_cube_train, output_one_hot_cube_train, model, bases_to_predict)
+    # print("Predicting validation set")
+    # helper.predict_and_validate(input_one_hot_cube_valid, output_one_hot_cube_valid, model, bases_to_predict)
 
 
 if __name__ == "__main__":

@@ -22,25 +22,25 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_
     extractor = SlidingWindowExtractor(input_length, spacing, bases_to_predict)
     encoder = KmerLabelEncoder()
 
-    start_time = time.clock()
+    start_time = time.time()
     reads = importer.import_fastq(paths, include_reverse_complement)
-    end_time = time.clock()
+    end_time = time.time()
     print("Import took " + str(end_time - start_time) + "s")
 
-    start_time = time.clock()
+    start_time = time.time()
     input_kmers, output_kmers, quality_vectors = extractor.extract_kmers_from_sequence(reads, unique=unique)
-    end_time = time.clock()
+    end_time = time.time()
     print("Extraction took " + str(end_time - start_time) + "s")
 
-    start_time = time.clock()
+    start_time = time.time()
     input_stats_map = get_stats(input_kmers, output_kmers, verbose)
-    end_time = time.clock()
+    end_time = time.time()
     print("Stats took " + str(end_time - start_time) + "s")
 
-    start_time = time.clock()
+    start_time = time.time()
     input_seq, input_quality, output_seq, shifted_output_seq = \
         encoder.encode_kmers(input_kmers, output_kmers, quality_vectors, fill_in_the_blanks=fill_in_the_blanks)
-    end_time = time.clock()
+    end_time = time.time()
     print("Label Integer Encoding took " + str(end_time - start_time) + "s")
     return input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map
 
@@ -48,19 +48,19 @@ def encode_reads(input_length, bases_to_predict, input_seq, input_quality, outpu
     input_encoder = OneHotMatrixEncoder(input_length)
     output_encoder = OneHotMatrixEncoder(bases_to_predict)
 
-    start_time = time.clock()
+    start_time = time.time()
     input_one_hot_cube = input_encoder.encode_sequences(input_seq, input_quality if has_quality else None)
-    end_time = time.clock()
+    end_time = time.time()
     print("Input one-hot encoding took " + str(end_time - start_time) + "s")
 
-    start_time = time.clock()
+    start_time = time.time()
     output_one_hot_cube = output_encoder.encode_sequences(output_seq)
-    end_time = time.clock()
+    end_time = time.time()
     print("Output one-hot encoding took " + str(end_time - start_time) + "s")
 
-    start_time = time.clock()
+    start_time = time.time()
     shifted_output_seq_cube = output_encoder.encode_sequences(shifted_output_seq)
-    end_time = time.clock()
+    end_time = time.time()
     print("Shifted one-hot output encoding took " + str(end_time - start_time) + "s")
     return input_one_hot_cube, output_one_hot_cube, shifted_output_seq_cube
 
@@ -107,19 +107,19 @@ def predict_and_validate(input, output_seq_cube, model, bases_to_predict):
     decoder = OneHotMatrixDecoder(bases_to_predict)
     validator = SequenceMatchCalculator()
 
-    start_time = time.clock()
+    start_time = time.time()
     decoded_actual_output = decoder.decode_sequences(output_seq_cube)
 
     decoded_predictions = predict(input, model, bases_to_predict)
-    end_time = time.clock()
+    end_time = time.time()
     print("Predicting took " + str(end_time - start_time) + "s")
 
-    start_time = time.clock()
+    start_time = time.time()
     matches = validator.compare_sequences(decoded_predictions, decoded_actual_output)
 
     mean_match = np.mean(matches, axis=0)
     print("Mean Match = " + str(mean_match))
 
-    end_time = time.clock()
+    end_time = time.time()
 
     print("Validation took " + str(end_time - start_time) + "s")

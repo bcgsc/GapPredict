@@ -169,20 +169,99 @@ what happens to runtime.
 
 In addition, need to test the 1000 bp contig in HPCE and locally to compare how much HPCE drops the runtime.
 
-10000 bp contig
-Import took 2.9800000000000004s
-Extraction took 44.14s
-Stats took 4.789999999999999s
-Label Integer Encoding took 60.88000000000001s
+##########
+###1000###
+##########
+Import took 0.3200000000000003s
+Extraction took 2.9899999999999984s
+Stats took 0.3200000000000003s
+Label Integer Encoding took 4.890000000000001s
 Encoding training set
-Input one-hot encoding took 6.1299999999999955s
-Output one-hot encoding took 0.21999999999999886s
-Shifted one-hot output encoding took 0.2400000000000091s
+Input one-hot encoding took 0.33000000000000185s
+Output one-hot encoding took 0.019999999999999574s
+Shifted one-hot output encoding took 0.00999999999999801s
 Encoding validation set
-Input one-hot encoding took 1.0900000000000034s
-Output one-hot encoding took 0.020000000000010232s
-Shifted one-hot output encoding took 0.030000000000001137s
+Input one-hot encoding took 0.060000000000002274s
+Output one-hot encoding took 0.0s
+Shifted one-hot output encoding took 0.0s
 
-5730341 kmers extracted
+Epoch 1/5
+2018-11-19 09:55:30.547429: I tensorflow/core/platform/cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+506688/506688 [==============================] - 252s 497us/step - loss: 0.4949
+Epoch 2/5
+506688/506688 [==============================] - 266s 525us/step - loss: 0.0796
+Epoch 3/5
+506688/506688 [==============================] - 268s 529us/step - loss: 0.0590
+Epoch 4/5
+506688/506688 [==============================] - 266s 525us/step - loss: 0.0484
+Epoch 5/5
+506688/506688 [==============================] - 267s 526us/step - loss: 0.0419
+Fitting took 7728.59s
+#TODO: Use the times returned by Keras, it  turns out time.time() is not good on Linux systems. I will switch to time.time()
+#TODO: so in reality this is more like 1319s
 
+Predicting training set
+9% finished
+19% finished
+29% finished
+39% finished
+50% finished
+59% finished
+69% finished
+79% finished
+89% finished
+Stats = {'G': 123785, 'C': 125696, 'A': 129682, 'T': 127525}
+Predicting took 7968.570000000001s
+Mean Match = [0.99031554]
+Validation took 0.929999999998472s
+Predicting validation set
+9% finished
+19% finished
+29% finished
+39% finished
+50% finished
+59% finished
+69% finished
+79% finished
+89% finished
+Stats = {'A': 23040, 'C': 22116, 'T': 22512, 'G': 21748}
+Predicting took 1275.1299999999974s
+Mean Match = [0.98700456]
+Validation took 0.2000000000007276s
 
+###############################
+###1000 WITH TENSORFLOW 1.12###
+###############################
+Using TensorFlow backend.
+Import took 0.19000000000000128s
+Extraction took 3.099999999999998s
+Stats took 0.370000000000001s
+Label Integer Encoding took 5.120000000000001s
+Encoding training set
+Input one-hot encoding took 0.4499999999999993s
+Output one-hot encoding took 0.019999999999999574s
+Shifted one-hot output encoding took 0.010000000000001563s
+Encoding validation set
+Input one-hot encoding took 0.08000000000000185s
+Output one-hot encoding took 0.0s
+Shifted one-hot output encoding took 0.0s
+Epoch 1/5
+2018-11-19 11:14:53.988598: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+506688/506688 [==============================] - 240s 474us/step - loss: 0.5111
+Epoch 2/5
+506688/506688 [==============================] - 239s 472us/step - loss: 0.0752
+Epoch 3/5
+506688/506688 [==============================] - 218s 430us/step - loss: 0.0559
+Epoch 4/5
+506688/506688 [==============================] - 221s 435us/step - loss: 0.0454
+Epoch 5/5
+506688/506688 [==============================] - 231s 456us/step - loss: 0.0391
+Fitting took 6702.93s
+#TODO: 1149 s
+
+Computing input statistics...
+Output stats: {'A': 152920, 'T': 151009, 'C': 147104, 'G': 145071}
+
+################################
+###10000 WITH TENSORFLOW 1.12###
+################################
