@@ -185,6 +185,10 @@ Input one-hot encoding took 0.060000000000002274s
 Output one-hot encoding took 0.0s
 Shifted one-hot output encoding took 0.0s
 
+Computing input statistics...
+Unique mappings: 24278
+
+
 Epoch 1/5
 2018-11-19 09:55:30.547429: I tensorflow/core/platform/cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
 506688/506688 [==============================] - 252s 497us/step - loss: 0.4949
@@ -196,9 +200,7 @@ Epoch 4/5
 506688/506688 [==============================] - 266s 525us/step - loss: 0.0484
 Epoch 5/5
 506688/506688 [==============================] - 267s 526us/step - loss: 0.0419
-Fitting took 7728.59s
-#TODO: Use the times returned by Keras, it  turns out time.time() is not good on Linux systems. I will switch to time.time()
-#TODO: so in reality this is more like 1319s
+Fitting took 1319s
 
 Predicting training set
 9% finished
@@ -245,6 +247,9 @@ Encoding validation set
 Input one-hot encoding took 0.08000000000000185s
 Output one-hot encoding took 0.0s
 Shifted one-hot output encoding took 0.0s
+Computing input statistics...
+Unique mappings: 24278
+
 Epoch 1/5
 2018-11-19 11:14:53.988598: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
 506688/506688 [==============================] - 240s 474us/step - loss: 0.5111
@@ -256,8 +261,7 @@ Epoch 4/5
 506688/506688 [==============================] - 221s 435us/step - loss: 0.0454
 Epoch 5/5
 506688/506688 [==============================] - 231s 456us/step - loss: 0.0391
-Fitting took 6702.93s
-#TODO: 1149 s
+Fitting took 1149 s
 
 Computing input statistics...
 Output stats: {'A': 152920, 'T': 151009, 'C': 147104, 'G': 145071}
@@ -265,3 +269,52 @@ Output stats: {'A': 152920, 'T': 151009, 'C': 147104, 'G': 145071}
 ################################
 ###10000 WITH TENSORFLOW 1.12###
 ################################
+Import took 2.2647032737731934s
+Extraction took 33.08223915100098s
+Stats took 3.867544651031494s
+Label Integer Encoding took 55.102012395858765s
+Encoding training set
+Input one-hot encoding took 3.7073183059692383s
+Output one-hot encoding took 0.1924905776977539s
+Shifted one-hot output encoding took 0.1898632049560547s
+Encoding validation set
+Input one-hot encoding took 0.8779551982879639s
+Output one-hot encoding took 0.01780247688293457s
+Shifted one-hot output encoding took 0.017885923385620117s
+
+Computing input statistics...
+Unique mappings: 274728
+
+Fitting took 13308.463732719421s
+
+Computing input statistics...
+Output stats: {'A': 1659989, 'T': 1650341, 'C': 1716404, 'G': 1714844}
+
+Predicting training set
+9% finished
+19% finished
+29% finished
+39% finished
+49% finished
+59% finished
+69% finished
+79% finished
+89% finished
+Stats = {'C': 1452108, 'G': 1450720, 'A': 1419492, 'T': 1408021}
+Predicting took 25182.057337284088s
+Mean Match = [0.97897455]
+Validation took 8.702461957931519s
+Predicting validation set
+9% finished
+19% finished
+29% finished
+39% finished
+49% finished
+59% finished
+69% finished
+79% finished
+89% finished
+Stats = {'T': 247799, 'A': 250360, 'C': 256231, 'G': 256847}
+Predicting took 4936.308021306992s
+Mean Match = [0.97732381]
+Validation took 1.8224895000457764s
