@@ -3,7 +3,7 @@ import numpy as np
 from keras.layers import LSTM, Input, Dense
 from keras.models import Model
 
-from constants import EncodingConstants as CONSTANTS
+from constants import RnnEncodingConstants as CONSTANTS
 
 
 #TODO: https://github.com/keras-team/keras/blob/master/examples/lstm_seq2seq.py

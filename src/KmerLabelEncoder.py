@@ -1,6 +1,6 @@
 import numpy as np
 
-from constants import EncodingConstants as CONSTANTS
+from constants import RnnEncodingConstants as CONSTANTS
 
 
 class KmerLabelEncoder:
