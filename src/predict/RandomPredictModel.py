@@ -1,6 +1,6 @@
 import numpy as np
 
-from constants.EncodingConstants import INTEGER_ENCODING_MAP
+from constants.RnnEncodingConstants import INTEGER_ENCODING_MAP
 
 
 class RandomPredictModel:

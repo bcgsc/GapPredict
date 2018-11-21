@@ -5,7 +5,7 @@ import numpy as np
 
 import app.rnn.app_helper as helper
 from KmerLabelEncoder import KmerLabelEncoder
-from constants import EncodingConstants as CONSTANTS
+from constants import RnnEncodingConstants as CONSTANTS
 from onehot.OneHotMatrix import OneHotMatrixEncoder
 from predict.KerasLSTMModel import KerasLSTMModel
 

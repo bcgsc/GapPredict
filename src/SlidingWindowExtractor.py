@@ -1,4 +1,4 @@
-from constants import EncodingConstants as CONSTANTS
+from constants import RnnEncodingConstants as CONSTANTS
 from exceptions.SlidingWindowParamException import SlidingWindowParamException
 
 

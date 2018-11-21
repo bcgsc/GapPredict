@@ -1,38 +1,39 @@
 import numpy as np
 
 from constants import EncodingConstants as CONSTANTS
+from constants import RnnEncodingConstants as RNN_CONSTANTS
 from exceptions.NegativePredictionLengthException import NegativePredictionLengthException
 from exceptions.NonpositiveLengthException import NonpositiveLengthException
 
 
 class _OneHotMatrixUtil:
-    def __init__(self, sequence_length):
+    def __init__(self, sequence_length, use_rnn_constants=True):
         if sequence_length < 1:
             raise NonpositiveLengthException
         self.sequence_length = sequence_length
+        self.constants = RNN_CONSTANTS if use_rnn_constants else CONSTANTS
 
 
 class OneHotMatrixDecoder(_OneHotMatrixUtil):
-    def __init__(self, sequence_length):
-        super().__init__(sequence_length)
+    def __init__(self, sequence_length, use_rnn_constants=True):
+        super().__init__(sequence_length, use_rnn_constants)
 
     def decode_sequences(self, encoded_sequences):
-        REVERSE_ONE_HOT_ENCODING = CONSTANTS.REVERSE_INTEGER_ENCODING
-        sequences = REVERSE_ONE_HOT_ENCODING[np.argmax(encoded_sequences, axis=2)]
+        sequences = self.constants.REVERSE_INTEGER_ENCODING[np.argmax(encoded_sequences, axis=2)]
         return sequences
 
 
 class OneHotMatrixEncoder(_OneHotMatrixUtil):
-    def __init__(self, sequence_length, bases_to_predict=0):
+    def __init__(self, sequence_length, bases_to_predict=0, use_rnn_constants=True):
         if bases_to_predict < 0:
             raise NegativePredictionLengthException
-        super().__init__(sequence_length)
+        super().__init__(sequence_length, use_rnn_constants)
         self.bases_to_predict = bases_to_predict
 
     def encode_sequences(self, integer_encoding, qualities=None):
         has_qualities = True if qualities is not None else False
 
-        ONE_HOT_ENCODING = CONSTANTS.ONE_HOT_QUALITY_ENCODING if has_qualities else CONSTANTS.ONE_HOT_ENCODING
+        ONE_HOT_ENCODING = self.constants.ONE_HOT_QUALITY_ENCODING if has_qualities else self.constants.ONE_HOT_ENCODING
         encoding_length = ONE_HOT_ENCODING.shape[1]
 
         cube = ONE_HOT_ENCODING[integer_encoding]
