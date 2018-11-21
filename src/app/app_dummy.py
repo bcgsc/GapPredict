@@ -5,7 +5,7 @@ import time
 
 import numpy as np
 
-import app.app_helper as helper
+import app.rnn.app_helper as helper
 from KmerLabelEncoder import KmerLabelEncoder
 from SequenceImporter import SequenceImporter
 from SequenceMatchCalculator import SequenceMatchCalculator

@@ -1,9 +1,9 @@
 import sys
-sys.path.append('../')
+sys.path.append('../../')
 
 import numpy as np
 
-import app.app_helper as helper
+import app.rnn.app_helper as helper
 from KmerLabelEncoder import KmerLabelEncoder
 from constants import EncodingConstants as CONSTANTS
 from onehot.OneHotMatrix import OneHotMatrixEncoder
@@ -33,7 +33,7 @@ def main():
 
     model = KerasLSTMModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=1, latent_dim=100)
 
-    model.load_weights('weights/my_model_weights.h5')
+    model.load_weights('../weights/my_model_weights.h5')
 
     while True:
         print("Enter a kmer of length " + str(input_length) + ": ")
