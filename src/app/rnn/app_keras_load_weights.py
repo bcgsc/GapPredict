@@ -6,7 +6,7 @@ import time
 from sklearn import model_selection
 
 import app.rnn.app_helper as helper
-from predict.KerasLSTMModel import KerasLSTMModel
+from predict.rnn.KerasLSTMModel import KerasLSTMModel
 
 
 def main():

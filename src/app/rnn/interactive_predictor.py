@@ -7,7 +7,7 @@ import app.rnn.app_helper as helper
 from KmerLabelEncoder import KmerLabelEncoder
 from constants import RnnEncodingConstants as CONSTANTS
 from onehot.OneHotMatrix import OneHotMatrixEncoder
-from predict.KerasLSTMModel import KerasLSTMModel
+from predict.rnn.KerasLSTMModel import KerasLSTMModel
 
 
 def validate_kmer(kmer, bases_to_predict):

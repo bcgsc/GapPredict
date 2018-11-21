@@ -4,7 +4,7 @@ sys.path.append('../../')
 import time
 
 import app.rnn.app_helper as helper
-from predict.KerasLSTMModel import KerasLSTMModel
+from predict.rnn.KerasLSTMModel import KerasLSTMModel
 
 
 def main():

@@ -33,9 +33,9 @@ class TestOneHotMatrixDecoder(TestCase):
         ])
         decoded_sequences = decoder.decode_sequences(encoded_sequences)
         expected_sequences = [
-            ["!"],
-            ["G"],
-            ["T"]
+            ["A"],
+            ["T"],
+            ["!"]
         ]
         np.testing.assert_array_equal(decoded_sequences, expected_sequences)
 
@@ -63,8 +63,8 @@ class TestOneHotMatrixDecoder(TestCase):
         ])
         decoded_sequences = decoder.decode_sequences(encoded_sequences)
         expected_sequences = [
-            ["A", "!", "G", "C"],
-            ["!", "G", "C", "A"],
-            ["!", "T", "C", "A"]
+            ["C", "A", "T", "G"],
+            ["A", "T", "G", "C"],
+            ["A", "!", "G", "C"]
         ]
         np.testing.assert_array_equal(decoded_sequences, expected_sequences)
