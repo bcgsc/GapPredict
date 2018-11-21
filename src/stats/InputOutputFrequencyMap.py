@@ -20,6 +20,13 @@ class InputOutputFrequencyMap:
             mapping_map[key] = len(self.map[key])
         return mapping_map
 
+    def get_total_unique_mappings_per_input(self):
+        mapping_map = self.get_unique_mappings_per_input()
+        sum = 0
+        for key in mapping_map:
+            sum += mapping_map[key]
+        return sum
+
     def get_inputs_with_redundant_mappings(self):
         redundants = set()
         for key in self.map:

@@ -75,6 +75,32 @@ class TestInputOutputFrequencyMap(TestCase):
         }
         self.assertEqual(mapping_map, expected_map)
 
+    def test_get_total_unique_mappings_per_input(self):
+        inputs = [
+            "A",
+            "A",
+            "T",
+            "T",
+            "G",
+            "A",
+            "G",
+            "T"
+        ]
+        outputs = [
+            "T",
+            "T",
+            "G",
+            "A",
+            "G",
+            "T",
+            "C",
+            "G"
+        ]
+        self.map.load_input_outputs(inputs, outputs)
+        total_mappings = self.map.get_total_unique_mappings_per_input()
+        expected_total_mappings = 5
+        self.assertEqual(total_mappings, expected_total_mappings)
+
     def test_get_inputs_with_redundant_mappings(self):
         inputs = [
             "A",
