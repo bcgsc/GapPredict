@@ -4,20 +4,19 @@ sys.path.append('../../')
 import numpy as np
 
 import app.app_helper as helper
-import app.rnn.app_helper as rnn_helper
 from KmerLabelEncoder import KmerLabelEncoder
-from onehot.OneHotMatrix import OneHotMatrixEncoder
-from predict.rnn.KerasLSTMModel import KerasLSTMModel
+from onehot.OneHotVector import OneHotVectorEncoder, OneHotVectorDecoder
+from predict.feedforward.KerasVanillaModel import KerasVanillaModel
 
 def main():
     input_length = 26
     bases_to_predict = 1
-    has_quality = False
 
     label_encoder = KmerLabelEncoder()
-    one_hot_encoder = OneHotMatrixEncoder(input_length)
+    one_hot_encoder = OneHotVectorEncoder(input_length)
+    one_hot_decoder = OneHotVectorDecoder(bases_to_predict)
 
-    model = KerasLSTMModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=1, latent_dim=100)
+    model = KerasVanillaModel(input_length, bases_to_predict, batch_size=64, epochs=10)
 
     model.load_weights('../weights/my_model_weights.h5')
 
@@ -35,7 +34,8 @@ def main():
         input_one_hot_cube = one_hot_encoder.encode_sequences(input_seq)
         print("One-Hot Encoded kmer: " + str(input_one_hot_cube))
 
-        decoded_prediction = rnn_helper.predict(input_one_hot_cube, model, bases_to_predict)
+        prediction = model.predict(input_one_hot_cube)
+        decoded_prediction = one_hot_decoder.decode_sequences(prediction)
 
         print("Predicted: " + np.array_str(decoded_prediction[0]) + " from " + kmer)
 

@@ -5,7 +5,8 @@ import time
 
 from sklearn import model_selection
 
-import app.rnn.app_helper as helper
+import app.app_helper as helper
+import app.rnn.app_helper as rnn_helper
 from predict.rnn.KerasLSTMModel import KerasLSTMModel
 
 
@@ -57,9 +58,9 @@ def main():
     print()
 
     print("Predicting training set")
-    helper.predict_and_validate(input_one_hot_cube_train, output_one_hot_cube_train, model, bases_to_predict)
+    rnn_helper.predict_and_validate(input_one_hot_cube_train, output_one_hot_cube_train, model, bases_to_predict)
     print("Predicting validation set")
-    helper.predict_and_validate(input_one_hot_cube_valid, output_one_hot_cube_valid, model, bases_to_predict)
+    rnn_helper.predict_and_validate(input_one_hot_cube_valid, output_one_hot_cube_valid, model, bases_to_predict)
 
 
 if __name__ == "__main__":
