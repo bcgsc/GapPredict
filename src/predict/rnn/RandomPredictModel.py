@@ -1,5 +1,6 @@
 import numpy as np
 
+import constants.EncodingConstants as CONSTANTS
 from constants.RnnEncodingConstants import INTEGER_ENCODING_MAP
 
 
@@ -13,6 +14,7 @@ class RandomPredictModel:
         pass
 
     def predict(self, X):
+        num_bases = len(CONSTANTS.BASES)
         if self.has_quality:
             X_copy = np.delete(X, len(INTEGER_ENCODING_MAP), axis=2)
         for i in range(len(X_copy)):
@@ -21,7 +23,7 @@ class RandomPredictModel:
                 offset = self.k - j
                 vector_idx = len(matrix) - offset
 
-                vector_prediction_idx = np.random.randint(4)
+                vector_prediction_idx = np.random.randint(num_bases)
                 vector_prediction = np.zeros(len(INTEGER_ENCODING_MAP))
                 vector_prediction[vector_prediction_idx+1] = 1
 

@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../')
+sys.path.append('../../')
 
 import time
 
@@ -11,7 +11,7 @@ from SequenceImporter import SequenceImporter
 from SequenceMatchCalculator import SequenceMatchCalculator
 from SlidingWindowExtractor import SlidingWindowExtractor
 from onehot.OneHotMatrix import OneHotMatrixEncoder, OneHotMatrixDecoder
-from predict.RandomPredictModel import RandomPredictModel
+from predict.rnn.RandomPredictModel import RandomPredictModel
 
 
 def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_reverse_complement):

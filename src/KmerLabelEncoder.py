@@ -8,6 +8,7 @@ class KmerLabelEncoder:
         pass
 
     # TODO: consider removing this parameter once we don't need it (eg. we decide on if we want to pad or not)
+    #TODO: consider making shifted output optional
     def encode_kmers(self, input_kmers, output_kmers, quality_kmers, fill_in_the_blanks=False):
         #TODO: handle empty arrays
         ONE_HOT_ENCODING_IDX_MAP = CONSTANTS.INTEGER_ENCODING_MAP
@@ -37,6 +38,7 @@ class KmerLabelEncoder:
 
         for i in range(output_kmer_count):
             kmer = output_kmers[i]
+            shifted_output_seq[i][0] = ONE_HOT_ENCODING_IDX_MAP["!"]
             for j in range(output_kmer_length):
                 encoding = ONE_HOT_ENCODING_IDX_MAP[kmer[j]]
                 if fill_in_the_blanks:
