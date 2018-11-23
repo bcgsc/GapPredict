@@ -26,7 +26,6 @@ def main():
     input_length = 26
     bases_to_predict = 1
     has_quality = False
-    fill_in_the_blanks = False
 
     label_encoder = KmerLabelEncoder()
     one_hot_encoder = OneHotMatrixEncoder(input_length)
@@ -43,8 +42,7 @@ def main():
             print(validation_result)
             continue
 
-        #TODO: the 2nd argument is a hack until we make encode_kmers robust to empty arrays, we ignore the output encodings so it doesn't matter
-        input_seq, input_quality, output_seq, shifted_output_seq = label_encoder.encode_kmers([kmer], ["A"], [], fill_in_the_blanks=fill_in_the_blanks)
+        input_seq, input_quality, output_seq, shifted_output_seq = label_encoder.encode_kmers([kmer], [], [])
         print("Encoded kmer: " + str(input_seq))
 
         input_one_hot_cube = one_hot_encoder.encode_sequences(input_seq)

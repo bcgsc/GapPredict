@@ -35,7 +35,7 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_
     print("Stats took " + str(end_time - start_time) + "s")
 
     start_time = time.time()
-    input_seq, input_quality, output_seq, shifted_output_seq = encoder.encode_kmers(input_kmers, output_kmers, quality_vectors, fill_in_the_blanks=True)
+    input_seq, input_quality, output_seq, shifted_output_seq = encoder.encode_kmers(input_kmers, output_kmers, quality_vectors)
     end_time = time.time()
     print("Label Integer Encoding took " + str(end_time - start_time) + "s")
     return input_seq, input_quality, output_seq
@@ -66,7 +66,7 @@ def main():
     match_calculator = SequenceMatchCalculator()
 
     arguments = sys.argv[1:]
-    paths = arguments if len(arguments) > 0 else ['data/read_1_1000.fastq', 'data/read_2_1000.fastq']
+    paths = arguments if len(arguments) > 0 else ['../data/read_1_1000.fastq', '../data/read_2_1000.fastq']
     input_one_hot_cube, output_one_hot_cube = encode_reads(paths, input_length, spacing, bases_to_predict)
 
     output_decoder = OneHotMatrixDecoder(input_length + bases_to_predict)
@@ -89,9 +89,7 @@ def main():
     print("Decoding took " + str(end_time - start_time) + "s")
 
     start_time = time.time()
-    total_bases = input_length + bases_to_predict
-    start_idx = total_bases - bases_to_predict
-    matches = match_calculator.compare_sequences(decoded_predicted_output, decoded_actual_output, start_idx=start_idx, bases_to_check=bases_to_predict)
+    matches = match_calculator.compare_sequences(decoded_predicted_output, decoded_actual_output, bases_to_check=bases_to_predict)
 
     mean_match = np.mean(matches, axis=0)
     print("Mean Match = " + str(mean_match))
