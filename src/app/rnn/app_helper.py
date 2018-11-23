@@ -17,7 +17,7 @@ def get_stats(inputs, outputs, verbose = False):
         print(str(freq_map.get_inputs_with_redundant_mappings()))
     return freq_map
 
-def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique, fill_in_the_blanks, verbose=False):
+def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique, verbose=False):
     importer = SequenceImporter()
     extractor = SlidingWindowExtractor(input_length, spacing, bases_to_predict)
     encoder = KmerLabelEncoder()
@@ -39,7 +39,7 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_
 
     start_time = time.time()
     input_seq, input_quality, output_seq, shifted_output_seq = \
-        encoder.encode_kmers(input_kmers, output_kmers, quality_vectors, fill_in_the_blanks=fill_in_the_blanks)
+        encoder.encode_kmers(input_kmers, output_kmers, quality_vectors)
     end_time = time.time()
     print("Label Integer Encoding took " + str(end_time - start_time) + "s")
     return input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map

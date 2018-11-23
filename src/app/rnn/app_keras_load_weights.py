@@ -16,12 +16,11 @@ def main():
     spacing = 0
     has_quality = False
     unique = False
-    fill_in_the_blanks = False
 
     arguments = sys.argv[1:]
     paths = arguments if len(arguments) > 0 else ['../data/ecoli_contigs/ecoli-0-400.fastq', '../data/ecoli_contigs/ecoli-600-1000.fastq']
     input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = helper.extract_read_matrix(paths, input_length, spacing,
-                                                                                   bases_to_predict, include_reverse_complement, unique, fill_in_the_blanks)
+                                                                                   bases_to_predict, include_reverse_complement, unique)
 
     input_seq_train, input_seq_valid, input_quality_train, input_quality_valid, output_seq_train, output_seq_valid, shifted_output_train, shifted_output_valid = model_selection.train_test_split(
         input_seq, input_quality, output_seq, shifted_output_seq, test_size=0.01, random_state=123)

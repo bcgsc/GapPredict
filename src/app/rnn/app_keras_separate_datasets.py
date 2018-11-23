@@ -14,7 +14,6 @@ def main():
     spacing = 0
     has_quality = False
     unique = False
-    fill_in_the_blanks = False
 
     training_paths = ['../data/ecoli_contigs/ecoli-0-400.fastq', '../data/ecoli_contigs/ecoli-600-1000.fastq']
     input_seq_train, input_quality_train, output_seq_train, shifted_output_train, train_input_stats_map = helper.extract_read_matrix(training_paths,
@@ -22,7 +21,7 @@ def main():
                                                                                                     spacing,
                                                                                                     bases_to_predict,
                                                                                                     include_reverse_complement,
-                                                                                                    unique, fill_in_the_blanks)
+                                                                                                    unique)
 
     validation_paths = ['data/ecoli_contigs/ecoli-400-600.fastq']
     input_seq_valid, input_quality_valid, output_seq_valid, shifted_output_valid, valid_input_stats_map = helper.extract_read_matrix(validation_paths,
@@ -30,7 +29,7 @@ def main():
                                                                                                     spacing,
                                                                                                     bases_to_predict,
                                                                                                     include_reverse_complement,
-                                                                                                    unique, fill_in_the_blanks)
+                                                                                                    unique)
     print("Encoding training set")
     input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train = helper.encode_reads(input_length,
                                                                                                       bases_to_predict,
