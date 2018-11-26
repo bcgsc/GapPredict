@@ -20,7 +20,7 @@ def main():
     as_matrix = False
 
     arguments = sys.argv[1:]
-    paths = arguments if len(arguments) > 0 else ['../data/read_1_1000.fastq', '../data/read_2_1000.fastq']
+    paths = arguments if len(arguments) > 0 else ['../data/ecoli_contigs/ecoli_contig_10000.fastq']
     input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = helper.extract_read_matrix(paths,
                                                                                                            input_length,
                                                                                                            spacing,

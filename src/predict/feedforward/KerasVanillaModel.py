@@ -19,6 +19,7 @@ class KerasVanillaModel:
 
     def _initialize_models(self):
         self.model = self._deep_vanilla_network()
+        # plot_model(self.model, to_file='viz/model.png', show_shapes=True)
 
         optimizer = optimizers.Adam()
         self.model.compile(optimizer=optimizer,
