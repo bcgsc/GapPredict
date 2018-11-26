@@ -5,7 +5,8 @@ import time
 
 from sklearn import model_selection
 
-import app.rnn.app_helper as helper
+import app.app_helper as helper
+import app.rnn.app_helper as rnn_helper
 from predict.rnn.KerasLSTMModel import KerasLSTMModel
 
 
@@ -25,7 +26,7 @@ def main():
     input_seq_train, input_seq_valid, input_quality_train, input_quality_valid, output_seq_train, output_seq_valid, shifted_output_train, shifted_output_valid = model_selection.train_test_split(
         input_seq, input_quality, output_seq, shifted_output_seq, test_size=0.01, random_state=123)
     #hack to get a random shuffle of some size TODO: make this use numpy random so we can do 0% or 100% as well
-    print("Encoding validation set")
+    print("Encoding data set")
     input_one_hot_cube_valid, output_one_hot_cube_valid, shifted_output_seq_cube_valid = helper.encode_reads(input_length,
                                                                                                       bases_to_predict,
                                                                                                       input_seq_valid,
@@ -43,12 +44,13 @@ def main():
 
     print()
     print("Computing input statistics...")
-    print("Redundant mappings: " + str(input_stats_map.get_inputs_with_redundant_mappings()))
+    print("Unique mappings: " + str(input_stats_map.get_total_unique_mappings_per_input()))
+    print()
     print("Output stats: " + str(input_stats_map.get_output_stats()))
     print()
 
-    print("Predicting validation set")
-    helper.predict_and_validate(input_one_hot_cube_valid, output_one_hot_cube_valid, model, bases_to_predict)
+    print("Predicting data set")
+    rnn_helper.predict_and_validate(input_one_hot_cube_valid, output_one_hot_cube_valid, model, bases_to_predict)
 
 
 if __name__ == "__main__":

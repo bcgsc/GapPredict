@@ -3,7 +3,8 @@ sys.path.append('../../')
 
 import time
 
-import app.rnn.app_helper as helper
+import app.app_helper as helper
+import app.rnn.app_helper as rnn_helper
 from predict.rnn.KerasLSTMModel import KerasLSTMModel
 
 
@@ -23,7 +24,7 @@ def main():
                                                                                                     include_reverse_complement,
                                                                                                     unique)
 
-    validation_paths = ['data/ecoli_contigs/ecoli-400-600.fastq']
+    validation_paths = ['../data/ecoli_contigs/ecoli-400-600.fastq']
     input_seq_valid, input_quality_valid, output_seq_valid, shifted_output_valid, valid_input_stats_map = helper.extract_read_matrix(validation_paths,
                                                                                                     input_length,
                                                                                                     spacing,
@@ -49,6 +50,9 @@ def main():
 
     model = KerasLSTMModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=10, latent_dim=100)
 
+    print("Computing input statistics...")
+    print("Unique mappings: " + str(train_input_stats_map.get_total_unique_mappings_per_input()))
+
     start_time = time.time()
     model.fit(input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train)
     model.save_weights('../weights/my_model_weights.h5')
@@ -56,15 +60,13 @@ def main():
     print("Fitting took " + str(end_time - start_time) + "s")
 
     print()
-    print("Computing input statistics...")
-    print("Redundant mappings: " + str(train_input_stats_map.get_inputs_with_redundant_mappings()))
     print("Output stats: " + str(train_input_stats_map.get_output_stats()))
     print()
 
     print("Predicting training set")
-    helper.predict_and_validate(input_one_hot_cube_train, output_one_hot_cube_train, model, bases_to_predict)
+    rnn_helper.predict_and_validate(input_one_hot_cube_train, output_one_hot_cube_train, model, bases_to_predict)
     print("Predicting validation set")
-    helper.predict_and_validate(input_one_hot_cube_valid, output_one_hot_cube_valid, model, bases_to_predict)
+    rnn_helper.predict_and_validate(input_one_hot_cube_valid, output_one_hot_cube_valid, model, bases_to_predict)
 
 
 if __name__ == "__main__":

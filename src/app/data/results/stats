@@ -318,3 +318,35 @@ Stats = {'T': 247799, 'A': 250360, 'C': 256231, 'G': 256847}
 Predicting took 4936.308021306992s
 Mean Match = [0.97732381]
 Validation took 1.8224895000457764s
+
+
+####################################
+###Vanilla DNN (One-Hot Encoding)###
+####################################
+read_1_1000.fastq + read_2_1000.fastq (59663 reads)
+
+Import took 0.10106563568115234s
+Extraction took 0.4509279727935791s
+Stats took 0.06615138053894043s
+Label Integer Encoding took 0.7581031322479248s
+Encoding training set
+Input one-hot encoding took 0.06043219566345215s
+Output one-hot encoding took 0.002413511276245117s
+Shifted one-hot output encoding took 1.3113021850585938e-05s
+Encoding validation set
+Input one-hot encoding took 0.010597705841064453s
+Output one-hot encoding took 0.0002913475036621094s
+Shifted one-hot output encoding took 1.3113021850585938e-05s
+
+Fitting took 29.91980767250061s
+Predicting training set
+Predicting took 0.8675267696380615s
+Mean Match = [0.66233679]
+Validation took 0.1592094898223877s
+Predicting validation set
+Predicting took 0.15867877006530762s
+Mean Match = [0.40260234]
+Validation took 0.025839805603027344s
+
+Overfitting! But much faster
+

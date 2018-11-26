@@ -1,3 +1,5 @@
+import numpy as np
+
 from constants import EncodingConstants as CONSTANTS
 from exceptions.NonpositiveLengthException import NonpositiveLengthException
 from onehot.OneHotMatrix import OneHotMatrixDecoder, OneHotMatrixEncoder
@@ -27,6 +29,9 @@ class OneHotVectorEncoder(_OneHotVectorUtil):
         self.encoder = OneHotMatrixEncoder(sequence_length, use_rnn_constants=False)
 
     def encode_sequences(self, integer_encoding, qualities=None):
+        if len(integer_encoding) == 0:
+            return np.array([])
+
         cube = self.encoder.encode_sequences(integer_encoding, qualities=qualities)
         encoding_length = len(CONSTANTS.ONE_HOT_ENCODING) if qualities is None else len(
             CONSTANTS.ONE_HOT_QUALITY_ENCODING)

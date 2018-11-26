@@ -40,3 +40,10 @@ class TestOneHotVectorEncoder(TestCase):
             [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0]
         ])
         np.testing.assert_array_equal(encoded_vectors, expected_vectors)
+
+    def test_encode_empty_array(self):
+        encoder = OneHotVectorEncoder(4)
+        sequences = np.array([])
+        encoded_vectors = encoder.encode_sequences(sequences)
+        expected_vectors = np.array([])
+        np.testing.assert_array_equal(encoded_vectors, expected_vectors)

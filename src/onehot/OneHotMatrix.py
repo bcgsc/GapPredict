@@ -25,12 +25,16 @@ class OneHotMatrixDecoder(_OneHotMatrixUtil):
 
 class OneHotMatrixEncoder(_OneHotMatrixUtil):
     def __init__(self, sequence_length, bases_to_predict=0, use_rnn_constants=True):
+        #TODO: consider removing bases_to_predict since we aren't using placeholders anymore
         if bases_to_predict < 0:
             raise NegativePredictionLengthException
         super().__init__(sequence_length, use_rnn_constants)
         self.bases_to_predict = bases_to_predict
 
     def encode_sequences(self, integer_encoding, qualities=None):
+        if len(integer_encoding) == 0:
+            return np.array([])
+
         has_qualities = True if qualities is not None else False
 
         ONE_HOT_ENCODING = self.constants.ONE_HOT_QUALITY_ENCODING if has_qualities else self.constants.ONE_HOT_ENCODING

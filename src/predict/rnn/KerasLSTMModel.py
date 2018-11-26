@@ -78,7 +78,8 @@ class KerasLSTMModel:
         # Run training
         optimizer = optimizers.Adam()
         self.model.compile(optimizer=optimizer,
-                           loss='categorical_crossentropy')  # TODO: 2 hyperparameters here, try learning rate = 0.0001
+                           loss='categorical_crossentropy',
+                           metrics=['accuracy'])  # TODO: 3 hyperparameters here, try learning rate = 0.0001
 
     def __init__(self, has_quality, prediction_length, batch_size=64, epochs=10, latent_dim=100):
         #TODO: 3 hyperparameters here
