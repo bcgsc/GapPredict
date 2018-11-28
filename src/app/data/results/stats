@@ -412,3 +412,24 @@ Predicting validation set
 Predicting took 15.419764995574951s
 Mean Match = [0.98499758]
 Validation took 1.6866600513458252s
+
+
+=====
+read_1_300.fastq quick benchmark
+=====
+RNN:
+Predicting took 28.1357843875885s
+Mean Match = [0.31022626]
+Validation took 0.021420955657958984s
+Predicting took 6.396478891372681s
+Mean Match = [0.30590452]
+Validation took 0.005162715911865234s
+
+Feedforward:
+Predicting took 0.12736845016479492s
+Mean Match = [0.81299911]
+Validation took 0.01720595359802246s
+Predicting validation set
+Predicting took 0.019136428833007812s
+Mean Match = [0.2839196]
+Validation took 0.0029184818267822266s 
