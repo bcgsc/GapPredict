@@ -385,3 +385,30 @@ Validation took 0.19814658164978027s
 
 
 ecoli_contig_10000.fastq (506688 reads)
+Import took 2.378763437271118s
+Extraction took 28.747227430343628s
+Stats took 4.113601446151733s
+Label Integer Encoding took 60.82844829559326s
+Encoding training set
+Input one-hot encoding took 5.007871866226196s
+Output one-hot encoding took 0.1824965476989746s
+Shifted one-hot output encoding took 2.2172927856445312e-05s
+Encoding validation set
+Input one-hot encoding took 0.8478875160217285s
+Output one-hot encoding took 0.017707109451293945s
+Shifted one-hot output encoding took 2.0742416381835938e-05s
+Computing input statistics...
+Unique mappings: 274728
+
+Fitting took 2934.6915521621704s
+
+Output stats: {'A': 1659989, 'T': 1650341, 'C': 1716404, 'G': 1714844}
+
+Predicting training set
+Predicting took 86.8417317867279s
+Mean Match = [0.98693132]
+Validation took 9.670882225036621s
+Predicting validation set
+Predicting took 15.419764995574951s
+Mean Match = [0.98499758]
+Validation took 1.6866600513458252s
