@@ -1,6 +1,6 @@
 import keras.optimizers as optimizers
 import numpy as np
-from keras.layers import LSTM, Input, Dense
+from keras.layers import CuDNNLSTM, Input, Dense
 from keras.models import Model
 
 from constants import RnnEncodingConstants as CONSTANTS
@@ -13,7 +13,7 @@ class KerasLSTMModel:
     def _encoder_model(self):
         # shape = (None, n) implies that there is a variable number of rows
         encoder_inputs = Input(shape=(None, self.one_hot_encoding_length))
-        encoder = LSTM(self.latent_dim, return_state=True)
+        encoder = CuDNNLSTM(self.latent_dim, return_state=True)
         encoder_outputs, state_h, state_c = encoder(encoder_inputs)
         # We discard `encoder_outputs` and only keep the states.
         encoder_states = [state_h, state_c]
@@ -27,7 +27,7 @@ class KerasLSTMModel:
         # return states in the training model, but we will use them in inference.
 
         # The decoder begins with the final cell state and hidden state of the encoder
-        decoder_lstm = LSTM(self.latent_dim, return_sequences=True, return_state=True)
+        decoder_lstm = CuDNNLSTM(self.latent_dim, return_sequences=True, return_state=True)
         decoder_outputs, _, _ = decoder_lstm(decoder_inputs,
                                              initial_state=encoder_states)
         decoder_dense = Dense(self.one_hot_decoding_length, activation='softmax') #TODO: hyperparameter here
