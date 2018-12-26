@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import numpy as np
 
-from SequenceMatchCalculator import SequenceMatchCalculator
+from preprocess.SequenceMatchCalculator import SequenceMatchCalculator
 
 
 class TestSequenceMatchCalculator(TestCase):

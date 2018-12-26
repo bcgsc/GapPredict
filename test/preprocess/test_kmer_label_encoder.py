@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import numpy as np
 
-from KmerLabelEncoder import KmerLabelEncoder
+from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 
 class TestKmerLabelEncoder(TestCase):

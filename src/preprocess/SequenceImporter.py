@@ -1,8 +1,8 @@
 import gzip
 import mimetypes
 
-from SequenceParser import SequenceParser
-from SequenceReverser import SequenceReverser
+from preprocess.SequenceParser import SequenceParser
+from preprocess.SequenceReverser import SequenceReverser
 
 
 class SequenceImporter:

@@ -1,4 +1,4 @@
-from BaseQualityConverter import BaseQualityConverter
+from preprocess.BaseQualityConverter import BaseQualityConverter
 from models.ParsedFastqRecord import ParsedFastqRecord
 
 

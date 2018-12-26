@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import numpy as np
 
-from SlidingWindowExtractor import SlidingWindowExtractor, SlidingWindowParamException
+from preprocess.SlidingWindowExtractor import SlidingWindowExtractor, SlidingWindowParamException
 from models.ParsedFastqRecord import ParsedFastqRecord
 
 

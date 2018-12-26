@@ -4,7 +4,7 @@ sys.path.append('../../')
 import numpy as np
 
 import app.app_helper as helper
-from KmerLabelEncoder import KmerLabelEncoder
+from preprocess.KmerLabelEncoder import KmerLabelEncoder
 from onehot.OneHotVector import OneHotVectorEncoder, OneHotVectorDecoder
 from predict.feedforward.KerasVanillaModel import KerasVanillaModel
 

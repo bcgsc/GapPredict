@@ -1,7 +1,7 @@
 import numpy as np
 from unittest import TestCase
 
-from BaseQualityConverter import BaseQualityConverter
+from preprocess.BaseQualityConverter import BaseQualityConverter
 
 
 class TestBaseQualityConverter(TestCase):

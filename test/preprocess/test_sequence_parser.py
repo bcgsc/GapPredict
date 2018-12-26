@@ -1,7 +1,7 @@
 import numpy as np
 from unittest import TestCase
 
-from SequenceParser import SequenceParser
+from preprocess.SequenceParser import SequenceParser
 
 
 class TestSequenceParser(TestCase):

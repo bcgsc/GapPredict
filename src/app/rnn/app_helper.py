@@ -2,7 +2,7 @@ import time
 
 import numpy as np
 
-from SequenceMatchCalculator import SequenceMatchCalculator
+from preprocess.SequenceMatchCalculator import SequenceMatchCalculator
 from onehot.OneHotMatrix import OneHotMatrixDecoder
 
 

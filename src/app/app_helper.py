@@ -3,10 +3,10 @@ import time
 import numpy as np
 
 import constants.EncodingConstants as CONSTANTS
-from KmerLabelEncoder import KmerLabelEncoder
-from SequenceImporter import SequenceImporter
-from SequenceMatchCalculator import SequenceMatchCalculator
-from SlidingWindowExtractor import SlidingWindowExtractor
+from preprocess.KmerLabelEncoder import KmerLabelEncoder
+from preprocess.SequenceImporter import SequenceImporter
+from preprocess.SequenceMatchCalculator import SequenceMatchCalculator
+from preprocess.SlidingWindowExtractor import SlidingWindowExtractor
 from onehot.OneHotMatrix import OneHotMatrixEncoder, OneHotMatrixDecoder
 from onehot.OneHotVector import OneHotVectorEncoder, OneHotVectorDecoder
 from stats.InputOutputFrequencyMap import InputOutputFrequencyMap

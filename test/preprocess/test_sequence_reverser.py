@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from SequenceReverser import SequenceReverser
+from preprocess.SequenceReverser import SequenceReverser
 from models.ParsedFastqRecord import ParsedFastqRecord
 
 

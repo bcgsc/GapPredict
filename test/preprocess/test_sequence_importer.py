@@ -2,9 +2,9 @@ from unittest import TestCase
 
 import numpy as np
 
-from BaseQualityConverter import BaseQualityConverter
-from SequenceImporter import SequenceImporter
-from SequenceReverser import SequenceReverser
+from preprocess.BaseQualityConverter import BaseQualityConverter
+from preprocess.SequenceImporter import SequenceImporter
+from preprocess.SequenceReverser import SequenceReverser
 
 
 class TestSequenceImporter(TestCase):
@@ -14,7 +14,7 @@ class TestSequenceImporter(TestCase):
         self.reverser = SequenceReverser()
 
     def test_import_fastq(self):
-        sequences = self.importer.import_fastq(['data/mini_read_for_test.fastq', 'data/mini_read_for_test_2.fastq.gz'])
+        sequences = self.importer.import_fastq(['../data/mini_read_for_test.fastq', '../data/mini_read_for_test_2.fastq.gz'])
         self.assertEqual(len(sequences), 3)
         self.assertEqual(sequences[0].sequence,
                          "AATTGAGTCGTAGTATCCACACCAAGCCGGCGTTATCCGGTGAGGCGCAATGTTGCGGGGGCTTTATCCCTGGTGGCATTGGTTGCTGGAAAGAGAAA")
@@ -30,7 +30,7 @@ class TestSequenceImporter(TestCase):
             "CCCFFFFFHHHHHJJJJJJJJJJJJJJGIJJGJJJIJJJJJJJJJJJJHFFFFFFEEDEEDDDDDDDDDDDDDDDCDDDDDDDDDDDDDDDDDDDDDD"))
 
     def test_import_fastq_with_reverse_complement(self):
-        sequences = self.importer.import_fastq(['data/mini_read_for_test.fastq', 'data/mini_read_for_test_2.fastq.gz'],
+        sequences = self.importer.import_fastq(['../data/mini_read_for_test.fastq', '../data/mini_read_for_test_2.fastq.gz'],
                                                True)
         self.assertEqual(len(sequences), 6)
         self.assertEqual(sequences[0].sequence,
