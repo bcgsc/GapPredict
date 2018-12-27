@@ -35,15 +35,19 @@ def main():
     print("Fitting took " + str(end_time - start_time) + "s")
 
     start_time = time.time()
-    yhat = model.predict(input_kmers_valid)
+    yhat_valid = model.predict(input_kmers_valid)
+    yhat_train = model.predict(input_kmers_train)
     end_time = time.time()
     print("Predicting took " + str(end_time - start_time) + "s")
 
     start_time = time.time()
-    matches = validator.compare_sequences(yhat, output_kmers_valid)
-    mean_match = np.mean(matches, axis=0)
-    print("Mean Match = " + str(mean_match))
+    matches_train = validator.compare_sequences(yhat_train, output_kmers_train)
+    mean_match_train = np.mean(matches_train, axis=0)
+    print("Mean Match Training = " + str(mean_match_train))
 
+    matches_valid = validator.compare_sequences(yhat_valid, output_kmers_valid)
+    mean_match_valid = np.mean(matches_valid, axis=0)
+    print("Mean Match Validation = " + str(mean_match_valid))
     end_time = time.time()
 
     print("Validation took " + str(end_time - start_time) + "s")
