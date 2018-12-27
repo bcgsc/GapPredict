@@ -20,13 +20,9 @@ def main():
     input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = helper.extract_read_matrix(paths, input_length, spacing,
                                                                                    bases_to_predict, include_reverse_complement, unique)
 
-    input_one_hot_cube, output_one_hot_cube, shifted_output_seq_cube = helper.encode_reads(input_length,
-                                                                                            bases_to_predict,
-                                                                                            input_seq,
-                                                                                            input_quality,
-                                                                                            output_seq,
-                                                                                            shifted_output_seq,
-                                                                                            has_quality=has_quality)
+    input_one_hot_cube = helper.encode(input_length, input_seq, input_quality, has_quality=has_quality)
+    output_one_hot_cube = helper.encode(bases_to_predict, output_seq, None, has_quality=has_quality)
+    shifted_output_seq_cube = helper.encode(input_length, shifted_output_seq, None, has_quality=has_quality)
 
     model = RandomPredictModel(bases_to_predict)
 

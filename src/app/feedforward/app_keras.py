@@ -32,25 +32,11 @@ def main():
     input_seq_train, input_seq_valid, input_quality_train, input_quality_valid, output_seq_train, output_seq_valid = model_selection.train_test_split(
         input_seq, input_quality, output_seq, test_size=0.15, random_state=123)
     print("Encoding training set")
-    input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train = helper.encode_reads(
-        input_length,
-        bases_to_predict,
-        input_seq_train,
-        input_quality_train,
-        output_seq_train,
-        np.array([]), #TODO: cheat
-        has_quality=has_quality,
-        as_matrix=as_matrix)
+    input_one_hot_cube_train = helper.encode(input_length, input_seq_train, input_quality_train, has_quality=has_quality, as_matrix=as_matrix)
+    output_one_hot_cube_train = helper.encode(bases_to_predict, output_seq_train, None, has_quality=has_quality, as_matrix=as_matrix)
     print("Encoding validation set")
-    input_one_hot_cube_valid, output_one_hot_cube_valid, shifted_output_seq_cube_valid = helper.encode_reads(
-        input_length,
-        bases_to_predict,
-        input_seq_valid,
-        input_quality_valid,
-        output_seq_valid,
-        np.array([]),
-        has_quality=has_quality,
-        as_matrix=as_matrix)
+    input_one_hot_cube_valid = helper.encode(input_length, input_seq_valid, input_quality_valid, has_quality=has_quality, as_matrix=as_matrix)
+    output_one_hot_cube_valid = helper.encode(bases_to_predict, output_seq_valid, None, has_quality=has_quality, as_matrix=as_matrix)
 
     model = KerasVanillaModel(input_length, bases_to_predict, batch_size=64, epochs=10)
 

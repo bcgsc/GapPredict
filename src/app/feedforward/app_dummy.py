@@ -29,14 +29,8 @@ def main():
                                                                                                            unique,
                                                                                                            with_shifted_output=False)
 
-    input_one_hot_cube, output_one_hot_cube, shifted_output_seq_cube = helper.encode_reads(input_length,
-                                                                                           bases_to_predict,
-                                                                                           input_seq,
-                                                                                           input_quality,
-                                                                                           output_seq,
-                                                                                           shifted_output_seq,
-                                                                                           has_quality=has_quality,
-                                                                                           as_matrix=as_matrix)
+    input_one_hot_cube = helper.encode(input_length, input_seq, input_quality, has_quality=has_quality, as_matrix=as_matrix)
+    output_one_hot_cube = helper.encode(bases_to_predict, output_seq, None, has_quality=has_quality, as_matrix=as_matrix)
 
     model = RandomPredictModel(bases_to_predict)
 

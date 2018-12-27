@@ -48,31 +48,15 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_
     print("Label Integer Encoding took " + str(end_time - start_time) + "s")
     return input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map
 
-def encode(length, quality, has_quality=False, as_matrix=True):
-    #TODO: implement this later so we aren't constrained to always pass in shifted_seq
-    pass
-
-def encode_reads(input_length, bases_to_predict, input_seq, input_quality, output_seq, shifted_output_seq,
-                 has_quality=False, as_matrix=True):
-    input_encoder = OneHotMatrixEncoder(input_length) if as_matrix else OneHotVectorEncoder(input_length)
-    output_encoder = OneHotMatrixEncoder(bases_to_predict) if as_matrix else OneHotVectorEncoder(bases_to_predict)
+def encode(length, seq, quality, has_quality=False, as_matrix=True):
+    encoder = OneHotMatrixEncoder(length) if as_matrix else OneHotVectorEncoder(length)
 
     start_time = time.time()
-    input_one_hot_cube = input_encoder.encode_sequences(input_seq, input_quality if has_quality else None)
+    one_hot_encoding = encoder.encode_sequences(seq, quality if has_quality else None)
     end_time = time.time()
-    print("Input one-hot encoding took " + str(end_time - start_time) + "s")
+    print("One-hot encoding took " + str(end_time - start_time) + "s")
 
-    start_time = time.time()
-    output_one_hot_cube = output_encoder.encode_sequences(output_seq)
-    end_time = time.time()
-    print("Output one-hot encoding took " + str(end_time - start_time) + "s")
-
-    start_time = time.time()
-    shifted_output_seq_cube = output_encoder.encode_sequences(shifted_output_seq)
-    end_time = time.time()
-    print("Shifted one-hot output encoding took " + str(end_time - start_time) + "s")
-    return input_one_hot_cube, output_one_hot_cube, shifted_output_seq_cube
-
+    return one_hot_encoding
 
 def predict_and_validate(input, output_seq_cube, model, bases_to_predict, as_matrix=True):
     decoder = OneHotMatrixDecoder(bases_to_predict) if as_matrix else OneHotVectorDecoder(bases_to_predict)

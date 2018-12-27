@@ -27,13 +27,8 @@ def main():
         input_seq, input_quality, output_seq, shifted_output_seq, test_size=0.01, random_state=123)
     #hack to get a random shuffle of some size TODO: make this use numpy random so we can do 0% or 100% as well
     print("Encoding data set")
-    input_one_hot_cube_valid, output_one_hot_cube_valid, shifted_output_seq_cube_valid = helper.encode_reads(input_length,
-                                                                                                      bases_to_predict,
-                                                                                                      input_seq_valid,
-                                                                                                      input_quality_valid,
-                                                                                                      output_seq_valid,
-                                                                                                      shifted_output_valid,
-                                                                                                      has_quality=has_quality)
+    input_one_hot_cube_valid = helper.encode(input_length, input_seq_valid, input_quality_valid, has_quality=has_quality)
+    output_one_hot_cube_valid = helper.encode(bases_to_predict, output_seq_valid, None, has_quality=has_quality)
 
     model = KerasLSTMModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=1, latent_dim=100)
 

@@ -32,21 +32,12 @@ def main():
                                                                                                     include_reverse_complement,
                                                                                                     unique)
     print("Encoding training set")
-    input_one_hot_cube_train, output_one_hot_cube_train, shifted_output_seq_cube_train = helper.encode_reads(input_length,
-                                                                                                      bases_to_predict,
-                                                                                                      input_seq_train,
-                                                                                                      input_quality_train,
-                                                                                                      output_seq_train,
-                                                                                                      shifted_output_train,
-                                                                                                      has_quality=has_quality)
+    input_one_hot_cube_train = helper.encode(input_length, input_seq_train, input_quality_train, has_quality=has_quality)
+    output_one_hot_cube_train = helper.encode(bases_to_predict, output_seq_train, None, has_quality=has_quality)
+    shifted_output_seq_cube_train = helper.encode(input_length, shifted_output_train, None, has_quality=has_quality)
     print("Encoding validation set")
-    input_one_hot_cube_valid, output_one_hot_cube_valid, shifted_output_seq_cube_valid = helper.encode_reads(input_length,
-                                                                                                      bases_to_predict,
-                                                                                                      input_seq_valid,
-                                                                                                      input_quality_valid,
-                                                                                                      output_seq_valid,
-                                                                                                      shifted_output_valid,
-                                                                                                      has_quality=has_quality)
+    input_one_hot_cube_valid = helper.encode(input_length, input_seq_valid, input_quality_valid, has_quality=has_quality)
+    output_one_hot_cube_valid = helper.encode(bases_to_predict, output_seq_valid, None, has_quality=has_quality)
 
     model = KerasLSTMModel(has_quality=has_quality, prediction_length=bases_to_predict, batch_size=64, epochs=10, latent_dim=100)
 
