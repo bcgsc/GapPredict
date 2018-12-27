@@ -1,8 +1,11 @@
 from stats.InputOutputFrequencyMap import InputOutputFrequencyMap
+import constants.EncodingConstants as CONSTANTS
+import numpy as np
 
 class HashModel:
-    def __init__(self):
+    def __init__(self, bases_to_predict):
         self.model = {}
+        self.bases_to_predict = bases_to_predict
 
     def fit(self, X, y):
         temp_map = InputOutputFrequencyMap()
@@ -25,7 +28,9 @@ class HashModel:
         y = []
         for input in X:
             if input not in self.model or self.model[input] is None:
-                y.append("")
+                prediction_idx = np.random.randint(4, size=self.bases_to_predict)
+                prediction = "".join(CONSTANTS.REVERSE_INTEGER_ENCODING[prediction_idx])
+                y.append(prediction)
             else:
                 y.append(self.model[input])
         return y
