@@ -23,6 +23,8 @@ class SequenceMatchCalculator:
         for i in range(num_seq):
             seq1 = seq_matrix1[i]
             seq2 = seq_matrix2[i]
+            if len(seq1) == 0 or len(seq2) == 0:
+                continue
             for j in range(seq_length):
                 base_idx = j + start_idx
                 if seq1[base_idx] == seq2[base_idx]:

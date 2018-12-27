@@ -15,10 +15,117 @@ class TestSequenceMatchCalculator(TestCase):
             []
         ))
 
+    def test_compare_different_sequences_strings(self):
+        np.testing.assert_array_equal(np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            ["TGCATGCATG"]
+        ))
+
+    def test_compare_different_sequences_strings(self):
+        np.testing.assert_array_equal(np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            ["TGCATGCATG"]
+        ))
+
+    def test_compare_with_empty_sequence_strings(self):
+        np.testing.assert_array_equal(np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            [""]
+        ))
+
+    def test_compare_same_sequences_strings(self):
+        np.testing.assert_array_equal(np.array([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            ["ATGCATGCAT"]
+        ))
+
+    def test_compare_similar_sequences_strings(self):
+        np.testing.assert_array_equal(np.array([[1, 0, 1, 0, 1, 1, 0, 1, 0, 0]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            ["AGGAATCCGA"]
+        ))
+
+    def test_compare_different_sequences_from_offset_strings(self):
+        np.testing.assert_array_equal(np.array([[0, 0, 0, 0, 0, 0, 0]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            ["TGCATGCATG"],
+            3
+        ))
+
+    def test_compare_different_sequences_from_offset_longer_than_string_strings(self):
+        np.testing.assert_array_equal(np.array([[]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            ["TGCATGCATG"],
+            11
+        ))
+
+    def test_compare_different_sequences_from_negative_offset_strings(self):
+        np.testing.assert_array_equal(np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            ["TGCATGCATG"],
+            -2
+        ))
+
+    def test_compare_same_sequences_from_offset_strings(self):
+        np.testing.assert_array_equal(np.array([[1, 1, 1, 1, 1, 1, 1]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            ["ATGCATGCAT"],
+            3
+        ))
+
+    def test_compare_similar_sequences_from_offset_strings(self):
+        np.testing.assert_array_equal(np.array([[0, 1, 1, 0, 1, 0, 0]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            ["AGGAATCCGA"],
+            3
+        ))
+
+    def test_compare_similar_sequences_from_offset_check_4_bases_strings(self):
+        np.testing.assert_array_equal(np.array([[0, 1, 1, 0]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            ["AGGAATCCGA"],
+            3,
+            4
+        ))
+
+    def test_compare_similar_sequences_from_offset_check_20_bases_doesnt_exceed_strings(self):
+        np.testing.assert_array_equal(np.array([[0, 1, 1, 0, 1, 0, 0]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            ["AGGAATCCGA"],
+            3,
+            20
+        ))
+
+    def test_compare_multiple_similar_sequences_from_offset_check_20_bases_doesnt_exceed_strings(self):
+        output = self.matcher.compare_sequences(
+            ["ATGCATGCAT",
+             "AAAGCTGAAT"],
+            ["AGGAATCCGA",
+             "AGGGCTGAGT"],
+            3,
+            20
+        )
+        np.testing.assert_array_equal(np.array([[0, 1, 1, 0, 1, 0, 0],
+                                                [1, 1, 1, 1, 1, 0, 1]]), output)
+
+    def test_compare_similar_sequences_from_offset_check_negative_bases_treated_as_0_strings(self):
+        np.testing.assert_array_equal(np.array([[]]), self.matcher.compare_sequences(
+            ["ATGCATGCAT"],
+            ["AGGAATCCGA"],
+            3,
+            -5
+        ))
+
     def test_compare_different_sequences(self):
         np.testing.assert_array_equal(np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]), self.matcher.compare_sequences(
             [["A", "T", "G", "C", "A", "T", "G", "C", "A", "T"]],
             [["T", "G", "C", "A", "T", "G", "C", "A", "T", "G"]]
+        ))
+
+    def test_compare_with_empty_sequence(self):
+        np.testing.assert_array_equal(np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]), self.matcher.compare_sequences(
+            [["A", "T", "G", "C", "A", "T", "G", "C", "A", "T"]],
+            [[]]
         ))
 
     def test_compare_same_sequences(self):
