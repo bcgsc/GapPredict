@@ -93,6 +93,7 @@ class KerasLSTMModel:
         self.one_hot_decoding_length = encoding_length - 1 if has_quality else encoding_length
         self.prediction_length = prediction_length
         self._initialize_models()
+        print(self.model.summary())
 
     def fit(self, X, Y, shifted_Y):
         self.model.fit([X, shifted_Y], Y,
@@ -115,7 +116,7 @@ class KerasLSTMModel:
         decoding = np.zeros((1, self.prediction_length, self.one_hot_decoding_length))
 
         for i in range(self.prediction_length):
-            # TODO: as above, we initially seed the target seq with the start character and feed in the input sequence
+            # we initially seed the target seq with the start character and feed in the input sequence
             # to get the model started with a context and a start character
             next_base, state_h, state_c = self.decoder_inference_model.predict([character_to_feed] + states_to_feed) #this is 3 inputs of the character and 2 states put together in a list
 

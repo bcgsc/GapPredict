@@ -36,6 +36,7 @@ class KerasVanillaModel:
         self.prediction_length = prediction_length * encoding_length
 
         self._initialize_models()
+        print(self.model.summary())
 
     def fit(self, X, y):
         self.model.fit(X, y,
