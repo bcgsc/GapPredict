@@ -34,11 +34,8 @@ def extract_kmers(paths, input_length, spacing, bases_to_predict, include_revers
     print("Extraction took " + str(end_time - start_time) + "s")
     return input_kmers, output_kmers, quality_vectors
 
-def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique,
-                        verbose=False, with_shifted_output=True):
+def label_integer_encode_kmers(input_kmers, output_kmers, quality_vectors, verbose=False, with_shifted_output=True):
     encoder = KmerLabelEncoder()
-
-    input_kmers, output_kmers, quality_vectors = extract_kmers(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique)
 
     start_time = time.time()
     input_stats_map = get_stats(input_kmers, output_kmers, verbose)
@@ -51,6 +48,15 @@ def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_
     end_time = time.time()
     print("Label Integer Encoding took " + str(end_time - start_time) + "s")
     return input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map
+
+#TODO: we can remove this later if needed as it just calls 2 helpers
+def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique,
+                        verbose=False, with_shifted_output=True):
+    input_kmers, output_kmers, quality_vectors = extract_kmers(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique)
+    input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = \
+        label_integer_encode_kmers(input_kmers, output_kmers, quality_vectors, verbose, with_shifted_output)
+    return input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map
+
 
 def encode(length, seq, quality, has_quality=False, as_matrix=True):
     encoder = OneHotMatrixEncoder(length) if as_matrix else OneHotVectorEncoder(length)
