@@ -20,24 +20,14 @@ def main():
 
     #TODO: parametrize this
     training_paths = ['../data/ecoli_contigs/ecoli-0-400.fastq', '../data/ecoli_contigs/ecoli-600-1000.fastq']
-    input_seq_train, input_quality_train, output_seq_train, shifted_output_train, train_input_stats_map = helper.extract_read_matrix(
-        training_paths,
-        input_length,
-        spacing,
-        bases_to_predict,
-        include_reverse_complement,
-        unique,
-        with_shifted_output=False)
+    input_kmers_train, output_kmers_train, quality_train = helper.extract_kmers(training_paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique)
+    input_seq_train, input_quality_train, output_seq_train, shifted_output_train, train_input_stats_map = \
+        helper.label_integer_encode_kmers(input_kmers_train, output_kmers_train, quality_train, with_shifted_output=False)
 
     validation_paths = ['../data/ecoli_contigs/ecoli-400-600.fastq']
-    input_seq_valid, input_quality_valid, output_seq_valid, shifted_output_valid, valid_input_stats_map = helper.extract_read_matrix(
-        validation_paths,
-        input_length,
-        spacing,
-        bases_to_predict,
-        include_reverse_complement,
-        unique,
-        with_shifted_output=False)
+    input_kmers_valid, output_kmers_valid, quality_valid = helper.extract_kmers(validation_paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique)
+    input_seq_valid, input_quality_valid, output_seq_valid, shifted_output_valid, valid_input_stats_map = \
+        helper.label_integer_encode_kmers(input_kmers_valid, output_kmers_valid, quality_valid, with_shifted_output=False)
 
     print("Encoding training set")
     input_one_hot_cube_train = helper.encode(input_length, input_seq_train, input_quality_train, has_quality=has_quality, as_matrix=as_matrix)

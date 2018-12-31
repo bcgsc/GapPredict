@@ -17,8 +17,9 @@ def main():
     arguments = sys.argv[1:]
     paths = arguments if len(arguments) > 0 else ['../data/read_1_1000.fastq', '../data/read_2_1000.fastq']
 
-    input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = helper.extract_read_matrix(paths, input_length, spacing,
-                                                                                   bases_to_predict, include_reverse_complement, unique)
+    input_kmers, output_kmers, quality_vectors = helper.extract_kmers(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique)
+    input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = \
+        helper.label_integer_encode_kmers(input_kmers, output_kmers, quality_vectors, with_shifted_output=True)
 
     input_one_hot_cube = helper.encode(input_length, input_seq, input_quality, has_quality=has_quality)
     output_one_hot_cube = helper.encode(bases_to_predict, output_seq, None, has_quality=has_quality)

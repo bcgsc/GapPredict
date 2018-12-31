@@ -21,16 +21,14 @@ def main():
 
     arguments = sys.argv[1:]
     paths = arguments if len(arguments) > 0 else ['../data/read_1_1000.fastq', '../data/read_2_1000.fastq']
-    input_seq, input_quality, output_seq, shifted_output_seq, input_stats_map = helper.extract_read_matrix(paths,
-                                                                                                           input_length,
-                                                                                                           spacing,
-                                                                                                           bases_to_predict,
-                                                                                                           include_reverse_complement,
-                                                                                                           unique,
-                                                                                                           with_shifted_output=False)
+    input_kmers, output_kmers, quality_vectors = helper.extract_kmers(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique)
 
-    input_seq_train, input_seq_valid, input_quality_train, input_quality_valid, output_seq_train, output_seq_valid = model_selection.train_test_split(
-        input_seq, input_quality, output_seq, test_size=0.01, random_state=123)
+    input_kmers_train, input_kmers_valid, output_kmers_train, output_kmers_valid, quality_train, quality_valid = model_selection.train_test_split(
+        input_kmers, output_kmers, quality_vectors, test_size=0.01, random_state=123)
+
+    print("Validation set")
+    input_seq_valid, input_quality_valid, output_seq_valid, shifted_output_seq_valid, input_stats_map_valid = \
+        helper.label_integer_encode_kmers(input_kmers_valid, output_kmers_valid, quality_valid, with_shifted_output=False)
     #hack to get a random shuffle of some size TODO: make this use numpy random so we can do 0% or 100% as well
     print("Encoding data set")
     input_one_hot_cube_valid = helper.encode(input_length, input_seq_valid, input_quality_valid, has_quality=has_quality, as_matrix=as_matrix)
@@ -44,9 +42,9 @@ def main():
     print("Loading weights took " + str(end_time - start_time) + "s")
 
     print("Computing input statistics...")
-    print("Unique mappings: " + str(input_stats_map.get_total_unique_mappings_per_input()))
+    print("Unique mappings: " + str(input_stats_map_valid.get_total_unique_mappings_per_input()))
     print()
-    print("Output stats: " + str(input_stats_map.get_output_stats()))
+    print("Output stats: " + str(input_stats_map_valid.get_output_stats()))
     print()
 
     print("Predicting data set")
