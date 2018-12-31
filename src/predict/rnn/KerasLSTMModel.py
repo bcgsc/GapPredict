@@ -106,24 +106,37 @@ class KerasLSTMModel:
     def load_weights(self, path):
         self.model.load_weights(path)
 
-    def predict(self, X):
-        states_to_feed = self.encoder_inference_model.predict(X)
+    def predict(self, X, batch_size=None):
+        num_predictions = len(X)
 
-        #(num_sequences, sequence_length, one_hot_length)
-        # # Populate the first character of target sequence with the start character.
-        character_to_feed = np.zeros((1, 1, self.one_hot_decoding_length))
-        character_to_feed[0, 0, CONSTANTS.INTEGER_ENCODING_MAP["!"]] = 1 #TODO: refactor to use the other map one day
-        decoding = np.zeros((1, self.prediction_length, self.one_hot_decoding_length))
+        interval = batch_size if batch_size is not None else num_predictions
+        lower_bound = 0
+        upper_bound = min(num_predictions, lower_bound + interval)
 
-        for i in range(self.prediction_length):
-            # we initially seed the target seq with the start character and feed in the input sequence
-            # to get the model started with a context and a start character
-            next_base, state_h, state_c = self.decoder_inference_model.predict([character_to_feed] + states_to_feed) #this is 3 inputs of the character and 2 states put together in a list
+        decoding = np.zeros((num_predictions, self.prediction_length, self.one_hot_decoding_length))
 
-            decoding[0][i] = next_base[0, 0, :]
+        while lower_bound < num_predictions:
+            batch = X[lower_bound:upper_bound]
 
-            #the input to the next loop are the new states and next base given all the previous loops
-            states_to_feed = [state_h, state_c]
-            character_to_feed = next_base
+            states_to_feed = self.encoder_inference_model.predict(batch)
+
+            # (num_sequences, sequence_length, one_hot_length)
+            # Populate the first character of target sequence with the start character.
+            start_character_label = CONSTANTS.INTEGER_ENCODING_MAP["!"]
+            character_to_feed = CONSTANTS.ONE_HOT_ENCODING[np.full((interval,1), start_character_label)]
+
+            for i in range(self.prediction_length):
+                # we initially seed the target seq with the start character and feed in the input sequence
+                # to get the model started with a context and a start character
+                next_base, state_h, state_c = self.decoder_inference_model.predict([character_to_feed] + states_to_feed)
+
+                decoding[lower_bound:upper_bound, i, :] = next_base[:, 0, :]
+
+                # the input to the next loop are the new states and next base given all the previous loops
+                states_to_feed = [state_h, state_c]
+                character_to_feed = next_base
+
+            lower_bound = upper_bound
+            upper_bound = min(num_predictions, upper_bound + interval)
 
         return decoding
