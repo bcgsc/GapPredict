@@ -29,6 +29,9 @@ def predict_and_validate(input, output_seq_cube, model, bases_to_predict):
 
     mean_match = np.mean(matches, axis=0)
     print("Mean Match = " + str(mean_match))
+    if bases_to_predict > 1:
+        overall_mean_match = np.mean(matches)
+        print("Overall Mean Match = " + str(overall_mean_match))
 
     end_time = time.time()
 
