@@ -19,7 +19,7 @@ def main():
     unique = False
 
     arguments = sys.argv[1:]
-    paths = arguments if len(arguments) > 0 else ['../data/read_1_300.fastq']
+    paths = arguments if len(arguments) > 0 else ['../data/ecoli_contigs/ecoli_contig_1000.fastq']
     input_kmers, output_kmers, quality_vectors = helper.extract_kmers(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique)
 
     input_kmers_train, input_kmers_valid, output_kmers_train, output_kmers_valid, quality_train, quality_valid = model_selection.train_test_split(

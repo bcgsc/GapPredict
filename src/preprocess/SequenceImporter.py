@@ -1,22 +1,12 @@
-import gzip
-import mimetypes
-
+from preprocess.Importer import Importer
 from preprocess.SequenceParser import SequenceParser
 from preprocess.SequenceReverser import SequenceReverser
 
 
-class SequenceImporter:
+class SequenceImporter(Importer):
     def __init__(self):
         self.parser = SequenceParser()
         self.reverser = SequenceReverser()
-
-    def _open_file(self, path):
-        file_extension = mimetypes.guess_type(path)
-        if file_extension[1] == "gzip":
-            file = gzip.open(path, 'rt')
-        else:
-            file = open(path, 'r')
-        return file
 
     def import_fastq(self, paths, include_reverse_complement=False):
         reads = []
@@ -25,7 +15,7 @@ class SequenceImporter:
         for path in paths:
             #TODO we could make a checker function to filter paths before going here (right now
             # we just eventually throw an exception)
-            file = self._open_file(path)
+            file = super()._open_file(path)
             line_num = 0
             line = file.readline()
             while line:
@@ -41,3 +31,30 @@ class SequenceImporter:
                 line_num = (line_num + 1) % 4
             file.close()
         return reads
+
+    def import_fasta(self, paths):
+        sequences = []
+
+        buf = []
+        for path in paths:
+            # TODO we could make a checker function to filter paths before going here (right now
+            # we just eventually throw an exception)
+            file = super()._open_file(path)
+            line = file.readline()
+            while line:
+                if line.startswith(">") and len(buf) > 0:
+                    parsed_fasta = self.parser.parse_fasta(buf)
+                    sequences.append(parsed_fasta)
+                    buf = []
+
+                    buf.append(line)
+                elif line.startswith('\n'):
+                    pass
+                else:
+                    buf.append(line)
+                line = file.readline()
+            parsed_fasta = self.parser.parse_fasta(buf)
+            sequences.append(parsed_fasta)
+            buf = []
+            file.close()
+        return sequences
