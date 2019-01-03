@@ -35,14 +35,14 @@ def main():
     input_one_hot_cube = one_hot_encoder.encode_sequences(input_seq)
     print("One-Hot Encoded kmer: " + str(input_one_hot_cube))
 
-    model = KerasLSTMModel(has_quality=has_quality, prediction_length=prediction_length, latent_dim=100)
+    model = KerasLSTMModel(has_quality=has_quality, prediction_length=prediction_length, latent_dim=100, with_gpu=False)
     model.load_weights('../weights/my_model_weights.h5')
 
     decoded_prediction = rnn_helper.predict(input_one_hot_cube, model, prediction_length)
 
     print("Predicted: " + np.array_str(decoded_prediction[0]) + " from " + input)
 
-    matches = validator.compare_sequences(decoded_prediction, bases_to_predict)
+    matches = validator.compare_sequences(decoded_prediction[0], bases_to_predict)
     mean_match = np.mean(matches)
     print("Matches: " + str(matches))
     print("Mean Match: " + str(mean_match))
