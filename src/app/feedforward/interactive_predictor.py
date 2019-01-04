@@ -16,7 +16,7 @@ def main():
     one_hot_encoder = OneHotVectorEncoder(input_length)
     one_hot_decoder = OneHotVectorDecoder(bases_to_predict)
 
-    model = KerasVanillaModel(input_length, bases_to_predict, batch_size=64, epochs=10)
+    model = KerasVanillaModel(input_length, bases_to_predict)
 
     model.load_weights('../weights/my_model_weights.h5')
 
