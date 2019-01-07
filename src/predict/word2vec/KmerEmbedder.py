@@ -1,4 +1,4 @@
-from gensim.models import word2vec
+from gensim.models import word2vec, KeyedVectors
 import numpy as np
 
 class KmerEmbedder:
@@ -36,8 +36,8 @@ class KmerEmbedder:
             if as_text:
                 self.model.wv.save_word2vec_format(path + '/model.txt', binary=False)
 
-    def load(self, path):
-        self.model = word2vec.Word2Vec.load(path)
+    def load(self, path, as_binary=True):
+        self.model = KeyedVectors.load_word2vec_format(path, binary=as_binary)
 
     def print_info(self, list_vocab=True):
         if self.model is not None:
