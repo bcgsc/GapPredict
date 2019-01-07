@@ -1,0 +1,30 @@
+import sys
+sys.path.append('../../')
+
+import time
+
+from preprocess.SentenceExtractor import SentenceExtractor
+from preprocess.SequenceImporter import SequenceImporter
+
+def main():
+    importer = SequenceImporter()
+    sentence_extractor = SentenceExtractor()
+
+    include_reverse_complement = True
+    k = 10
+
+    arguments = sys.argv[1:]
+    paths = arguments if len(arguments) > 0 else ['../data/ecoli_contigs/ecoli_contig_1000.fastq']
+
+    start_time = time.time()
+    reads = importer.import_fastq(paths, include_reverse_complement)
+    end_time = time.time()
+    print("Import took " + str(end_time - start_time) + "s")
+
+    start_time = time.time()
+    sentences = sentence_extractor.split_sequences_into_kmers(reads, k)
+    end_time = time.time()
+    print("Sentence extraction took " + str(end_time - start_time) + "s")
+
+if __name__ == "__main__":
+    main()
