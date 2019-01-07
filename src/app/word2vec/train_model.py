@@ -5,6 +5,7 @@ import time
 
 from preprocess.SentenceExtractor import SentenceExtractor
 from preprocess.SequenceImporter import SequenceImporter
+from predict.word2vec.KmerEmbedder import KmerEmbedder
 
 def main():
     importer = SequenceImporter()
@@ -25,6 +26,16 @@ def main():
     sentences = sentence_extractor.split_sequences_into_kmers(reads, k)
     end_time = time.time()
     print("Sentence extraction took " + str(end_time - start_time) + "s")
+
+    embedder = KmerEmbedder(window=10, min_count=5, dimensions=100)
+    start_time = time.time()
+    embedder.train(sentences)
+    end_time = time.time()
+    print("Word embedding took " + str(end_time - start_time) + "s")
+
+    embedder.print_info(list_vocab=True)
+
+    embedder.save('model', as_text=True)
 
 if __name__ == "__main__":
     main()
