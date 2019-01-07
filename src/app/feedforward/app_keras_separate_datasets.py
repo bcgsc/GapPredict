@@ -19,7 +19,7 @@ def main():
     as_matrix = False
 
     #TODO: parametrize this
-    training_paths = ['../data/ecoli_contigs/ecoli_contig_1000.fastq']
+    training_paths = ['../data/ecoli_contigs/ecoli-0-400.fastq', '../data/ecoli_contigs/ecoli-600-1000.fastq']
     input_kmers_train, output_kmers_train, quality_train = helper.extract_kmers(training_paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique)
     input_seq_train, input_quality_train, output_seq_train, shifted_output_train, train_input_stats_map = \
         helper.label_integer_encode_kmers(input_kmers_train, output_kmers_train, quality_train, with_shifted_output=False)
