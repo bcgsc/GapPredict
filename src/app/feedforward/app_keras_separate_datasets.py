@@ -19,7 +19,7 @@ def main():
     as_matrix = False
 
     #TODO: parametrize this
-    training_paths = ['../data/ecoli_contigs/ecoli-0-400.fastq', '../data/ecoli_contigs/ecoli-600-1000.fastq']
+    training_paths = ['../data/ecoli_contigs/ecoli_contig_1000.fastq']
     input_kmers_train, output_kmers_train, quality_train = helper.extract_kmers(training_paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique)
     input_seq_train, input_quality_train, output_seq_train, shifted_output_train, train_input_stats_map = \
         helper.label_integer_encode_kmers(input_kmers_train, output_kmers_train, quality_train, with_shifted_output=False)
@@ -36,7 +36,7 @@ def main():
     input_one_hot_cube_valid = helper.encode(input_length, input_seq_valid, input_quality_valid, has_quality=has_quality, as_matrix=as_matrix)
     output_one_hot_cube_valid = helper.encode(bases_to_predict, output_seq_valid, None, has_quality=has_quality, as_matrix=as_matrix)
 
-    model = KerasVanillaModel(input_length, bases_to_predict, batch_size=64, epochs=10)
+    model = KerasVanillaModel(input_length, bases_to_predict, batch_size=512, epochs=10)
 
     print("Computing input statistics...")
     print("Unique mappings: " + str(train_input_stats_map.get_total_unique_mappings_per_input()))

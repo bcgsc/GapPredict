@@ -1,3 +1,5 @@
+FYI - i also tried batch size 512 with 10 epochs but we still get this result
+
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
 =================================================================
