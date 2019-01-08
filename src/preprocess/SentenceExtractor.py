@@ -19,9 +19,8 @@ class SentenceExtractor:
             raise NonpositiveLengthException
 
         sentences = []
-        for fastq_read in sequences:
+        for sequence in sequences:
             sentence = []
-            sequence = fastq_read.sequence
             if not self._invalid(sequence):
                 for i in range(len(sequence) - k + 1):
                     sentence.append(sequence[i:i+k])

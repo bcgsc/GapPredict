@@ -1,22 +1,23 @@
 from unittest import TestCase
-from preprocess.SentenceExtractor import SentenceExtractor
-from exceptions.NonpositiveLengthException import NonpositiveLengthException
-from models.ParsedFastqRecord import ParsedFastqRecord
 
 import numpy as np
+
+from exceptions.NonpositiveLengthException import NonpositiveLengthException
+from preprocess.SentenceExtractor import SentenceExtractor
+
 
 class TestSentenceExtractor(TestCase):
     def setUp(self):
         self.extractor = SentenceExtractor()
         self.sequences = [
-            ParsedFastqRecord("AATTGAGTCG", np.array([28, 28, 28, 10, 28, 32, 32, 28, 32, 35])),
-            ParsedFastqRecord("AGTCGAATTG", np.array([28, 28, 28, 10, 28, 32, 32, 28, 32, 35])),
-            ParsedFastqRecord("TCGAATTGAG", np.array([28, 28, 28, 10, 28, 32, 32, 28, 32, 35]))
+            "AATTGAGTCG",
+            "AGTCGAATTG",
+            "TCGAATTGAG"
         ]
         self.sequences_with_errors = [
-            ParsedFastqRecord("AATTGAGTCG", np.array([28, 28, 28, 10, 28, 32, 32, 28, 32, 35])),
-            ParsedFastqRecord("AGNCGAATTG", np.array([28, 28, 28, 10, 28, 32, 32, 28, 32, 35])),
-            ParsedFastqRecord("TCGAATTGNG", np.array([28, 28, 28, 10, 28, 32, 32, 28, 32, 35]))
+            "AATTGAGTCG",
+            "AGNCGAATTG",
+            "TCGAATTGBG"
         ]
 
     def test_split_sequences_into_kmers_k_zero(self):

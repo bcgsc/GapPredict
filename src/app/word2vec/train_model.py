@@ -23,7 +23,12 @@ def main():
     print("Import took " + str(end_time - start_time) + "s")
 
     start_time = time.time()
-    sentences = sentence_extractor.split_sequences_into_kmers(reads, k)
+    sequences = list(map(lambda parsed_record: parsed_record.sequence, reads))
+    end_time = time.time()
+    print("Additional preprocessing took " + str(end_time - start_time) + "s")
+
+    start_time = time.time()
+    sentences = sentence_extractor.split_sequences_into_kmers(sequences, k)
     end_time = time.time()
     print("Sentence extraction took " + str(end_time - start_time) + "s")
 
