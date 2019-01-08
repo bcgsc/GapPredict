@@ -1,5 +1,6 @@
-from gensim.models import word2vec, KeyedVectors
 import numpy as np
+from gensim.models import word2vec, KeyedVectors
+
 
 class KmerEmbedder:
     #TODO: what should these hyperparameters be?
@@ -38,6 +39,7 @@ class KmerEmbedder:
 
     def load(self, path, as_binary=True):
         self.model = KeyedVectors.load_word2vec_format(path, binary=as_binary)
+        self.dimensions = self.model.vector_size
 
     def print_info(self, list_vocab=True):
         if self.model is not None:
