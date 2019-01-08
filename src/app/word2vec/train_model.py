@@ -32,13 +32,13 @@ def main():
     end_time = time.time()
     print("Sentence extraction took " + str(end_time - start_time) + "s")
 
-    embedder = KmerEmbedder(window=10, min_count=5, dimensions=100)
+    embedder = KmerEmbedder(window=10, min_count=5, dimensions=100, workers=32)
     start_time = time.time()
     embedder.train(sentences)
     end_time = time.time()
     print("Word embedding took " + str(end_time - start_time) + "s")
 
-    embedder.print_info(list_vocab=True)
+    embedder.print_info(list_vocab=False)
 
     embedder.save('model', as_text=True)
 
