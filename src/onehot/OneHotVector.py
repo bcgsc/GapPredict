@@ -28,13 +28,12 @@ class OneHotVectorEncoder(_OneHotVectorUtil):
         super().__init__(sequence_length)
         self.encoder = OneHotMatrixEncoder(sequence_length, use_rnn_constants=False)
 
-    def encode_sequences(self, integer_encoding, qualities=None):
+    def encode_sequences(self, integer_encoding):
         if len(integer_encoding) == 0:
             return np.array([])
 
-        cube = self.encoder.encode_sequences(integer_encoding, qualities=qualities)
-        encoding_length = len(CONSTANTS.ONE_HOT_ENCODING) if qualities is None else len(
-            CONSTANTS.ONE_HOT_QUALITY_ENCODING)
+        cube = self.encoder.encode_sequences(integer_encoding)
+        encoding_length = len(CONSTANTS.ONE_HOT_ENCODING)
         dimensions = (len(cube), encoding_length * self.sequence_length)
         encoded_matrix = cube.reshape(dimensions)
 

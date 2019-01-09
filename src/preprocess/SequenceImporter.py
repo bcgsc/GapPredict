@@ -1,11 +1,11 @@
 from preprocess.Importer import Importer
-from preprocess.SequenceParser import SequenceParser
+from preprocess.SequenceParser import RawSequenceParser
 from preprocess.SequenceReverser import SequenceReverser
 
 
 class SequenceImporter(Importer):
     def __init__(self):
-        self.parser = SequenceParser()
+        self.parser = RawSequenceParser()
         self.reverser = SequenceReverser()
 
     def import_fastq(self, paths, include_reverse_complement=False):
@@ -24,7 +24,7 @@ class SequenceImporter(Importer):
                     parsed_fastq = self.parser.parse_fastq(buf[0], buf[1], buf[2], buf[3])
                     reads.append(parsed_fastq)
                     if include_reverse_complement:
-                        reverse_complement = self.reverser.reverse_sequence(parsed_fastq)
+                        reverse_complement = self.reverser.reverse_complement(parsed_fastq)
                         reads.append(reverse_complement)
 
                 line = file.readline()

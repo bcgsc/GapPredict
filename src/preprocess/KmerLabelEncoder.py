@@ -7,7 +7,7 @@ class KmerLabelEncoder:
     def __init__(self):
         pass
 
-    def encode_kmers(self, input_kmers, output_kmers, quality_kmers, with_shifted_output=True):
+    def encode_kmers(self, input_kmers, output_kmers, with_shifted_output=True):
         ONE_HOT_ENCODING_IDX_MAP = CONSTANTS.INTEGER_ENCODING_MAP
 
         input_kmer_count = len(input_kmers)
@@ -52,6 +52,4 @@ class KmerLabelEncoder:
             output_seq = np.array([])
             shifted_output_seq = np.array([])
 
-        input_quality = np.array(quality_kmers)
-
-        return input_seq, np.array(input_quality), output_seq, shifted_output_seq
+        return input_seq, output_seq, shifted_output_seq

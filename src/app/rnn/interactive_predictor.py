@@ -12,12 +12,11 @@ from predict.rnn.KerasLSTMModel import KerasLSTMModel
 def main():
     input_length = 26
     prediction_length = 1
-    has_quality = False
 
     label_encoder = KmerLabelEncoder()
     one_hot_encoder = OneHotMatrixEncoder(input_length)
 
-    model = KerasLSTMModel(has_quality=has_quality, prediction_length=prediction_length, latent_dim=100)
+    model = KerasLSTMModel(prediction_length=prediction_length, latent_dim=100)
 
     model.load_weights('../weights/my_model_weights.h5')
 
@@ -29,7 +28,7 @@ def main():
             print(validation_result)
             continue
 
-        input_seq, input_quality, output_seq, shifted_output_seq = label_encoder.encode_kmers([kmer], [], [])
+        input_seq, output_seq, shifted_output_seq = label_encoder.encode_kmers([kmer], [], [])
         print("Encoded kmer: " + str(input_seq))
 
         input_one_hot_cube = one_hot_encoder.encode_sequences(input_seq)

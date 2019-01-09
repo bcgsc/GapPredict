@@ -31,22 +31,14 @@ class OneHotMatrixEncoder(_OneHotMatrixUtil):
         super().__init__(sequence_length, use_rnn_constants)
         self.bases_to_predict = bases_to_predict
 
-    def encode_sequences(self, integer_encoding, qualities=None):
+    def encode_sequences(self, integer_encoding):
         if len(integer_encoding) == 0:
             return np.array([])
 
-        has_qualities = True if qualities is not None else False
-
-        ONE_HOT_ENCODING = self.constants.ONE_HOT_QUALITY_ENCODING if has_qualities else self.constants.ONE_HOT_ENCODING
+        ONE_HOT_ENCODING = self.constants.ONE_HOT_ENCODING
         encoding_length = ONE_HOT_ENCODING.shape[1]
 
         cube = ONE_HOT_ENCODING[integer_encoding]
-
-        if has_qualities:
-            for i in range(len(qualities)):
-                quality_vector = qualities[i]
-                for j in range(len(quality_vector)):
-                    cube[i][j][encoding_length - 1] = quality_vector[j]
 
         if self.bases_to_predict > 0:
             extra_cube_shape = (len(integer_encoding), self.bases_to_predict, encoding_length)

@@ -17,12 +17,12 @@ def main():
     unique = False
 
     training_paths = ['../data/ecoli_contigs/ecoli-0-400.fastq', '../data/ecoli_contigs/ecoli-600-1000.fastq']
-    input_kmers_train, output_kmers_train, quality_vectors_train = helper.extract_kmers(training_paths, input_length,
+    input_kmers_train, output_kmers_train = helper.extract_kmers(training_paths, input_length,
                                                                                         spacing, bases_to_predict,
                                                                                         include_reverse_complement,
                                                                                         unique)
     validation_paths = ['../data/ecoli_contigs/ecoli-400-600.fastq']
-    input_kmers_valid, output_kmers_valid, quality_vectors_valid = helper.extract_kmers(validation_paths, input_length, spacing,
+    input_kmers_valid, output_kmers_valid = helper.extract_kmers(validation_paths, input_length, spacing,
                                                                       bases_to_predict, include_reverse_complement,
                                                                       unique)
 

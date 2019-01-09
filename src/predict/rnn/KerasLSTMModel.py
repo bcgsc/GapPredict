@@ -81,9 +81,9 @@ class KerasLSTMModel:
                            loss='categorical_crossentropy',
                            metrics=['accuracy'])  # TODO: 3 hyperparameters here, try learning rate = 0.0001
 
-    def __init__(self, has_quality, prediction_length, batch_size=64, epochs=10, latent_dim=100, with_gpu=True):
+    def __init__(self, prediction_length, batch_size=64, epochs=10, latent_dim=100, with_gpu=True):
         #TODO: 3 hyperparameters here
-        self.encoding = CONSTANTS.ONE_HOT_QUALITY_ENCODING if has_quality else CONSTANTS.ONE_HOT_ENCODING
+        self.encoding = CONSTANTS.ONE_HOT_ENCODING
         encoding_length = self.encoding.shape[1]
 
         self.with_gpu = with_gpu
@@ -91,7 +91,7 @@ class KerasLSTMModel:
         self.epochs = epochs  # Number of epochs to train for.
         self.latent_dim = latent_dim  # Latent dimensionality of the encoding space.
         self.one_hot_encoding_length = encoding_length
-        self.one_hot_decoding_length = encoding_length - 1 if has_quality else encoding_length
+        self.one_hot_decoding_length = encoding_length
         self.prediction_length = prediction_length
         self._initialize_models()
         print(self.model.summary())

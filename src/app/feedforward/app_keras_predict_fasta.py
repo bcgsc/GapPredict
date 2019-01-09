@@ -14,7 +14,6 @@ def main():
     importer = SequenceImporter()
     validator = SequenceMatchCalculator()
     label_encoder = KmerLabelEncoder()
-    has_quality = False
 
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
     sequence = importer.import_fasta([path])[0].sequence
@@ -40,7 +39,7 @@ def main():
     upper_bound = lower_bound + input_length
     while remaining_length > 0:
         seed = current_sequence[lower_bound:upper_bound]
-        input_seq, input_quality, output_seq, shifted_output_seq = label_encoder.encode_kmers([seed], [], [])
+        input_seq, output_seq, shifted_output_seq = label_encoder.encode_kmers([seed], [], [])
 
         input_one_hot_cube = one_hot_encoder.encode_sequences(input_seq)
 
