@@ -3,22 +3,21 @@ from unittest import TestCase
 import numpy as np
 
 from preprocess.SlidingWindowExtractor import SlidingWindowExtractor, SlidingWindowParamException
-from models.ParsedFastqRecord import ParsedFastqRecord
 
 
 class TestSlidingWindowExtractor(TestCase):
     def setUp(self):
         self.parsed_fastqs = [
-            ParsedFastqRecord("AATTGAGTCG", np.array([28, 28, 28, 10, 28, 32, 32, 28, 32, 35]))
+            "AATTGAGTCG"
         ]
         self.erroneous_parsed_fastqs = [
-            ParsedFastqRecord("AANTGNCG", np.array([28, 28, 28, 10, 28, 10, 13, 15]))
+            "AANTGNCG"
         ]
         self.parsed_redundant_fastqs = [
-            ParsedFastqRecord("AAAAAGGGGGTT", np.array([28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39]))
+            "AAAAAGGGGGTT"
         ]
         self.erroneous_parsed_redundant_fastqs = [
-            ParsedFastqRecord("AAAANGGGGNTT", np.array([28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39]))
+            "AAAANGGGGNTT"
         ]
 
     def test_nonpositive_input_length(self):
