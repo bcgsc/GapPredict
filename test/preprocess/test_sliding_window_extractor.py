@@ -29,7 +29,7 @@ class TestSlidingWindowExtractor(TestCase):
         except Exception as e:
             self.fail()
 
-    def test_nonpositive_spacing_length(self):
+    def test_negative_spacing_length(self):
         try:
             extractor = SlidingWindowExtractor(1, -1, 1)
             self.fail()
@@ -52,10 +52,6 @@ class TestSlidingWindowExtractor(TestCase):
         input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.erroneous_parsed_redundant_fastqs, unique=True)
 
-        self.assertEqual(len(input_kmers), 3)
-        self.assertEqual(len(input_kmers[0]), 1)
-        self.assertEqual(len(output_kmers), 3)
-        self.assertEqual(len(output_kmers[0]), 1)
         expected_input = [
             "A",
             "G",
@@ -74,10 +70,6 @@ class TestSlidingWindowExtractor(TestCase):
         input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.parsed_redundant_fastqs, unique=True)
 
-        self.assertEqual(len(input_kmers), 7)
-        self.assertEqual(len(input_kmers[0]), 2)
-        self.assertEqual(len(output_kmers), 7)
-        self.assertEqual(len(output_kmers[0]), 2)
         expected_input = [
             "AA",
             "AA",
@@ -104,10 +96,6 @@ class TestSlidingWindowExtractor(TestCase):
         input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.erroneous_parsed_fastqs)
 
-        self.assertEqual(len(input_kmers), 2)
-        self.assertEqual(len(input_kmers[0]), 1)
-        self.assertEqual(len(output_kmers), 2)
-        self.assertEqual(len(output_kmers[0]), 1)
         expected_input = [
             "A",
             "G"
@@ -124,10 +112,6 @@ class TestSlidingWindowExtractor(TestCase):
         input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.parsed_fastqs)
 
-        self.assertEqual(len(input_kmers), 3)
-        self.assertEqual(len(input_kmers[0]), 4)
-        self.assertEqual(len(output_kmers), 3)
-        self.assertEqual(len(output_kmers[0]), 4)
         expected_input = [
             "AATT",
             "ATTG",
@@ -146,10 +130,6 @@ class TestSlidingWindowExtractor(TestCase):
         input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.parsed_fastqs)
 
-        self.assertEqual(len(input_kmers), 8)
-        self.assertEqual(len(input_kmers[0]), 1)
-        self.assertEqual(len(output_kmers), 8)
-        self.assertEqual(len(output_kmers[0]), 1)
         expected_input = [
             "A",
             "A",
@@ -178,10 +158,6 @@ class TestSlidingWindowExtractor(TestCase):
         input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.parsed_fastqs)
 
-        self.assertEqual(len(input_kmers), 2)
-        self.assertEqual(len(input_kmers[0]), 4)
-        self.assertEqual(len(output_kmers), 2)
-        self.assertEqual(len(output_kmers[0]), 2)
         expected_input = [
             "AATT",
             "ATTG"
