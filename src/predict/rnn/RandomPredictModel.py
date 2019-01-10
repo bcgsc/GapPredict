@@ -4,9 +4,8 @@ import constants.EncodingConstants as CONSTANTS
 
 
 class RandomPredictModel:
-    def __init__(self, k, has_quality=True):
+    def __init__(self, k):
         self.k = k
-        self.has_quality = has_quality
 
     def fit(self, X, Y):
         pass

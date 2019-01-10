@@ -2,10 +2,9 @@ from models.ParsedFastaRecord import ParsedFastaRecord
 from models.ParsedFastqRecord import ParsedFastqRecord
 from preprocess.BaseQualityConverter import BaseQualityConverter
 
-
 class SequenceParser:
     def __init__(self):
-        self.base_quality_convert = BaseQualityConverter()
+        pass
 
     def _strip_terminal_newline(self, string):
         if string[len(string) - 1] == "\n":
@@ -13,15 +12,34 @@ class SequenceParser:
         else:
             return string
 
+class RawSequenceParser(SequenceParser):
+    def __init__(self):
+        pass
+
     def parse_fastq(self, id, sequence, optional_id, quality_string):
-        filtered_sequence = self._strip_terminal_newline(sequence)
-        filtered_quality = self._strip_terminal_newline(quality_string)
+        return super()._strip_terminal_newline(sequence)
+
+    def parse_fasta(self, buf):
+        sequence = ""
+        for subsequence in buf[1:]:
+            sequence += super()._strip_terminal_newline(subsequence)
+        return sequence
+
+
+
+class FormattedSequenceParser(SequenceParser):
+    def __init__(self):
+        self.base_quality_convert = BaseQualityConverter()
+
+    def parse_fastq(self, id, sequence, optional_id, quality_string):
+        filtered_sequence = super()._strip_terminal_newline(sequence)
+        filtered_quality = super()._strip_terminal_newline(quality_string)
         phred_quality = self.base_quality_convert.convert_quality_to_phred(filtered_quality)
         return ParsedFastqRecord(filtered_sequence, phred_quality)
 
     def parse_fasta(self, buf):
-        filtered_id = self._strip_terminal_newline(buf[0])
+        filtered_id = super()._strip_terminal_newline(buf[0])
         sequence = ""
         for subsequence in buf[1:]:
-            sequence += self._strip_terminal_newline(subsequence)
+            sequence += super()._strip_terminal_newline(subsequence)
         return ParsedFastaRecord(filtered_id, sequence)

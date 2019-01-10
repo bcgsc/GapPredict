@@ -1,13 +1,13 @@
 import gzip
 import mimetypes
 
-from preprocess.SequenceParser import SequenceParser
+from preprocess.SequenceParser import RawSequenceParser
 from preprocess.SequenceReverser import SequenceReverser
 
 
 class SequenceImporter():
     def __init__(self):
-        self.parser = SequenceParser()
+        self.parser = RawSequenceParser()
         self.reverser = SequenceReverser()
 
     def _open_file(self, path):
@@ -34,7 +34,7 @@ class SequenceImporter():
                     parsed_fastq = self.parser.parse_fastq(buf[0], buf[1], buf[2], buf[3])
                     reads.append(parsed_fastq)
                     if include_reverse_complement:
-                        reverse_complement = self.reverser.reverse_sequence(parsed_fastq)
+                        reverse_complement = self.reverser.reverse_complement(parsed_fastq)
                         reads.append(reverse_complement)
 
                 line = file.readline()
