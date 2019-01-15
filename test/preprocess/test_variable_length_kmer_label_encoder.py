@@ -4,6 +4,7 @@ import numpy as np
 
 from preprocess.VariableLengthKmerLabelEncoder import VariableLengthKmerLabelEncoder
 
+
 class TestVariableLengthKmerLabelEncoder(TestCase):
     def setUp(self):
         self.encoder = VariableLengthKmerLabelEncoder()
@@ -34,12 +35,11 @@ class TestVariableLengthKmerLabelEncoder(TestCase):
             "CC"
         ]
 
-        input_matrix, output_matrix, shifted_output_matrix = \
+        input_matrix, output_matrix = \
             self.encoder.encode_kmers(input_kmers, output_kmers)
 
         self.assertEqual(input_matrix.shape, (10, 5))
         self.assertEqual(output_matrix.shape, (10, 2))
-        self.assertEqual(shifted_output_matrix.shape, (10, 2))
         expected_input = np.array([
             [1, 0, 0, 0, 0],
             [3, 0, 0, 0, 0],
@@ -64,21 +64,8 @@ class TestVariableLengthKmerLabelEncoder(TestCase):
             [3, 1],
             [2, 2]
         ])
-        expected_shifted_output = np.array([
-            [5, 4],
-            [5, 4],
-            [5, 3],
-            [5, 1],
-            [5, 3],
-            [5, 3],
-            [5, 2],
-            [5, 4],
-            [5, 3],
-            [5, 2]
-        ])
         np.testing.assert_array_equal(input_matrix, expected_input)
         np.testing.assert_array_equal(output_matrix, expected_output)
-        np.testing.assert_array_equal(shifted_output_matrix, expected_shifted_output)
 
     def test_encode_kmers_no_shifted_output(self):
         input_kmers = [
@@ -106,12 +93,11 @@ class TestVariableLengthKmerLabelEncoder(TestCase):
             "CC"
         ]
 
-        input_matrix, output_matrix, shifted_output_matrix = \
-            self.encoder.encode_kmers(input_kmers, output_kmers, with_shifted_output=False)
+        input_matrix, output_matrix = \
+            self.encoder.encode_kmers(input_kmers, output_kmers)
 
         self.assertEqual(input_matrix.shape, (10, 5))
         self.assertEqual(output_matrix.shape, (10, 2))
-        self.assertEqual(shifted_output_matrix.shape, (0,))
         expected_input = np.array([
             [1, 0, 0, 0, 0],
             [3, 0, 0, 0, 0],
@@ -136,10 +122,8 @@ class TestVariableLengthKmerLabelEncoder(TestCase):
             [3, 1],
             [2, 2]
         ])
-        expected_shifted_output = np.array([])
         np.testing.assert_array_equal(input_matrix, expected_input)
         np.testing.assert_array_equal(output_matrix, expected_output)
-        np.testing.assert_array_equal(shifted_output_matrix, expected_shifted_output)
 
     def test_encode_kmers_no_input(self):
         input_kmers = []
@@ -156,12 +140,11 @@ class TestVariableLengthKmerLabelEncoder(TestCase):
             "CC"
         ]
 
-        input_matrix, output_matrix, shifted_output_matrix = \
+        input_matrix, output_matrix = \
             self.encoder.encode_kmers(input_kmers, output_kmers)
 
         self.assertEqual(input_matrix.shape, (0,))
         self.assertEqual(output_matrix.shape, (10, 2))
-        self.assertEqual(shifted_output_matrix.shape, (10, 2))
         expected_input = np.array([])
         expected_output = np.array([
             [4, 2],
@@ -175,21 +158,8 @@ class TestVariableLengthKmerLabelEncoder(TestCase):
             [3, 1],
             [2, 2]
         ])
-        expected_shifted_output = np.array([
-            [5, 4],
-            [5, 4],
-            [5, 3],
-            [5, 1],
-            [5, 3],
-            [5, 3],
-            [5, 2],
-            [5, 4],
-            [5, 3],
-            [5, 2]
-        ])
         np.testing.assert_array_equal(input_matrix, expected_input)
         np.testing.assert_array_equal(output_matrix, expected_output)
-        np.testing.assert_array_equal(shifted_output_matrix, expected_shifted_output)
 
     def test_encode_kmers_no_output(self):
         input_kmers = [
@@ -206,12 +176,11 @@ class TestVariableLengthKmerLabelEncoder(TestCase):
         ]
         output_kmers = []
 
-        input_matrix, output_matrix, shifted_output_matrix = \
+        input_matrix, output_matrix = \
             self.encoder.encode_kmers(input_kmers, output_kmers)
 
         self.assertEqual(input_matrix.shape, (10, 5))
         self.assertEqual(output_matrix.shape, (0,))
-        self.assertEqual(shifted_output_matrix.shape, (0,))
         expected_input = np.array([
             [1, 0, 0, 0, 0],
             [3, 0, 0, 0, 0],
@@ -225,7 +194,5 @@ class TestVariableLengthKmerLabelEncoder(TestCase):
             [1, 1, 4, 4, 3]
         ])
         expected_output = np.array([])
-        expected_shifted_output = np.array([])
         np.testing.assert_array_equal(input_matrix, expected_input)
         np.testing.assert_array_equal(output_matrix, expected_output)
-        np.testing.assert_array_equal(shifted_output_matrix, expected_shifted_output)
