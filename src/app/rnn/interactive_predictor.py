@@ -28,7 +28,7 @@ def main():
             print(validation_result)
             continue
 
-        input_seq, output_seq, shifted_output_seq = label_encoder.encode_kmers([kmer], [], [])
+        input_seq, output_seq, shifted_output_seq = label_encoder.encode_kmers([kmer], [])
         print("Encoded kmer: " + str(input_seq))
 
         input_one_hot_cube = one_hot_encoder.encode_sequences(input_seq)
