@@ -102,10 +102,16 @@ class KerasLSTMModel:
                   epochs=self.epochs)
 
     def save_weights(self, path):
-        self.model.save_weights(path)
+        if self.model is not None:
+            self.model.save_weights(path)
+        else:
+            print("No model")
 
     def load_weights(self, path):
-        self.model.load_weights(path)
+        if self.model is not None:
+            self.model.load_weights(path)
+        else:
+            print("No model")
 
     def predict(self, X, batch_size=None):
         num_predictions = len(X)
