@@ -3,6 +3,7 @@ import time
 import numpy as np
 
 import constants.EncodingConstants as CONSTANTS
+import constants.RnnEncodingConstants as RNN_CONSTANTS
 from onehot.OneHotMatrix import OneHotMatrixEncoder, OneHotMatrixDecoder
 from onehot.OneHotVector import OneHotVectorEncoder, OneHotVectorDecoder
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
@@ -49,17 +50,9 @@ def label_integer_encode_kmers(input_kmers, output_kmers, verbose=False, with_sh
     print("Label Integer Encoding took " + str(end_time - start_time) + "s")
     return input_seq, output_seq, shifted_output_seq, input_stats_map
 
-#TODO: we can remove this later if needed as it just calls 2 helpers
-def extract_read_matrix(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique,
-                        verbose=False, with_shifted_output=True):
-    input_kmers, output_kmers = extract_kmers(paths, input_length, spacing, bases_to_predict, include_reverse_complement, unique)
-    input_seq, output_seq, shifted_output_seq, input_stats_map = \
-        label_integer_encode_kmers(input_kmers, output_kmers, verbose, with_shifted_output)
-    return input_seq, output_seq, shifted_output_seq, input_stats_map
-
-
-def encode(length, seq, as_matrix=True):
-    encoder = OneHotMatrixEncoder(length) if as_matrix else OneHotVectorEncoder(length)
+def encode(length, seq, as_matrix=True, encoding_constants=RNN_CONSTANTS):
+    #TODO: this is a bit weird now that vector encoder also has a default encoding_constants, maybe just split it up into 2 methods - matrix and vector encode
+    encoder = OneHotMatrixEncoder(length, encoding_constants=encoding_constants) if as_matrix else OneHotVectorEncoder(length)
 
     start_time = time.time()
     one_hot_encoding = encoder.encode_sequences(seq)

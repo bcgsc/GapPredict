@@ -5,7 +5,7 @@ from keras.models import Sequential
 from constants import VariableLengthRnnEncodingConstants as CONSTANTS
 
 
-class VariableLengthKerasLSTMModel:
+class BaseKerasLSTMModel:
     def _initialize_model(self):
         model = Sequential()
         if self.with_gpu:
@@ -15,13 +15,15 @@ class VariableLengthKerasLSTMModel:
             model.add(LSTM(self.latent_dim, input_shape=(None, self.one_hot_encoding_length)))
         model.add(Dense(self.one_hot_decoding_length, activation='softmax'))
 
+        self.model = model
+
         optimizer = optimizers.Adam()
         self.model.compile(optimizer=optimizer,
                            loss='categorical_crossentropy',
                            metrics=['accuracy'])  # TODO: 3 hyperparameters here
 
 
-    def __init__(self, prediction_length, batch_size=64, epochs=10, latent_dim=100, with_gpu=True):
+    def __init__(self, batch_size=64, epochs=10, latent_dim=100, with_gpu=True):
         self.encoding = CONSTANTS.ONE_HOT_ENCODING
         encoding_length = self.encoding.shape[1]
 
@@ -31,7 +33,6 @@ class VariableLengthKerasLSTMModel:
         self.latent_dim = latent_dim  # Latent dimensionality of the encoding space.
         self.one_hot_encoding_length = encoding_length
         self.one_hot_decoding_length = encoding_length
-        self.prediction_length = prediction_length
         self._initialize_model()
         print(self.model.summary())
 
