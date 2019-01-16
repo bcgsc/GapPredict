@@ -19,7 +19,7 @@ def main():
     paths = arguments if len(arguments) > 0 else ['../data/ecoli_contigs/ecoli_contig_1000.fastq']
     reads = helper.import_reads(paths, include_reverse_complement)
 
-    reads_train, reads_valid = model_selection.train_test_split(reads, test_size=0.99, random_state=123)
+    reads_train, reads_valid = model_selection.train_test_split(reads, test_size=0.10, random_state=123)
 
     input_kmers_valid, output_kmers_valid, k_high_valid = helper.extract_kmers(reads_valid, input_length, spacing)
     input_seq_valid, output_seq_valid, input_stats_map_valid = \

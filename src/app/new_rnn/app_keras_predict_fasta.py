@@ -27,8 +27,11 @@ def main():
     input = sequence[0:input_length]
     bases_to_predict = sequence[input_length:sequence_length]
 
-    implementation = 1
-
+    implementation = 2
+    #TODO: hack to force padding
+    dummy = ""
+    for i in range(98):
+        dummy += "A"
     #static length prediction
     if implementation == 1:
         prediction_length = 1
@@ -42,9 +45,10 @@ def main():
         upper_bound = lower_bound + input_length
         one_hot_encoder = OneHotMatrixEncoder(input_length, encoding_constants=CONSTANTS)
         one_hot_decoder = OneHotVectorDecoder(prediction_length, encoding_constants=CONSTANTS)
+
         while remaining_length > 0:
             seed = current_sequence[lower_bound:upper_bound]
-            input_seq, output_seq = label_encoder.encode_kmers([seed], [])
+            input_seq, output_seq = label_encoder.encode_kmers([seed, dummy], [])
 
             input_one_hot_cube = one_hot_encoder.encode_sequences(input_seq)
 
@@ -74,7 +78,7 @@ def main():
         one_hot_decoder = OneHotVectorDecoder(prediction_length, encoding_constants=CONSTANTS)
         while remaining_length > 0:
             seed = current_sequence[0:length]
-            input_seq, output_seq = label_encoder.encode_kmers([seed], [])
+            input_seq, output_seq = label_encoder.encode_kmers([seed, dummy], [])
 
             one_hot_encoder = OneHotMatrixEncoder(length, encoding_constants=CONSTANTS)
             input_one_hot_cube = one_hot_encoder.encode_sequences(input_seq)

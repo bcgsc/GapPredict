@@ -26,6 +26,7 @@ def main():
         helper.label_integer_encode_kmers(input_kmers_valid, output_kmers_valid)
 
     k_high = max(k_high_train, k_high_valid)
+    print("k_high = " + str(k_high))
 
     print("Encoding training set")
     input_one_hot_cube_train = helper.encode(k_high, input_seq_train)
