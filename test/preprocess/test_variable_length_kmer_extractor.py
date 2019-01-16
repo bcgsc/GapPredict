@@ -46,7 +46,7 @@ class TestVariableLengthKmerExtractor(TestCase):
 
     def test_extract_kmers_from_sequence_minimal_spacing(self):
         extractor = VariableLengthKmerExtractor(1, 1, 1)
-        input_kmers, output_kmers, max_length = \
+        input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.parsed_fastqs)
 
         expected_input = [
@@ -91,11 +91,94 @@ class TestVariableLengthKmerExtractor(TestCase):
         ]
         np.testing.assert_array_equal(input_kmers, expected_input)
         np.testing.assert_array_equal(output_kmers, expected_output)
-        self.assertEqual(max_length, 7)
+
+    def test_extract_kmers_from_sequence_minimal_spacing_small_khigh(self):
+        extractor = VariableLengthKmerExtractor(1, 1, 1, k_high=0)
+        input_kmers, output_kmers = \
+            extractor.extract_kmers_from_sequence(self.parsed_fastqs)
+
+        expected_input = [
+            "A",
+            "A",
+            "T",
+            "T",
+            "G",
+            "A",
+            "T",
+            "AA",
+            "AT",
+            "TT",
+            "TG",
+            "AT",
+            "AAT",
+            "ATT",
+            "TTG",
+            "AATT",
+            "ATTG",
+            "AATTG"
+        ]
+        expected_output = [
+            "T",
+            "T",
+            "G",
+            "A",
+            "G",
+            "G",
+            "C",
+            "T",
+            "G",
+            "A",
+            "G",
+            "C",
+            "G",
+            "A",
+            "G",
+            "A",
+            "G",
+            "G"
+        ]
+        np.testing.assert_array_equal(input_kmers, expected_input)
+        np.testing.assert_array_equal(output_kmers, expected_output)
+
+    def test_extract_kmers_from_sequence_minimal_spacing_medium_khigh(self):
+        extractor = VariableLengthKmerExtractor(1, 1, 1, k_high=2)
+        input_kmers, output_kmers = \
+            extractor.extract_kmers_from_sequence(self.parsed_fastqs)
+
+        expected_input = [
+            "A",
+            "A",
+            "T",
+            "T",
+            "G",
+            "A",
+            "T",
+            "AA",
+            "AT",
+            "TT",
+            "TG",
+            "AT"
+        ]
+        expected_output = [
+            "T",
+            "T",
+            "G",
+            "A",
+            "G",
+            "G",
+            "C",
+            "T",
+            "G",
+            "A",
+            "G",
+            "C"
+        ]
+        np.testing.assert_array_equal(input_kmers, expected_input)
+        np.testing.assert_array_equal(output_kmers, expected_output)
 
     def test_extract_kmers_from_sequence_zero_spacing(self):
         extractor = VariableLengthKmerExtractor(2, 0, 2)
-        input_kmers, output_kmers, max_length = \
+        input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.parsed_fastqs)
 
         expected_input = [
@@ -126,11 +209,10 @@ class TestVariableLengthKmerExtractor(TestCase):
         ]
         np.testing.assert_array_equal(input_kmers, expected_input)
         np.testing.assert_array_equal(output_kmers, expected_output)
-        self.assertEqual(max_length, 7)
 
     def test_extract_kmers_from_sequence(self):
         extractor = VariableLengthKmerExtractor(3, 2, 1)
-        input_kmers, output_kmers, max_length = \
+        input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.parsed_fastqs)
 
         expected_input = [
@@ -145,11 +227,10 @@ class TestVariableLengthKmerExtractor(TestCase):
         ]
         np.testing.assert_array_equal(input_kmers, expected_input)
         np.testing.assert_array_equal(output_kmers, expected_output)
-        self.assertEqual(max_length, 7)
 
     def test_extract_kmers_from_sequence_with_N(self):
         extractor = VariableLengthKmerExtractor(1, 0, 1)
-        input_kmers, output_kmers, max_length = \
+        input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.erroneous_parsed_fastqs)
 
         expected_input = [
@@ -184,31 +265,27 @@ class TestVariableLengthKmerExtractor(TestCase):
         ]
         np.testing.assert_array_equal(input_kmers, expected_input)
         np.testing.assert_array_equal(output_kmers, expected_output)
-        self.assertEqual(max_length, 7)
 
     def test_extract_kmers_from_sequence_lower_bound_too_long(self):
         extractor = VariableLengthKmerExtractor(8, 1, 1)
-        input_kmers, output_kmers, max_length = \
+        input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.parsed_fastqs)
 
         self.assertEqual(len(input_kmers), 0)
         self.assertEqual(len(output_kmers), 0)
-        self.assertEqual(max_length, 7)
 
     def test_extract_kmers_from_sequence_spacing_too_long(self):
         extractor = VariableLengthKmerExtractor(1, 8, 1)
-        input_kmers, output_kmers, max_length = \
+        input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.parsed_fastqs)
 
         self.assertEqual(len(input_kmers), 0)
         self.assertEqual(len(output_kmers), 0)
-        self.assertEqual(max_length, 7)
 
     def test_extract_kmers_from_sequence_output_too_long(self):
         extractor = VariableLengthKmerExtractor(1, 1, 8)
-        input_kmers, output_kmers, max_length = \
+        input_kmers, output_kmers = \
             extractor.extract_kmers_from_sequence(self.parsed_fastqs)
 
         self.assertEqual(len(input_kmers), 0)
         self.assertEqual(len(output_kmers), 0)
-        self.assertEqual(max_length, 7)
