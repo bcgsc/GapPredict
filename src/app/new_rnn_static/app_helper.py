@@ -41,10 +41,10 @@ def extract_kmers(reads, k_low, spacing):
     extractor = VariableLengthKmerExtractor(k_low, spacing, bases_to_predict)
 
     start_time = time.time()
-    input_kmers, output_kmers, k_high = extractor.extract_kmers_from_sequence(reads)
+    input_kmers, output_kmers = extractor.extract_kmers_from_sequence(reads)
     end_time = time.time()
     print("Extraction took " + str(end_time - start_time) + "s")
-    return input_kmers, output_kmers, k_high
+    return input_kmers, output_kmers
 
 def label_integer_encode_kmers(input_kmers, output_kmers, verbose=False):
     encoder = VariableLengthKmerLabelEncoder()
@@ -55,10 +55,10 @@ def label_integer_encode_kmers(input_kmers, output_kmers, verbose=False):
     print("Stats took " + str(end_time - start_time) + "s")
 
     start_time = time.time()
-    input_seq, output_seq = encoder.encode_kmers(input_kmers, output_kmers)
+    input_seq, output_seq, k_high = encoder.encode_kmers(input_kmers, output_kmers)
     end_time = time.time()
     print("Label Integer Encoding took " + str(end_time - start_time) + "s")
-    return input_seq, output_seq, input_stats_map
+    return input_seq, output_seq, k_high, input_stats_map
 
 def predict_and_validate(input, output_seq_cube, model):
     decoder = OneHotVectorDecoder(bases_to_predict, encoding_constants=CONSTANTS)

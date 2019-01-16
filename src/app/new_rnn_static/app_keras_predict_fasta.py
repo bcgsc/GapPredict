@@ -30,14 +30,14 @@ def main():
     implementation = 2
     #TODO: hack to force padding
     dummy = ""
-    for i in range(98):
+    for i in range(97):
         dummy += "A"
     #static length prediction
     if implementation == 1:
         prediction_length = 1
         remaining_length = output_length
 
-        model = BaseKerasLSTMModel(latent_dim=100, with_gpu=False)
+        model = BaseKerasLSTMModel(latent_dim=100, with_gpu=True)
         model.load_weights('../weights/my_model_weights.h5')
 
         current_sequence = str(input)
@@ -70,7 +70,7 @@ def main():
         prediction_length = 1
         remaining_length = output_length
 
-        model = BaseKerasLSTMModel(latent_dim=100, with_gpu=False)
+        model = BaseKerasLSTMModel(latent_dim=100, with_gpu=True)
         model.load_weights('../weights/my_model_weights.h5')
 
         current_sequence = str(input)

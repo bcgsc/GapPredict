@@ -27,6 +27,7 @@ class VariableLengthKmerLabelEncoder:
                     input_seq[i][j] = encoding
         else:
             input_seq = np.array([])
+            max_input_length = 0
 
         output_kmer_count = len(output_kmers)
 
@@ -46,4 +47,4 @@ class VariableLengthKmerLabelEncoder:
         else:
             output_seq = np.array([])
 
-        return input_seq, output_seq
+        return input_seq, output_seq, max_input_length

@@ -38,7 +38,7 @@ def main():
     input_one_hot_cube_valid = helper.encode(input_length, input_seq_valid)
     output_one_hot_cube_valid = helper.encode(bases_to_predict, output_seq_valid)
 
-    model = KerasLSTMModel(prediction_length=bases_to_predict, batch_size=64, epochs=5, latent_dim=100, with_gpu=False)
+    model = KerasLSTMModel(prediction_length=bases_to_predict, batch_size=64, epochs=5, latent_dim=100, with_gpu=True)
 
     print("Computing input statistics...")
     print("Unique mappings: " + str(input_stats_map_train.get_total_unique_mappings_per_input()))
