@@ -38,7 +38,7 @@ def import_reads(paths, include_reverse_complement):
     return reads
 
 def extract_kmers(reads, k_low, spacing):
-    extractor = VariableLengthKmerExtractor(k_low, spacing, bases_to_predict, k_high=k_low)
+    extractor = VariableLengthKmerExtractor(k_low, spacing, bases_to_predict)
 
     start_time = time.time()
     input_kmers, output_kmers = extractor.extract_kmers_from_sequence(reads)
