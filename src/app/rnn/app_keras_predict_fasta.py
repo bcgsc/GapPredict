@@ -17,7 +17,7 @@ def main():
     label_encoder = KmerLabelEncoder()
 
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
-    sequence = importer.import_fasta([path])[0].sequence
+    sequence = importer.import_fasta([path])[0]
 
     sequence_length = len(sequence)
 
@@ -26,7 +26,7 @@ def main():
     input = sequence[0:input_length]
     bases_to_predict = sequence[input_length:sequence_length]
 
-    implementation = 1
+    implementation = 3
 
     if implementation == 1:
         prediction_length = output_length
