@@ -5,7 +5,7 @@ import time
 
 from sklearn import model_selection
 
-import app.new_rnn.app_helper as helper
+import app.new_rnn_variable.app_helper as helper
 from predict.new_rnn.BaseKerasLSTMModel import BaseKerasLSTMModel
 
 
@@ -21,8 +21,8 @@ def main():
 
     reads_train, reads_valid = model_selection.train_test_split(reads, test_size=0.10, random_state=123)
 
-    input_kmers_valid, output_kmers_valid, k_high_valid = helper.extract_kmers(reads_valid, input_length, spacing)
-    input_seq_valid, output_seq_valid, input_stats_map_valid = \
+    input_kmers_valid, output_kmers_valid = helper.extract_kmers(reads_valid, input_length, spacing)
+    input_seq_valid, output_seq_valid, k_high_valid, input_stats_map_valid = \
         helper.label_integer_encode_kmers(input_kmers_valid, output_kmers_valid)
     #hack to get a random shuffle of some size TODO: make this use numpy random so we can do 0% or 100% as well
 

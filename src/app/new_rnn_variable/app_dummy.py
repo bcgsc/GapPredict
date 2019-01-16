@@ -3,7 +3,7 @@ sys.path.append('../../')
 
 import time
 
-import app.new_rnn.app_helper as helper
+import app.new_rnn_variable.app_helper as helper
 from predict.new_rnn.RandomPredictModel import RandomPredictModel
 
 def main():
@@ -17,8 +17,8 @@ def main():
 
     reads = helper.import_reads(paths, include_reverse_complement)
 
-    input_kmers, output_kmers, k_high = helper.extract_kmers(reads, input_length, spacing)
-    input_seq, output_seq, input_stats_map = \
+    input_kmers, output_kmers = helper.extract_kmers(reads, input_length, spacing)
+    input_seq, output_seq, k_high, input_stats_map = \
         helper.label_integer_encode_kmers(input_kmers, output_kmers)
 
     input_one_hot_cube = helper.encode(k_high, input_seq)
