@@ -4,6 +4,8 @@ from keras.layers import CuDNNLSTM, LSTM, Input, Dense
 from keras.models import Model
 
 from constants import RnnEncodingConstants as CONSTANTS
+from onehot.OneHotMatrix import OneHotMatrixDecoder, OneHotMatrixEncoder
+from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 
 #TODO: https://github.com/keras-team/keras/blob/master/examples/lstm_seq2seq.py
@@ -114,6 +116,9 @@ class KerasLSTMModel:
             print("No model")
 
     def predict(self, X, batch_size=None):
+        decoder = OneHotMatrixDecoder(1)
+        label_encoder = KmerLabelEncoder()
+        encoder = OneHotMatrixEncoder(1)
         num_predictions = len(X)
 
         interval = batch_size if batch_size is not None else num_predictions
@@ -138,10 +143,12 @@ class KerasLSTMModel:
                 next_base, state_h, state_c = self.decoder_inference_model.predict([character_to_feed] + states_to_feed)
 
                 decoding[lower_bound:upper_bound, i, :] = next_base[:, 0, :]
+                bases = decoder.decode_sequences(next_base)
+                recoded_bases = encoder.encode_sequences(label_encoder.encode_kmers(bases, [], False)[0])
 
                 # the input to the next loop are the new states and next base given all the previous loops
                 states_to_feed = [state_h, state_c]
-                character_to_feed = next_base
+                character_to_feed = recoded_bases
 
             lower_bound = upper_bound
             upper_bound = min(num_predictions, upper_bound + interval)

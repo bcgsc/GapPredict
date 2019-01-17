@@ -26,11 +26,11 @@ def main():
     input = sequence[0:input_length]
     bases_to_predict = sequence[input_length:sequence_length]
 
-    implementation = 3
+    implementation = 1
 
     if implementation == 1:
         prediction_length = output_length
-        model = KerasLSTMModel(prediction_length=prediction_length, latent_dim=100)
+        model = KerasLSTMModel(prediction_length=prediction_length, latent_dim=100, with_gpu=True)
         model.load_weights('../weights/my_model_weights.h5')
 
         input_seq, output_seq, shifted_output_seq = label_encoder.encode_kmers([input], [])
