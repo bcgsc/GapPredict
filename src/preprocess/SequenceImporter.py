@@ -1,6 +1,8 @@
 import gzip
 import mimetypes
 
+import numpy as np
+
 from preprocess.SequenceParser import RawSequenceParser
 from preprocess.SequenceReverser import SequenceReverser
 
@@ -40,7 +42,7 @@ class SequenceImporter():
                 line = file.readline()
                 line_num = (line_num + 1) % 4
             file.close()
-        return reads
+        return np.array(reads)
 
     def import_fasta(self, paths):
         sequences = []
@@ -67,4 +69,4 @@ class SequenceImporter():
             sequences.append(parsed_fasta)
             buf = []
             file.close()
-        return sequences
+        return np.array(sequences)

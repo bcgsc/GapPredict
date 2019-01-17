@@ -7,18 +7,18 @@ from preprocess.SlidingWindowExtractor import SlidingWindowExtractor, SlidingWin
 
 class TestSlidingWindowExtractor(TestCase):
     def setUp(self):
-        self.parsed_fastqs = [
+        self.parsed_fastqs = np.array([
             "AATTGAGTCG"
-        ]
-        self.erroneous_parsed_fastqs = [
+        ])
+        self.erroneous_parsed_fastqs = np.array([
             "AANTGNCG"
-        ]
-        self.parsed_redundant_fastqs = [
+        ])
+        self.parsed_redundant_fastqs = np.array([
             "AAAAAGGGGGTT"
-        ]
-        self.erroneous_parsed_redundant_fastqs = [
+        ])
+        self.erroneous_parsed_redundant_fastqs = np.array([
             "AAAANGGGGNTT"
-        ]
+        ])
 
     def test_nonpositive_input_length(self):
         try:
