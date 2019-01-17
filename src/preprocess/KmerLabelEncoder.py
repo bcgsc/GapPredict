@@ -40,12 +40,8 @@ class KmerLabelEncoder:
             if with_shifted_output:
                 shifted_output_seq = np.zeros(output_shape, dtype="int8")
                 for i in range(output_kmer_count):
-                    kmer = output_kmers[i]
                     shifted_output_seq[i][0] = ONE_HOT_ENCODING_IDX_MAP["!"]
-                    for j in range(output_kmer_length):
-                        encoding = ONE_HOT_ENCODING_IDX_MAP[kmer[j]]
-                        if j + 1 < output_kmer_length:
-                            shifted_output_seq[i][j + 1] = encoding
+                shifted_output_seq[:, 1:output_kmer_length] = output_seq[:, 0:output_kmer_length-1]
             else:
                 shifted_output_seq = np.array([])
         else:
