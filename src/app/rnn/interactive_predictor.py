@@ -34,7 +34,7 @@ def main():
         input_one_hot_cube = one_hot_encoder.encode_sequences(input_seq)
         print("One-Hot Encoded kmer: " + str(input_one_hot_cube))
 
-        decoded_prediction = rnn_helper.predict(input_one_hot_cube, model, prediction_length)
+        decoded_prediction, basewise_probabilities = rnn_helper.predict(input_one_hot_cube, model, prediction_length)
 
         print("Predicted: " + np.array_str(decoded_prediction[0]) + " from " + kmer)
 

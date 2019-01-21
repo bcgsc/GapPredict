@@ -8,10 +8,10 @@ from onehot.OneHotMatrix import OneHotMatrixDecoder
 def predict(X, model, bases_to_predict):
     decoder = OneHotMatrixDecoder(bases_to_predict)
 
-    predicted_output = model.predict(X)
+    basewise_probabilities = model.predict(X)
 
-    decoded_predictions = decoder.decode_sequences(predicted_output)
-    return decoded_predictions
+    decoded_predictions = decoder.decode_sequences(basewise_probabilities)
+    return decoded_predictions, basewise_probabilities
 
 def predict_and_validate(input, output_seq_cube, model, bases_to_predict):
     decoder = OneHotMatrixDecoder(bases_to_predict)
@@ -20,7 +20,7 @@ def predict_and_validate(input, output_seq_cube, model, bases_to_predict):
     start_time = time.time()
     decoded_actual_output = decoder.decode_sequences(output_seq_cube)
 
-    decoded_predictions = predict(input, model, bases_to_predict)
+    decoded_predictions, basewise_probabilities = predict(input, model, bases_to_predict)
     end_time = time.time()
     print("Predicting took " + str(end_time - start_time) + "s")
 
