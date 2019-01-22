@@ -88,7 +88,7 @@ def main():
         print("Matches: " + str(matches))
         print("Mean Match: " + str(mean_match))
 
-        predicted_string = predicted_sequence
+        predicted_string = current_sequence
     elif implementation == 3:
         prediction_length = 1
         remaining_length = output_length
