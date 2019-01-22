@@ -7,6 +7,8 @@ from onehot.OneHotMatrix import OneHotMatrixEncoder
 from predict.rnn.KerasLSTMModel import KerasLSTMModel
 from preprocess.SequenceImporter import SequenceImporter
 from preprocess.SequenceMatchCalculator import SequenceMatchCalculator
+from viz.SequenceRegenerationViz import SequenceRegenerationViz
+import constants.RnnEncodingConstants as CONSTANTS
 
 import numpy as np
 
@@ -15,6 +17,7 @@ def main():
     importer = SequenceImporter()
     validator = SequenceMatchCalculator()
     label_encoder = KmerLabelEncoder()
+    viz = SequenceRegenerationViz()
 
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
     sequence = importer.import_fasta([path])[0]
@@ -26,7 +29,8 @@ def main():
     input = sequence[0:input_length]
     bases_to_predict = sequence[input_length:sequence_length]
 
-    implementation = 1
+    implementation = 2
+    basewise_probabilities = np.zeros((len(bases_to_predict), len(CONSTANTS.ONE_HOT_ENCODING)))
 
     if implementation == 1:
         prediction_length = output_length
@@ -41,7 +45,7 @@ def main():
         input_one_hot_cube = one_hot_encoder.encode_sequences(input_seq)
         print("One-Hot Encoded kmer: " + str(input_one_hot_cube))
 
-        decoded_prediction = rnn_helper.predict(input_one_hot_cube, model, prediction_length)
+        decoded_prediction, probabilities = rnn_helper.predict(input_one_hot_cube, model, prediction_length)
 
         print("Predicted: " + np.array_str(decoded_prediction[0]) + " from " + input)
 
@@ -49,6 +53,9 @@ def main():
         mean_match = np.mean(matches)
         print("Matches: " + str(matches))
         print("Mean Match: " + str(mean_match))
+
+        predicted_string = input + "".join(decoded_prediction[0])
+        basewise_probabilities = probabilities[0]
     elif implementation == 2:
         prediction_length = 1
         remaining_length = output_length
@@ -67,8 +74,9 @@ def main():
 
             input_one_hot_cube = one_hot_encoder.encode_sequences(input_seq)
 
-            decoded_prediction = rnn_helper.predict(input_one_hot_cube, model, prediction_length)
+            decoded_prediction, probabilities = rnn_helper.predict(input_one_hot_cube, model, prediction_length)
             current_sequence += decoded_prediction[0][0]
+            basewise_probabilities[lower_bound] = probabilities[0][0]
 
             remaining_length -= 1
             lower_bound += 1
@@ -79,6 +87,8 @@ def main():
         mean_match = np.mean(matches)
         print("Matches: " + str(matches))
         print("Mean Match: " + str(mean_match))
+
+        predicted_string = predicted_sequence
     elif implementation == 3:
         prediction_length = 1
         remaining_length = output_length
@@ -95,8 +105,9 @@ def main():
             one_hot_encoder = OneHotMatrixEncoder(length)
             input_one_hot_cube = one_hot_encoder.encode_sequences(input_seq)
 
-            decoded_prediction = rnn_helper.predict(input_one_hot_cube, model, prediction_length)
+            decoded_prediction, probabilities = rnn_helper.predict(input_one_hot_cube, model, prediction_length)
             current_sequence += decoded_prediction[0][0]
+            basewise_probabilities[length - input_length] = probabilities[0][0]
 
             remaining_length -= 1
             length += 1
@@ -107,6 +118,13 @@ def main():
         print("Matches: " + str(matches))
         print("Mean Match: " + str(mean_match))
 
+        predicted_string = current_sequence
+
+    correct_index_vector = label_encoder.encode_kmers([bases_to_predict], [], [])[0][0]
+
+    viz.compare_sequences(sequence, predicted_string, input_length)
+    viz.top_base_probability_plot(basewise_probabilities, correct_index_vector)
+    viz.sliding_window_average_plot(matches)
 
 if __name__ == "__main__":
     main()
