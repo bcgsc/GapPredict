@@ -8,6 +8,7 @@ import app.app_helper as helper
 import numpy as np
 from predict.heuristic.HashModel import HashModel
 from preprocess.SequenceMatchCalculator import SequenceMatchCalculator
+from preprocess.SequenceImporter import SequenceImporter
 
 def main():
     include_reverse_complement = True
@@ -16,7 +17,7 @@ def main():
     spacing = 0
     unique = False
 
-    training_paths = ['../data/ecoli_contigs/ecoli-0-400.fastq', '../data/ecoli_contigs/ecoli-600-1000.fastq']
+    training_paths = ['../data/ecoli_contigs/ecoli_contig_1000.fastq']
     input_kmers_train, output_kmers_train = helper.extract_kmers(training_paths, input_length,
                                                                                         spacing, bases_to_predict,
                                                                                         include_reverse_complement,
@@ -51,6 +52,36 @@ def main():
     end_time = time.time()
 
     print("Validation took " + str(end_time - start_time) + "s")
+
+    # FASTA prediction
+    importer = SequenceImporter()
+    path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
+    sequence = importer.import_fasta([path])[0]
+    sequence_length = len(sequence)
+
+    input = sequence[0:input_length]
+    bases_to_predict = sequence[input_length:sequence_length]
+    output_length = sequence_length - input_length
+    remaining_length = output_length
+
+    current_sequence = str(input)
+    lower_bound = 0
+    upper_bound = lower_bound + input_length
+    while remaining_length > 0:
+        seed = current_sequence[lower_bound:upper_bound]
+
+        prediction = model.predict([seed])
+        current_sequence += prediction[0]
+
+        remaining_length -= 1
+        lower_bound += 1
+        upper_bound += 1
+
+    predicted_sequence = current_sequence[input_length:sequence_length]
+    matches = validator.compare_sequences(predicted_sequence, bases_to_predict)
+    mean_match = np.mean(matches)
+    print("Matches: " + str(matches))
+    print("Mean Match: " + str(mean_match))
 
 if __name__ == "__main__":
     main()
