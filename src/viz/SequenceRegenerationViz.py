@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\'
+
 class SequenceRegenerationViz:
     def compare_sequences(self, actual, predicted, seed_length):
         length_to_compare_to = min(len(actual), len(predicted))
@@ -18,13 +20,16 @@ class SequenceRegenerationViz:
             else:
                 comparison_string += "X"
 
-        print("ACTUAL")
-        print()
-        print(actual)
-        print(comparison_string)
-        print(predicted)
-        print()
-        print("PREDICTED")
+        file = open(root_path + 'align.txt', 'w')
+
+        file.write("ACTUAL\n")
+        file.write('\n')
+        file.write(actual + '\n')
+        file.write(comparison_string + '\n')
+        file.write(predicted + '\n')
+        file.write('\n')
+        file.write('PREDICTED\n')
+        file.close()
 
     def sliding_window_average_plot(self, correctness_vector, window_length=10):
         bases = len(correctness_vector)
@@ -39,9 +44,8 @@ class SequenceRegenerationViz:
             averages[i] = average
 
         plt.figure()
-        label = 'sliding_window_probability'
         plt.plot(position, averages)
-        plt.savefig(label + '.png')
+        plt.savefig(root_path + 'sliding_window_probability.png')
         plt.clf()
 
     def top_base_probability_plot(self, class_probabilities, correct_index_vector, top=2):
@@ -62,12 +66,12 @@ class SequenceRegenerationViz:
 
         for i in range(top):
             plt.figure()
-            label = 'top_' + str(i+1) + '_probability'
+            label = root_path + 'top_' + str(i+1) + '_probability'
             plt.scatter(position, y[i])
             plt.savefig(label + '.png')
             plt.clf()
 
         plt.figure()
         plt.scatter(position, correct_base_probability)
-        plt.savefig('correct_base_probability.png')
+        plt.savefig(root_path + 'correct_base_probability.png')
         plt.clf()
