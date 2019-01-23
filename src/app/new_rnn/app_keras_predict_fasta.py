@@ -33,7 +33,7 @@ def main():
     embedding_dim = 25
     latent_dim = 100
 
-    implementation = 3
+    implementation = 2
 
     basewise_probabilities = np.zeros((len(bases_to_predict), len(CONSTANTS.ONE_HOT_ENCODING)))
 

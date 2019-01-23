@@ -6,13 +6,9 @@ import time
 from predict.new_rnn.SingleLSTMModel import SingleLSTMModel
 from preprocess.SequenceImporter import SequenceImporter
 
-import numpy as np
-
-
 def main():
     include_reverse_complement = True
     min_seed_length = 26
-    bases_to_predict = 1
 
     arguments = sys.argv[1:]
     paths = arguments if len(arguments) > 0 else ['../data/ecoli_contigs/ecoli_contig_1000.fastq']
