@@ -45,6 +45,7 @@ class SequenceRegenerationViz:
 
         plt.figure()
         plt.plot(position, averages)
+        plt.ylim(0, 1)
         plt.savefig(root_path + 'sliding_window_probability.png')
         plt.clf()
 
@@ -68,10 +69,12 @@ class SequenceRegenerationViz:
             plt.figure()
             label = root_path + 'top_' + str(i+1) + '_probability'
             plt.scatter(position, y[i])
+            plt.ylim(0, 1)
             plt.savefig(label + '.png')
             plt.clf()
 
         plt.figure()
         plt.scatter(position, correct_base_probability)
+        plt.ylim(0, 1)
         plt.savefig(root_path + 'correct_base_probability.png')
         plt.clf()
