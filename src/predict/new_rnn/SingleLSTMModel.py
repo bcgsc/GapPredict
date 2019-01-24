@@ -50,6 +50,10 @@ class SingleLSTMModel:
         generator = DataGenerator(X, self.min_seed_length, self.batch_size, log_samples=self.log_samples)
         self.model.fit_generator(generator, epochs=self.epochs)
 
+    def reset_states(self):
+        if self.model is not None:
+            self.model.reset_states()
+
     def save_weights(self, path):
         if self.model is not None:
             self.model.save_weights(path)
