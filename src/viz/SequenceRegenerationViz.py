@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+#TODO: perhaps fix this and make it dynamic
 root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\'
 
 class SequenceRegenerationViz:
@@ -20,7 +21,7 @@ class SequenceRegenerationViz:
             else:
                 comparison_string += "X"
 
-        file = open(root_path + 'align.txt', 'w')
+        file = open(root_path + 'align.txt', 'w+')
 
         file.write("ACTUAL\n")
         file.write('\n')
