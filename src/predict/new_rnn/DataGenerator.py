@@ -6,6 +6,7 @@ from onehot.OneHotVector import OneHotVectorEncoder
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 output_file = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\predict\\new_rnn\\out\\training.csv'
+#output_file = '/home/echen/Desktop/Projects/Sealer_NN/src/predict/new_rnn/out/training.csv'
 
 class DataGenerator(keras.utils.Sequence):
     def __init__(self, reads, min_seed_length, batch_size=64, log_samples=False):
