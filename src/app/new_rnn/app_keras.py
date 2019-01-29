@@ -15,7 +15,7 @@ def main():
     importer = SequenceImporter()
     reads = importer.import_fastq(paths, include_reverse_complement)
 
-    model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=False, batch_size=128, epochs=100, embedding_dim=25, latent_dim=100, with_gpu=True)
+    model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=False, batch_size=128, epochs=100, embedding_dim=25, latent_dim=100, with_gpu=True, log_samples=True)
 
     start_time = time.time()
     model.fit(reads)

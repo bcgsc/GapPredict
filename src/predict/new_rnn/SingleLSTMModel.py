@@ -28,7 +28,7 @@ class SingleLSTMModel:
                            loss='categorical_crossentropy',
                            metrics=['accuracy'])
 
-    def __init__(self, min_seed_length, batch_size=64, stateful=False, epochs=100, embedding_dim=25, latent_dim=100, with_gpu=True):
+    def __init__(self, min_seed_length, batch_size=64, stateful=False, epochs=100, embedding_dim=25, latent_dim=100, with_gpu=True, log_samples=True):
         self.encoding = CONSTANTS.ONE_HOT_ENCODING
         encoding_length = self.encoding.shape[1]
 
@@ -41,12 +41,13 @@ class SingleLSTMModel:
         self.one_hot_encoding_length = encoding_length
         self.one_hot_decoding_length = encoding_length
         self.min_seed_length = min_seed_length
+        self.log_samples = log_samples
         self._initialize_models()
 
         print(self.model.summary())
 
     def fit(self, X):
-        generator = DataGenerator(X, self.min_seed_length, self.batch_size)
+        generator = DataGenerator(X, self.min_seed_length, self.batch_size, log_samples=self.log_samples)
         self.model.fit_generator(generator, epochs=self.epochs)
 
     def save_weights(self, path):
