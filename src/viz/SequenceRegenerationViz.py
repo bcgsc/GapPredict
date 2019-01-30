@@ -41,7 +41,7 @@ class SequenceRegenerationViz:
             file.write(padding + comparison_string + '\n')
             file.write(padding + predicted_sequence + '\n')
             file.write('\n')
-            file.write('Mean Match: ' + str(round(np.mean(matches), 1)) + '\n')
+            file.write('Mean Match: ' + str(round(np.mean(matches),2)) + '\n')
             if first_mismatch_idx is not None:
                 file.write('First Mismatch: ' + str(first_mismatch_idx) + '\n')
             file.write('\n')
@@ -76,7 +76,7 @@ class SequenceRegenerationViz:
         file.write(predicted + '\n')
         file.write('\n')
         file.write('PREDICTED\n')
-        file.write('Mean Match: ' + str(round(np.mean(matches)), 1) +'\n')
+        file.write('Mean Match: ' + str(round(np.mean(matches), 2)) +'\n')
         if first_mismatch_idx is not None:
             file.write('First Mismatch: ' + str(first_mismatch_idx) + '\n')
         file.close()
