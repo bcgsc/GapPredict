@@ -20,7 +20,6 @@ def main():
 
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
     sequence = importer.import_fasta([path])[0]
-    sequence_length = len(sequence)
 
     embedding_dim = 25
     latent_dim = 100
@@ -36,21 +35,32 @@ def main():
     elif implementation == IMP_CONSTANTS.EXTENDING_SEQUENCE_PREDICTION:
         model = SingleLSTMModel(min_seed_length=min_seed_length, embedding_dim=embedding_dim, latent_dim=latent_dim,
                                 with_gpu=True)
-
     model.load_weights('../weights/my_model_weights.h5')
+    results = helper.regenerate_sequence_with_reseeding(implementation, min_seed_length, model, sequence)
 
-    predicted_string_with_seed, basewise_probabilities = helper.regenerate_sequence(implementation, min_seed_length, model, sequence)
+    alignment_data = []
 
-    predicted_sequence = predicted_string_with_seed[min_seed_length:sequence_length]
-    actual_sequence = sequence[min_seed_length:sequence_length]
+    for i in range(len(results)):
+        tuple = results[i]
+        predicted_sequence = tuple[0]
+        reference_sequence = tuple[1]
+        basewise_probabilities = tuple[2]
+        current_lower_bound = tuple[3]
 
-    matches = validator.compare_sequences(predicted_sequence, actual_sequence)
+        seedless_predicted_sequence = predicted_sequence[min_seed_length:]
+        seedless_reference_sequence = reference_sequence[min_seed_length:]
 
-    correct_index_vector = label_encoder.encode_kmers([actual_sequence], [], [])[0][0]
+        matches = validator.compare_sequences(seedless_predicted_sequence, seedless_reference_sequence)
 
-    viz.compare_sequences(sequence, predicted_string_with_seed, min_seed_length, matches)
-    viz.top_base_probability_plot(basewise_probabilities, correct_index_vector, offset=min_seed_length)
-    viz.sliding_window_average_plot(matches, offset=min_seed_length)
+        correct_index_vector = label_encoder.encode_kmers([seedless_reference_sequence], [], [])[0][0]
+
+        viz.top_base_probability_plot(basewise_probabilities, correct_index_vector, offset=current_lower_bound+min_seed_length, id=str(i)+"_")
+        viz.sliding_window_average_plot(matches, offset=current_lower_bound+min_seed_length, id=str(i)+"_")
+
+        alignment_tuple = (predicted_sequence, matches, current_lower_bound)
+        alignment_data.append(alignment_tuple)
+
+    viz.compare_multiple_sequences(sequence, alignment_data, min_seed_length)
 
 
 if __name__ == "__main__":
