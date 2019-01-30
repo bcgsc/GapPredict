@@ -100,3 +100,43 @@ def regenerate_sequence(implementation, min_seed_length, model, full_sequence):
             remaining_length -= 1
             length += 1
     return current_sequence, basewise_probabilities
+
+def regenerate_sequence_second_choice(implementation, min_seed_length, model, full_sequence):
+    reverse_encoding = CONSTANTS.REVERSE_INTEGER_ENCODING
+    label_encoder = KmerLabelEncoder()
+    prediction_length = 1
+    one_hot_decoder = OneHotVectorDecoder(prediction_length, encoding_constants=CONSTANTS)
+
+    sequence_length = len(full_sequence)
+    start_string = full_sequence[0:min_seed_length]
+
+    bases_to_predict = sequence_length - min_seed_length
+
+    basewise_probabilities = np.zeros((bases_to_predict, len(CONSTANTS.ONE_HOT_ENCODING)))
+
+    remaining_length = bases_to_predict
+    if implementation == IMP_CONSTANTS.SINGLE_BASE_PREDICTION:
+        current_sequence = str(start_string)
+        length = min_seed_length
+
+        seed = current_sequence[0:length - 1]
+        input_seq = label_encoder.encode_kmers([seed], [], with_shifted_output=False)[0]
+        model.predict(input_seq)
+        while remaining_length > 0:
+            base = current_sequence[length-1:length]
+            base_encoding = label_encoder.encode_kmers([base], [], with_shifted_output=False)[0]
+
+            prediction = model.predict(base_encoding)[0]
+            decoded_prediction = reverse_encoding[_second_largest_idx(prediction)]
+            current_sequence += decoded_prediction
+            basewise_probabilities[length - min_seed_length] = prediction
+
+            remaining_length -= 1
+            length += 1
+    return current_sequence, basewise_probabilities
+
+def _second_largest_idx(array):
+    copy = np.copy(array)
+    largest_idx = np.argmax(copy)
+    copy[largest_idx] = 0
+    return np.argmax(copy)
