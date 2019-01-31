@@ -19,7 +19,11 @@ def main():
     label_encoder = KmerLabelEncoder()
 
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
+    static_offset = 0
     sequence = importer.import_fasta([path])[0]
+    sequence_length = len(sequence)
+
+    offset_sequence = sequence[static_offset:sequence_length]
 
     embedding_dim = 25
     latent_dim = 100
@@ -36,7 +40,7 @@ def main():
         model = SingleLSTMModel(min_seed_length=min_seed_length, embedding_dim=embedding_dim, latent_dim=latent_dim,
                                 with_gpu=True)
     model.load_weights('../weights/my_model_weights.h5')
-    results = helper.regenerate_sequence_with_reseeding(implementation, min_seed_length, model, sequence)
+    results = helper.regenerate_sequence_with_reseeding(implementation, min_seed_length, model, offset_sequence)
 
     alignment_data = []
 
@@ -54,16 +58,16 @@ def main():
 
         correct_index_vector = label_encoder.encode_kmers([seedless_reference_sequence], [], [])[0][0]
 
-        viz.top_base_probability_plot(basewise_probabilities, correct_index_vector, offset=current_lower_bound+min_seed_length, id=str(i)+"_")
-        viz.sliding_window_average_plot(matches, offset=current_lower_bound+min_seed_length, id=str(i)+"_")
+        viz.top_base_probability_plot(basewise_probabilities, correct_index_vector, offset=static_offset+current_lower_bound+min_seed_length, id=str(i)+"_")
+        viz.sliding_window_average_plot(matches, offset=static_offset+current_lower_bound+min_seed_length, id=str(i)+"_")
 
         top_base_probability = np.max(basewise_probabilities, axis=1)
-        viz.sliding_window_average_plot(top_base_probability, offset=current_lower_bound+min_seed_length, id=str(i)+"_rnn_top_prediction_")
+        viz.sliding_window_average_plot(top_base_probability, offset=static_offset+current_lower_bound+min_seed_length, id=str(i)+"_rnn_top_prediction_")
 
         alignment_tuple = (predicted_sequence, matches, current_lower_bound)
         alignment_data.append(alignment_tuple)
 
-    viz.compare_multiple_sequences(sequence, alignment_data, min_seed_length)
+    viz.compare_multiple_sequences(sequence, alignment_data, min_seed_length, static_offset)
 
 
 if __name__ == "__main__":
