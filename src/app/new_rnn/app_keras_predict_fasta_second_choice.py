@@ -29,10 +29,13 @@ def main():
     if implementation == IMP_CONSTANTS.SINGLE_BASE_PREDICTION:
         model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=True, batch_size=1, embedding_dim=embedding_dim, latent_dim=latent_dim,
                                 with_gpu=True)
+    sampler_model = SingleLSTMModel(min_seed_length=min_seed_length, embedding_dim=embedding_dim, latent_dim=latent_dim,
+                                        with_gpu=True)
 
     model.load_weights('../weights/my_model_weights.h5')
+    sampler_model.load_weights('../weights/my_model_weights.h5')
 
-    predicted_string_with_seed, basewise_probabilities = helper.regenerate_sequence_second_choice(implementation, min_seed_length, model, sequence)
+    predicted_string_with_seed, basewise_probabilities = helper.regenerate_sequence_second_choice(implementation, min_seed_length, model, sampler_model, sequence)
 
     predicted_sequence = predicted_string_with_seed[min_seed_length:sequence_length]
     actual_sequence = sequence[min_seed_length:sequence_length]
