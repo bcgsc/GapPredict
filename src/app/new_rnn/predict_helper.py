@@ -101,11 +101,9 @@ def regenerate_sequence(implementation, min_seed_length, model, full_sequence):
             length += 1
     return current_sequence, basewise_probabilities
 
-def regenerate_sequence_second_choice(implementation, min_seed_length, model, full_sequence):
+def regenerate_sequence_second_choice(implementation, min_seed_length, model, sampler_model, full_sequence):
     reverse_encoding = CONSTANTS.REVERSE_INTEGER_ENCODING
     label_encoder = KmerLabelEncoder()
-    prediction_length = 1
-    one_hot_decoder = OneHotVectorDecoder(prediction_length, encoding_constants=CONSTANTS)
 
     sequence_length = len(full_sequence)
     start_string = full_sequence[0:min_seed_length]
@@ -127,16 +125,35 @@ def regenerate_sequence_second_choice(implementation, min_seed_length, model, fu
             base_encoding = label_encoder.encode_kmers([base], [], with_shifted_output=False)[0]
 
             prediction = model.predict(base_encoding)[0]
-            decoded_prediction = reverse_encoding[_second_largest_idx(prediction)]
-            current_sequence += decoded_prediction
+            best_prediction = reverse_encoding[_nth_largest_idx(prediction, 1)]
+            second_best_prediction = reverse_encoding[_nth_largest_idx(prediction, 2)]
+            chosen_prediction = _branch_and_choose(best_prediction, second_best_prediction, current_sequence, sampler_model)
+            current_sequence += chosen_prediction
             basewise_probabilities[length - min_seed_length] = prediction
 
             remaining_length -= 1
             length += 1
     return current_sequence, basewise_probabilities
 
-def _second_largest_idx(array):
+def _nth_largest_idx(array, n):
     copy = np.copy(array)
-    largest_idx = np.argmax(copy)
-    copy[largest_idx] = 0
+    for i in range(n-1):
+        largest_idx = np.argmax(copy)
+        copy[largest_idx] = 0
     return np.argmax(copy)
+
+def _branch_and_choose(best_prediction, second_best_prediction, current_sequence, model):
+    label_encoder = KmerLabelEncoder()
+    best_seed = str(current_sequence) + best_prediction
+    second_best_seed = str(current_sequence) + second_best_prediction
+
+    encoded_best_seed = label_encoder.encode_kmers([best_seed], [], with_shifted_output=False)[0]
+    encoded_second_best_seed = label_encoder.encode_kmers([second_best_seed], [], with_shifted_output=False)[0]
+
+    best_seed_prediction = model.predict(encoded_best_seed)[0]
+    second_best_seed_prediction = model.predict(encoded_second_best_seed)[0]
+
+    if np.max(best_seed_prediction) > np.max(second_best_seed_prediction):
+        return best_prediction
+    else:
+        return second_best_prediction
