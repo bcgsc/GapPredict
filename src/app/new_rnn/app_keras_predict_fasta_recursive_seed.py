@@ -9,7 +9,7 @@ from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 import app.new_rnn.predict_helper as helper
 import app.new_rnn.implementation_constants as IMP_CONSTANTS
-
+import numpy as np
 
 def main():
     min_seed_length = 26
@@ -56,6 +56,9 @@ def main():
 
         viz.top_base_probability_plot(basewise_probabilities, correct_index_vector, offset=current_lower_bound+min_seed_length, id=str(i)+"_")
         viz.sliding_window_average_plot(matches, offset=current_lower_bound+min_seed_length, id=str(i)+"_")
+
+        top_base_probability = np.max(basewise_probabilities, axis=1)
+        viz.sliding_window_average_plot(top_base_probability, offset=current_lower_bound+min_seed_length, id=str(i)+"_rnn_top_prediction_")
 
         alignment_tuple = (predicted_sequence, matches, current_lower_bound)
         alignment_data.append(alignment_tuple)
