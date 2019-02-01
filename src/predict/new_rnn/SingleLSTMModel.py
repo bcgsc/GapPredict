@@ -1,10 +1,11 @@
 import keras.optimizers as optimizers
-import numpy as np
 from keras.layers import CuDNNLSTM, LSTM, Embedding, Dense
 from keras.models import Sequential
 
 from constants import EncodingConstants as CONSTANTS
 from predict.new_rnn.DataGenerator import DataGenerator
+from predict.new_rnn.ValidationMetric import ValidationMetric
+
 
 class SingleLSTMModel:
     def _initialize_models(self):
@@ -28,7 +29,7 @@ class SingleLSTMModel:
                            loss='categorical_crossentropy',
                            metrics=['accuracy'])
 
-    def __init__(self, min_seed_length, batch_size=64, stateful=False, epochs=100, embedding_dim=25, latent_dim=100, with_gpu=True, log_samples=True):
+    def __init__(self, min_seed_length, batch_size=64, stateful=False, epochs=100, embedding_dim=25, latent_dim=100, with_gpu=True, log_samples=True, reference_sequence=None):
         self.encoding = CONSTANTS.ONE_HOT_ENCODING
         encoding_length = self.encoding.shape[1]
 
@@ -43,12 +44,16 @@ class SingleLSTMModel:
         self.min_seed_length = min_seed_length
         self.log_samples = log_samples
         self._initialize_models()
+        if reference_sequence is not None:
+            self.validator = ValidationMetric(self.model, reference_sequence, self.min_seed_length)
+            self.callbacks = [self.validator]
 
         print(self.model.summary())
 
     def fit(self, X):
         generator = DataGenerator(X, self.min_seed_length, self.batch_size, log_samples=self.log_samples)
-        self.model.fit_generator(generator, epochs=self.epochs)
+        history = self.model.fit_generator(generator, epochs=self.epochs, callbacks=self.callbacks)
+        return history
 
     def reset_states(self):
         if self.model is not None:
@@ -68,3 +73,6 @@ class SingleLSTMModel:
 
     def predict(self, X):
         return self.model.predict(X, batch_size=len(X))
+
+    def validation_history(self):
+        return self.validator.get_data()
