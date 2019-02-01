@@ -21,7 +21,7 @@ def main():
     label_encoder = KmerLabelEncoder()
 
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
-    static_offset = 0
+    static_offset = 350
     sequence = importer.import_fasta([path])[0]
     sequence_length = len(sequence)
 

@@ -15,11 +15,11 @@ class SequenceRegenerationViz:
             matches = alignment_tuple[1]
             current_lower_bound = alignment_tuple[2]
 
-            comparison_string = ""
-
+            static_padding = ""
             for j in range(static_offset):
-                comparison_string += " "
+                static_padding += " "
 
+            comparison_string = str(static_padding)
             for j in range(seed_length):
                 comparison_string += "S"
 
@@ -42,7 +42,7 @@ class SequenceRegenerationViz:
             file.write("SEQ " + str(i) + "\n")
             file.write(reference_sequence + '\n')
             file.write(padding + comparison_string + '\n')
-            file.write(padding + predicted_sequence + '\n')
+            file.write(static_padding + padding + predicted_sequence + '\n')
             file.write('\n')
             file.write('Mean Match: ' + str(round(np.mean(matches),2)) + '\n')
             if first_mismatch_idx is not None:
@@ -52,11 +52,12 @@ class SequenceRegenerationViz:
 
 
     def compare_sequences(self, actual, predicted, seed_length, matches, offset=0):
-        comparison_string = ""
+        static_padding = ""
 
         for i in range(offset):
-            comparison_string += " "
+            static_padding += " "
 
+        comparison_string = str(static_padding)
         for i in range(seed_length):
             comparison_string += "S"
 
@@ -79,7 +80,7 @@ class SequenceRegenerationViz:
         file.write('\n')
         file.write(actual + '\n')
         file.write(comparison_string + '\n')
-        file.write(predicted + '\n')
+        file.write(static_padding + predicted + '\n')
         file.write('\n')
         file.write('PREDICTED\n')
         file.write('Mean Match: ' + str(round(np.mean(matches), 2)) +'\n')
