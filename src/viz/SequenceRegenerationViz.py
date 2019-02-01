@@ -6,7 +6,7 @@ root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_N
 #root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/'
 
 class SequenceRegenerationViz:
-    def compare_multiple_sequences(self, reference_sequence, alignment_data, seed_length):
+    def compare_multiple_sequences(self, reference_sequence, alignment_data, seed_length, static_offset=0):
         file = open(root_path + 'multi_align.txt', 'w+')
 
         for i in range(len(alignment_data)):
@@ -16,6 +16,9 @@ class SequenceRegenerationViz:
             current_lower_bound = alignment_tuple[2]
 
             comparison_string = ""
+
+            for j in range(static_offset):
+                comparison_string += " "
 
             for j in range(seed_length):
                 comparison_string += "S"
@@ -48,8 +51,11 @@ class SequenceRegenerationViz:
         file.close()
 
 
-    def compare_sequences(self, actual, predicted, seed_length, matches):
+    def compare_sequences(self, actual, predicted, seed_length, matches, offset=0):
         comparison_string = ""
+
+        for i in range(offset):
+            comparison_string += " "
 
         for i in range(seed_length):
             comparison_string += "S"
