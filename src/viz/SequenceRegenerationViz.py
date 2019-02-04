@@ -104,6 +104,8 @@ class SequenceRegenerationViz:
         plt.plot(position, averages)
         plt.ylim(0, 1.1)
         plt.xlim(0, int(max(position) * 1.05))
+        plt.xlabel("Base Index")
+        plt.ylabel("Avg Probability (Window = " + str(window_length) + ")")
         plt.savefig(root_path + id + 'sliding_window_probability.png')
         plt.clf()
 
@@ -129,6 +131,8 @@ class SequenceRegenerationViz:
             plt.scatter(position, y[i])
             plt.ylim(0, 1.1)
             plt.xlim(0, int(max(position) * 1.05))
+            plt.xlabel("Base Index")
+            plt.ylabel("Probability")
             plt.savefig(label + '.png')
             plt.clf()
 
@@ -136,5 +140,7 @@ class SequenceRegenerationViz:
         plt.scatter(position, correct_base_probability)
         plt.ylim(0, 1.1)
         plt.xlim(0, int(max(position) * 1.05))
+        plt.xlabel("Base Index")
+        plt.ylabel("Probability")
         plt.savefig(root_path + id + 'correct_base_probability.png')
         plt.clf()
