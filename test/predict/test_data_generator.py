@@ -15,8 +15,8 @@ class TestDataGenerator(TestCase):
         self.reads = SequenceImporter().import_fastq(['data/sample.fastq'])
         self.error_reads = SequenceImporter().import_fastq(['data/sample_with_errors.fastq'])
         self.batch_size = 4
-        self.generator = DataGenerator(self.reads, 26, batch_size=self.batch_size, log_samples=True)
-        self.error_generator = DataGenerator(self.error_reads, 26, batch_size=self.batch_size, log_samples=True)
+        self.generator = DataGenerator(self.reads, 26, batch_size=self.batch_size, log_samples=False)
+        self.error_generator = DataGenerator(self.error_reads, 26, batch_size=self.batch_size, log_samples=False, spacing=10)
         self.encoder = KmerLabelEncoder()
 
     def test_process_batch(self):
@@ -63,9 +63,9 @@ class TestDataGenerator(TestCase):
         batch = self.error_reads[batch_idx]
         expected_batch = np.array([
             "GCCGCTGGCTTTACGCTATATCCGGTGGCGATGGNATGGGCTTGCGAGAAAGTTGAACATCATCAACTGGTGGC",
-            "GTAAGGCCTGGTTCATCGCCACCAGTTGATGATGTTCAACTTTCTCGCAANCCCATGCCATCGCCAC",
+            "GTAAGGCCTGGTTCATCGCCACCAGTTGATGATGTTCAACTTTCTCGCAAGCCCATGCCATCGCNAC",
             "CCTNGGTGCCGCTGGCTTTACGCTATATCCGGTGGCGATGGCATGGGCTTGCGAGAAAGTTGAACATCATCAACTGGTGGCGATGAACCAGGCCTTAC",
-            "TCATGGGTGTTTATCTTTGCACTCTATTTCACACCTTATGCGCTAATTGTTGGTCAGTTAGGCTCGACATTCAAAGATGGGAAGGGCGGGGTCAGTAN"
+            "TCATGGGTGTTTATCTTTGCACTCTATTTCACACCTTATGCGCTAATTGTTGGTCAGTTAGGCTCGACATTCAAANATGGGAAGGGCGGGGTCAGTAN"
 
         ], dtype='U98')
         np.testing.assert_array_equal(batch, expected_batch)
@@ -74,14 +74,12 @@ class TestDataGenerator(TestCase):
         input, output = self.error_generator.__getitem__(0)
 
         expected_processed_batch = np.array([
-            'TATATCCGGTGGCGATGGCATGGGCTTGCGAGAAAGTTGAACATCAT',
-            'GTGTTTATCTTTGCACTCTATTTCACACCTTATGCGCTAATTGTTGG'
+            'TGCCGCTGGCTTTACGCTATATCCGGTGGCGATGGCATGGGCTTGCG',
+            'TATTTCACACCTTATGCGCTAATTGTTGGTCAGTTAGGCTCGACATT'
         ])
         X = self.encoder.encode_kmers(expected_processed_batch, [], with_shifted_output=False)[0]
 
         np.testing.assert_array_equal(input, X)
-        np.testing.assert_array_equal(output, np.array([[0, 1, 0, 0],
-                                                        [0, 0, 0, 1]]))
-
-
+        np.testing.assert_array_equal(output, np.array([[1, 0, 0, 0],
+                                                        [1, 0, 0, 0]]))
 

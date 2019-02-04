@@ -9,16 +9,22 @@ output_file = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer
 #output_file = '/home/echen/Desktop/Projects/Sealer_NN/src/predict/new_rnn/out/training.csv'
 
 class DataGenerator(keras.utils.Sequence):
-    def __init__(self, reads, min_seed_length, batch_size=64, log_samples=False):
-        self.reads = reads
+    def __init__(self, reads, min_seed_length, batch_size=64, spacing=0, log_samples=False):
         self.batch_size = batch_size
         self.min_seed_length = min_seed_length
         self.encoder = OneHotVectorEncoder(1, encoding_constants=CONSTANTS)
         self.label_encoder = KmerLabelEncoder()
         self.output_length = 1
         self.log_samples = log_samples
+        self.spacing = spacing
         if self.log_samples:
             self._clean_output_file()
+        self.reads = np.array(list(filter(lambda x:self._above_minimum_length(x), reads)))
+
+    def _above_minimum_length(self, read):
+        minimum_length = self.min_seed_length + self.spacing + self.output_length
+        return len(read) >= minimum_length
+
 
     def __len__(self):
         return int(np.ceil(len(self.reads)/self.batch_size))
@@ -59,7 +65,7 @@ class DataGenerator(keras.utils.Sequence):
 
     def _process_batch(self, batch):
         min_kmer_length = min(list(map(lambda x:len(x), batch)))
-        input_length = np.random.randint(low=self.min_seed_length, high=min_kmer_length - self.output_length + 1)
+        input_length = np.random.randint(low=self.min_seed_length, high=min_kmer_length - self.spacing - self.output_length + 1)
 
         np_inputs, np_outputs = self._extract_random_input_output(batch, input_length)
 
@@ -74,16 +80,16 @@ class DataGenerator(keras.utils.Sequence):
         inputs = []
         outputs = []
 
-        total_length = input_length + self.output_length
+        total_length = input_length + self.spacing + self.output_length
         for i in range(len(batch)):
             read = batch[i]
             read_length = len(read)
             start_idx = np.random.randint(low=0, high=read_length - total_length + 1)
             subread = read[start_idx:start_idx + total_length]
+            input_subread = subread[0:input_length]
+            output_subread = subread[0 + input_length + self.spacing:total_length]
 
-            if self._validate_sequence(subread):
-                input_subread = subread[0:input_length]
-                output_subread = subread[0 + input_length:total_length]
+            if self._validate_sequence(input_subread) and self._validate_sequence(output_subread):
                 inputs.append(input_subread)
                 outputs.append(output_subread)
 
