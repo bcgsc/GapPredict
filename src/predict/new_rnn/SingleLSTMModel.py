@@ -29,7 +29,7 @@ class SingleLSTMModel:
                            loss='categorical_crossentropy',
                            metrics=['accuracy'])
 
-    def __init__(self, min_seed_length, batch_size=64, stateful=False, epochs=100, embedding_dim=25, latent_dim=100, with_gpu=True, log_samples=True, reference_sequence=None):
+    def __init__(self, min_seed_length, spacing=0, batch_size=64, stateful=False, epochs=100, embedding_dim=25, latent_dim=100, with_gpu=True, log_samples=True, reference_sequence=None):
         self.encoding = CONSTANTS.ONE_HOT_ENCODING
         encoding_length = self.encoding.shape[1]
 
@@ -43,15 +43,16 @@ class SingleLSTMModel:
         self.one_hot_decoding_length = encoding_length
         self.min_seed_length = min_seed_length
         self.log_samples = log_samples
+        self.spacing = spacing
         self._initialize_models()
         if reference_sequence is not None:
-            self.validator = ValidationMetric(self.model, reference_sequence, self.min_seed_length)
+            self.validator = ValidationMetric(self.model, reference_sequence, self.min_seed_length, self.spacing)
             self.callbacks = [self.validator]
 
         print(self.model.summary())
 
     def fit(self, X):
-        generator = DataGenerator(X, self.min_seed_length, self.batch_size, log_samples=self.log_samples)
+        generator = DataGenerator(X, self.min_seed_length, self.batch_size, log_samples=self.log_samples, spacing=self.spacing)
         history = self.model.fit_generator(generator, epochs=self.epochs, callbacks=self.callbacks)
         return history
 

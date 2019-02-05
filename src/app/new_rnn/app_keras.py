@@ -31,6 +31,7 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy):
 def main():
     include_reverse_complement = True
     min_seed_length = 26
+    spacing = 10
 
     arguments = sys.argv[1:]
     paths = arguments if len(arguments) > 0 else ['../data/ecoli_contigs/ecoli_contig_1000.fastq']
@@ -40,7 +41,7 @@ def main():
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
     reference_sequence = importer.import_fasta([path])[0]
 
-    model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=False, batch_size=128, epochs=100, embedding_dim=25, latent_dim=100, with_gpu=True, log_samples=True, reference_sequence=reference_sequence)
+    model = SingleLSTMModel(min_seed_length=min_seed_length, spacing=spacing, stateful=False, batch_size=128, epochs=100, embedding_dim=25, latent_dim=100, with_gpu=True, log_samples=True, reference_sequence=reference_sequence)
 
     start_time = time.time()
     history = model.fit(reads)
