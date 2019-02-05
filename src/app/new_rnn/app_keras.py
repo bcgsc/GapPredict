@@ -17,7 +17,7 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy):
     plt.xlabel('Epoch')
     plt.ylabel('Training Accuracy')
     plt.plot(epochs, training_accuracy)
-    plt.savefig('training_accuracy.png')
+    plt.savefig(root_path + 'training_accuracy.png')
     plt.clf()
 
     plt.figure()
@@ -25,7 +25,7 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy):
     plt.xlabel('Epoch')
     plt.ylabel('Fraction Until Mismatch')
     plt.plot(epochs, validation_metrics)
-    plt.savefig('percent_predicted_till_mismatch.png')
+    plt.savefig(root_path + 'percent_predicted_till_mismatch.png')
     plt.clf()
 
 def main():
