@@ -1,6 +1,10 @@
-nohup /usr/bin/time -pv /projects/btl/sanctuary/scripts/abyss-bloom.slurm 75 barcoded.fastq.gz &> log/k75.log &
-nohup /usr/bin/time -pv /projects/btl/sanctuary/scripts/abyss-bloom.slurm 85 barcoded.fastq.gz &> log/k85.log & 
-nohup /usr/bin/time -pv /projects/btl/sanctuary/scripts/abyss-bloom.slurm 95 barcoded.fastq.gz &> log/k95.log &
-nohup /usr/bin/time -pv /projects/btl/sanctuary/scripts/abyss-bloom.slurm 105 barcoded.fastq.gz &> log/k105.log &
-nohup /usr/bin/time -pv /projects/btl/sanctuary/scripts/abyss-bloom.slurm 115 barcoded.fastq.gz &> log/k115.log &
-nohup /usr/bin/time -pv /projects/btl/sanctuary/scripts/abyss-bloom.slurm 125 barcoded.fastq.gz &> log/k125.log &
+#!/bin/bash
+for i in {75..155..10}
+  do
+    nohup /usr/bin/time -pv /projects/btl/scratch/echen/scripts/abyss-bloom.slurm $i \
+    /projects/btl/datasets/hsapiens/NA12878-Illumina/NA12878_S1_L001_R1_001.fastq.gz \
+    /projects/btl/datasets/hsapiens/NA12878-Illumina/NA12878_S1_L001_R2_001.fastq.gz \
+    /projects/btl/datasets/hsapiens/NA12878-Illumina/NA12878_S1_L002_R1_001.fastq.gz \
+    /projects/btl/datasets/hsapiens/NA12878-Illumina/NA12878_S1_L002_R2_001.fastq.gz \
+    &> /projects/btl/scratch/echen/bloom_filters/log/k$i.log &
+  done
