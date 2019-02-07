@@ -12,7 +12,7 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy):
     #root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\'
     root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/'
 
-    plt.figure()
+    plt.figure(figsize=(24, 18))
     plt.ylim(0, 1.1)
     plt.xlabel('Epoch')
     plt.ylabel('Training Accuracy')
@@ -20,7 +20,7 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy):
     plt.savefig(root_path + 'training_accuracy.png')
     plt.clf()
 
-    plt.figure()
+    plt.figure(figsize=(24, 18))
     plt.ylim(0, 1.1)
     plt.xlabel('Epoch')
     plt.ylabel('Fraction Until Mismatch')
@@ -41,7 +41,7 @@ def main():
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
     reference_sequence = importer.import_fasta([path])[0]
 
-    model = SingleLSTMModel(min_seed_length=min_seed_length, spacing=spacing, stateful=False, batch_size=128, epochs=1000, embedding_dim=25, latent_dim=100, with_gpu=True, log_samples=True, reference_sequence=reference_sequence)
+    model = SingleLSTMModel(min_seed_length=min_seed_length, spacing=spacing, stateful=False, batch_size=128, epochs=100, embedding_dim=25, latent_dim=100, with_gpu=True, log_samples=True, reference_sequence=reference_sequence)
 
     start_time = time.time()
     history = model.fit(reads)
