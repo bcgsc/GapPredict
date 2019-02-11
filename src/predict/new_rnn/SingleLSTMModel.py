@@ -4,8 +4,6 @@ from keras.models import Sequential
 
 from constants import EncodingConstants as CONSTANTS
 from predict.new_rnn.DataGenerator import DataGenerator
-from predict.new_rnn.ValidationMetric import ValidationMetric
-
 
 class SingleLSTMModel:
     def _initialize_models(self):
@@ -46,7 +44,8 @@ class SingleLSTMModel:
         self.spacing = spacing
         self._initialize_models()
         if reference_sequence is not None:
-            self.validator = ValidationMetric(self.model, reference_sequence, self.min_seed_length, self.spacing)
+            from predict.new_rnn.ValidationMetric import ValidationMetric
+            self.validator = ValidationMetric(self.model, reference_sequence, self.min_seed_length, self.spacing, self.embedding_dim, self.latent_dim)
             self.callbacks = [self.validator]
 
         print(self.model.summary())
@@ -61,16 +60,16 @@ class SingleLSTMModel:
             self.model.reset_states()
 
     def save_weights(self, path):
-        if self.model is not None:
-            self.model.save_weights(path)
-        else:
-            print("No model")
+        self.model.save_weights(path)
 
     def load_weights(self, path):
-        if self.model is not None:
-            self.model.load_weights(path)
-        else:
-            print("No model")
+        self.model.load_weights(path)
+
+    def set_weights(self, weights):
+        self.model.set_weights(weights)
+
+    def get_weights(self, weights):
+        return self.model.get_weights()
 
     def predict(self, X):
         return self.model.predict(X, batch_size=len(X))

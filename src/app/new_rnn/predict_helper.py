@@ -5,7 +5,6 @@ import constants.EncodingConstants as CONSTANTS
 from onehot.OneHotVector import OneHotVectorDecoder
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
-
 def _first_mismatch(seq1, seq2):
     length = min(len(seq1), len(seq2))
     for i in range(length):
