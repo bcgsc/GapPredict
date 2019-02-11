@@ -4,13 +4,16 @@ sys.path.append('../../')
 import time
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 from predict.new_rnn.SingleLSTMModel import SingleLSTMModel
 from preprocess.SequenceImporter import SequenceImporter
 
 def _plot_training_validation(epochs, validation_metrics, training_accuracy):
-    #root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\'
-    root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/'
+    if os.name == 'nt':
+        root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\'
+    else:
+        root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/'
 
     plt.figure(figsize=(24, 18))
     plt.ylim(0, 1.1)

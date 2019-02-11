@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
-#TODO: perhaps fix this and make it dynamic
-root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\'
-#root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/'
+if os.name == 'nt':
+    root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\'
+else:
+    root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/'
 
 class SequenceRegenerationViz:
     def compare_multiple_sequences(self, reference_sequence, alignment_data, seed_length, static_offset=0):
