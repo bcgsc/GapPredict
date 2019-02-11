@@ -9,7 +9,7 @@ output_file = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer
 #output_file = '/home/echen/Desktop/Projects/Sealer_NN/src/predict/new_rnn/out/training.csv'
 
 class DataGenerator(keras.utils.Sequence):
-    def __init__(self, reads, min_seed_length, batch_size=64, spacing=0, log_samples=False):
+    def __init__(self, reads, min_seed_length, batch_size=64, spacing=0, log_samples=False, log_training=False):
         self.batch_size = batch_size
         self.min_seed_length = min_seed_length
         self.encoder = OneHotVectorEncoder(1, encoding_constants=CONSTANTS)
@@ -17,14 +17,18 @@ class DataGenerator(keras.utils.Sequence):
         self.output_length = 1
         self.log_samples = log_samples
         self.spacing = spacing
+        self.log_training = log_training
+
+        if self.log_training:
+            self.batches = []
         if self.log_samples:
             self._clean_output_file()
+
         self.reads = np.array(list(filter(lambda x:self._above_minimum_length(x), reads)))
 
     def _above_minimum_length(self, read):
         minimum_length = self.min_seed_length + self.spacing + self.output_length
         return len(read) >= minimum_length
-
 
     def __len__(self):
         return int(np.ceil(len(self.reads)/self.batch_size))
@@ -74,7 +78,16 @@ class DataGenerator(keras.utils.Sequence):
 
         X, y = self.label_encoder.encode_kmers(np_inputs, np_outputs, with_shifted_output=False)[0:2]
         y = self.encoder.encode_sequences(y)
+
+        if self.log_training:
+            self.batches.append((X, y))
+
         return X, y
+
+    def _pop_earliest_batch(self):
+        batch = self.batches[0]
+        self.batches = self.batches[1:]
+        return batch
 
     def _extract_random_input_output(self, batch, input_length):
         inputs = []
