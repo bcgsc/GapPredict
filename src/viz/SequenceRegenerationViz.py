@@ -72,7 +72,7 @@ class SequenceRegenerationViz:
         first_mismatch_idx = None
         for i in range(len(matches)):
             if not matches[i]:
-                first_mismatch_idx = seed_length + i
+                first_mismatch_idx = offset + seed_length + i
                 break
 
 
