@@ -54,61 +54,36 @@ def main():
     epochs = 1000
     replicates = 2
 
-    # (128, 1024, 1024)
+    # (128, 1024, 1024) probably don't go further than this
     # doubling latent_dim seems to increase # parameters by ~3X
     # doubling embedding_dim seems to increase # parameters by ~1.5X
-    #batch_size, embedding_dim, latent_dim
-    hyperparameters = [
-        (64, 32, 32),
-        (64, 32, 128),
-        (64, 32, 512),
-        (64, 128, 32),
-        (64, 128, 128),
-        (64, 128, 512),
-        (64, 512, 32),
-        (64, 512, 128),
-        (64, 512, 512),
-        (128, 32, 32),
-        (128, 32, 128),
-        (128, 32, 512),
-        (128, 128, 32),
-        (128, 128, 128),
-        (128, 128, 512),
-        (128, 512, 32),
-        (128, 512, 128),
-        (128, 512, 512),
-        (256, 32, 32),
-        (256, 32, 128),
-        (256, 32, 512),
-        (256, 128, 32),
-        (256, 128, 128),
-        (256, 128, 512),
-        (256, 512, 32),
-        (256, 512, 128),
-        (256, 512, 512)
-    ]
-    for hyperparameter in hyperparameters:
-        batch_size = hyperparameter[0]
-        embedding_dim = hyperparameter[1]
-        latent_dim = hyperparameter[2]
+    batch_sizes = [64, 128, 256]
+    embedding_dims = [32, 128, 512]
+    latent_dims = [32, 128, 512]
+    for batch_size in batch_sizes:
+        for embedding_dim in embedding_dims:
+            for latent_dim in latent_dims:
+                for i in range(replicates):
+                    model = SingleLSTMModel(min_seed_length=min_seed_length, spacing=spacing, stateful=False,
+                                            batch_size=batch_size,
+                                            epochs=epochs, embedding_dim=embedding_dim, latent_dim=latent_dim,
+                                            with_gpu=with_gpu,
+                                            log_samples=log_samples, reference_sequence=reference_sequence)
 
-        for i in range(replicates):
-            model = SingleLSTMModel(min_seed_length=min_seed_length, spacing=spacing, stateful=False, batch_size=batch_size,
-                                    epochs=epochs, embedding_dim=embedding_dim, latent_dim=latent_dim, with_gpu=with_gpu,
-                                    log_samples=log_samples, reference_sequence=reference_sequence)
+                    start_time = time.time()
+                    history = model.fit(reads)
+                    model.save_weights('../weights/my_model_weights.h5')
+                    end_time = time.time()
+                    print("Fitting took " + str(end_time - start_time) + "s")
 
-            start_time = time.time()
-            history = model.fit(reads)
-            model.save_weights('../weights/my_model_weights.h5')
-            end_time = time.time()
-            print("Fitting took " + str(end_time - start_time) + "s")
+                    epoch_axis = np.array(history.epoch)
+                    validation_metrics = model.validation_history()[0]
+                    training_accuracy = np.array(history.history['acc'])
+                    directory_name = "BS_" + str(batch_size) + "_ED_" + str(embedding_dim) + "_LD_" + str(latent_dim) \
+                                     + "_E_" + str(epochs) + "_R_" + str(i)
+                    _plot_training_validation(epoch_axis, validation_metrics, training_accuracy, directory_name)
 
-            epoch_axis = np.array(history.epoch)
-            validation_metrics = model.validation_history()[0]
-            training_accuracy = np.array(history.history['acc'])
-            directory_name = "BS_" + str(batch_size) + "_ED_" + str(embedding_dim) + "_LD_" + str(latent_dim) \
-                             + "_E_" + str(epochs) + "_R_" + str(i)
-            _plot_training_validation(epoch_axis, validation_metrics, training_accuracy, directory_name)
+
 
 if __name__ == "__main__":
     main()
