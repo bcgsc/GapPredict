@@ -1,11 +1,12 @@
-import numpy as np
 import keras as keras
+import numpy as np
+
 
 class TrainingMetric(keras.callbacks.Callback):
-    def __init__(self, model):
-        self.model = model
-        self.data = []
-        self.epochs = []
+    def __init__(self, epochs):
+        self.num_epochs = epochs
+        self.data = np.zeros(self.num_epochs)
+        self.epochs = np.arange(self.num_epochs)
         self.batches = []
 
     def set_generator(self, generator):
@@ -29,8 +30,7 @@ class TrainingMetric(keras.callbacks.Callback):
             batch_sizes[i] = len(input)
 
         training_metric = np.sum(accuracy_per_batch*batch_sizes)/np.sum(batch_sizes)
-        self.data.append(training_metric)
-        self.epochs.append(epoch)
+        self.data[epoch] = training_metric
         self.batches = []
 
     def on_batch_end(self, batch, logs=None):
@@ -38,6 +38,4 @@ class TrainingMetric(keras.callbacks.Callback):
         self.batches.append(batch)
 
     def get_data(self):
-        return np.array(self.data), np.array(self.epochs)
-
-
+        return self.data, self.epochs
