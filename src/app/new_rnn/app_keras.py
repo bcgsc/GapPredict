@@ -51,15 +51,16 @@ def main():
 
     with_gpu=True
     log_samples=False
-    epochs = 1000
-    replicates = 2
+    log_training=False
+    epochs = 100
+    replicates = 1
 
     # (128, 1024, 1024) probably don't go further than this
     # doubling latent_dim seems to increase # parameters by ~3X
     # doubling embedding_dim seems to increase # parameters by ~1.5X
-    batch_sizes = [64, 128, 256]
-    embedding_dims = [32, 128, 512]
-    latent_dims = [32, 128, 512]
+    batch_sizes = [128]
+    embedding_dims = [128]
+    latent_dims = [64]
     for batch_size in batch_sizes:
         for embedding_dim in embedding_dims:
             for latent_dim in latent_dims:
@@ -68,7 +69,8 @@ def main():
                                             batch_size=batch_size,
                                             epochs=epochs, embedding_dim=embedding_dim, latent_dim=latent_dim,
                                             with_gpu=with_gpu,
-                                            log_samples=log_samples, reference_sequence=reference_sequence)
+                                            log_samples=log_samples, reference_sequence=reference_sequence,
+                                            log_training=log_training)
 
                     start_time = time.time()
                     history = model.fit(reads)
@@ -78,7 +80,10 @@ def main():
 
                     epoch_axis = np.array(history.epoch)
                     validation_metrics = model.validation_history()[0]
-                    training_accuracy = np.array(history.history['acc'])
+                    if log_training:
+                        training_accuracy = model.training_history()[0]
+                    else:
+                        training_accuracy = np.array(history.history['acc'])
                     directory_name = "BS_" + str(batch_size) + "_ED_" + str(embedding_dim) + "_LD_" + str(latent_dim) \
                                      + "_E_" + str(epochs) + "_R_" + str(i)
                     _plot_training_validation(epoch_axis, validation_metrics, training_accuracy, directory_name)
