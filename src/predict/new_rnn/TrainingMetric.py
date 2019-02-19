@@ -6,7 +6,6 @@ class TrainingMetric(keras.callbacks.Callback):
     def __init__(self, epochs):
         self.num_epochs = epochs
         self.data = np.zeros(self.num_epochs)
-        self.epochs = np.arange(self.num_epochs)
         self.batches = []
 
     def set_generator(self, generator):
@@ -38,4 +37,4 @@ class TrainingMetric(keras.callbacks.Callback):
         self.batches.append(batch)
 
     def get_data(self):
-        return self.data, self.epochs
+        return self.data
