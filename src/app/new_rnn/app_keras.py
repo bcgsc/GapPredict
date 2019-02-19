@@ -9,7 +9,7 @@ import os
 from predict.new_rnn.SingleLSTMModel import SingleLSTMModel
 from preprocess.SequenceImporter import SequenceImporter
 
-def _plot_training_validation(epochs, validation_metrics, training_accuracy, directory_name):
+def _plot_training_validation(epochs, validation_metrics, training_accuracy, directory_name, legend=None, best_epoch=None):
     if os.name == 'nt':
         root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\training_metrics\\'
         root_path += directory_name + '\\'
@@ -32,7 +32,14 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy, dir
     plt.ylim(0, 1.1)
     plt.xlabel('Epoch')
     plt.ylabel('Fraction Until Mismatch')
-    plt.plot(epochs, validation_metrics)
+    num_epochs, num_seqs = validation_metrics.shape
+    for i in range(num_seqs):
+        metric = validation_metrics[:, i]
+        plt.plot(epochs, metric)
+    if best_epoch is not None:
+        plt.axvline(best_epoch, color='r', linestyle='dashed')
+    if legend is not None:
+        plt.legend(legend+["Best Epoch"], loc='upper left')
     plt.savefig(root_path + 'percent_predicted_till_mismatch.png')
     plt.clf()
 
@@ -48,6 +55,7 @@ def main():
 
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
     reference_sequence = importer.import_fasta([path])[0]
+    reference_sequences = [reference_sequence[0:500], reference_sequence[500:]]
 
     with_gpu=True
     log_samples=False
@@ -55,6 +63,7 @@ def main():
     epochs = 1000
     replicates = 1
     early_stopping=True
+    legend=['Left Flank', 'Right Flank'] if len(reference_sequences) > 1 else None
 
     # (128, 1024, 1024) probably don't go further than this
     # doubling latent_dim seems to increase # parameters by ~3X
@@ -70,7 +79,7 @@ def main():
                                             batch_size=batch_size,
                                             epochs=epochs, embedding_dim=embedding_dim, latent_dim=latent_dim,
                                             with_gpu=with_gpu, log_samples=log_samples,
-                                            reference_sequence=reference_sequence,
+                                            reference_sequences=reference_sequences,
                                             log_training=log_training, early_stopping=early_stopping)
 
                     start_time = time.time()
@@ -79,15 +88,19 @@ def main():
                     end_time = time.time()
                     print("Fitting took " + str(end_time - start_time) + "s")
 
-                    epoch_axis = np.array(history.epoch)
-                    validation_metrics = model.validation_history()[0]
+                    epoch_axis = np.arange(epochs)
+                    validation_metrics = model.validation_history()
                     if log_training:
-                        training_accuracy = model.training_history()[0]
+                        training_accuracy = model.training_history()
                     else:
-                        training_accuracy = np.array(history.history['acc'])
+                        training_accuracy = np.zeros(epochs)
+                        accuracy = history.history['acc']
+                        training_accuracy[0:len(accuracy)] = accuracy[0:]
+                    if early_stopping:
+                        best_epoch = model.get_best_epoch()
                     directory_name = "BS_" + str(batch_size) + "_ED_" + str(embedding_dim) + "_LD_" + str(latent_dim) \
                                      + "_E_" + str(epochs) + "_R_" + str(i)
-                    _plot_training_validation(epoch_axis, validation_metrics, training_accuracy, directory_name)
+                    _plot_training_validation(epoch_axis, validation_metrics, training_accuracy, directory_name, legend=legend, best_epoch=best_epoch)
 
 
 
