@@ -26,7 +26,6 @@ def main():
     sequence_length = len(sequence)
 
     offset_sequence = sequence[static_offset:sequence_length]
-    offset_sequence_length = len(offset_sequence)
 
     embedding_dim = 128
     latent_dim = 64
@@ -47,8 +46,8 @@ def main():
 
     predicted_string_with_seed, basewise_probabilities = helper.regenerate_sequence(implementation, min_seed_length, model, offset_sequence)
 
-    predicted_sequence = predicted_string_with_seed[min_seed_length:offset_sequence_length]
-    actual_sequence = offset_sequence[min_seed_length:offset_sequence_length]
+    predicted_sequence = predicted_string_with_seed[min_seed_length:]
+    actual_sequence = offset_sequence[min_seed_length:]
 
     matches = validator.compare_sequences(predicted_sequence, actual_sequence)
 
