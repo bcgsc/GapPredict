@@ -52,8 +52,9 @@ def main():
     with_gpu=True
     log_samples=False
     log_training=False
-    epochs = 100
+    epochs = 1000
     replicates = 1
+    early_stopping=True
 
     # (128, 1024, 1024) probably don't go further than this
     # doubling latent_dim seems to increase # parameters by ~3X
@@ -68,9 +69,9 @@ def main():
                     model = SingleLSTMModel(min_seed_length=min_seed_length, spacing=spacing, stateful=False,
                                             batch_size=batch_size,
                                             epochs=epochs, embedding_dim=embedding_dim, latent_dim=latent_dim,
-                                            with_gpu=with_gpu,
-                                            log_samples=log_samples, reference_sequence=reference_sequence,
-                                            log_training=log_training)
+                                            with_gpu=with_gpu, log_samples=log_samples,
+                                            reference_sequence=reference_sequence,
+                                            log_training=log_training, early_stopping=early_stopping)
 
                     start_time = time.time()
                     history = model.fit(reads)

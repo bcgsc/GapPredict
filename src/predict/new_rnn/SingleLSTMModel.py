@@ -4,6 +4,8 @@ from keras.models import Sequential
 
 from constants import EncodingConstants as CONSTANTS
 from predict.new_rnn.DataGenerator import DataGenerator
+from predict.new_rnn.TrainingMetric import TrainingMetric
+
 
 class SingleLSTMModel:
     def _initialize_models(self):
@@ -27,7 +29,9 @@ class SingleLSTMModel:
                            loss='categorical_crossentropy',
                            metrics=['accuracy'])
 
-    def __init__(self, min_seed_length, spacing=0, batch_size=64, stateful=False, epochs=100, embedding_dim=25, latent_dim=100, with_gpu=True, log_samples=True, reference_sequence=None, log_training=False):
+    def __init__(self, min_seed_length, spacing=0, batch_size=64, stateful=False, epochs=100, embedding_dim=25,
+                 latent_dim=100, with_gpu=True, log_samples=True, reference_sequence=None, log_training=False,
+                 early_stopping=False):
         self.encoding = CONSTANTS.ONE_HOT_ENCODING
         encoding_length = self.encoding.shape[1]
 
@@ -42,17 +46,18 @@ class SingleLSTMModel:
         self.min_seed_length = min_seed_length
         self.log_samples = log_samples
         self.spacing = spacing
+        self.early_stopping = early_stopping
         self._initialize_models()
 
         self.log_training = log_training
         self.callbacks = []
         if reference_sequence is not None:
             from predict.new_rnn.ValidationMetric import ValidationMetric
-            self.validator = ValidationMetric(self.model, reference_sequence, self.min_seed_length, self.spacing, self.embedding_dim, self.latent_dim)
+            self.validator = ValidationMetric(reference_sequence, self.min_seed_length, self.spacing,
+                                              self.embedding_dim, self.latent_dim, self.epochs, self.early_stopping)
             self.callbacks.append(self.validator)
         if self.log_training:
-            from predict.new_rnn.TrainingMetric import TrainingMetric
-            self.train_validator = TrainingMetric(self.model)
+            self.train_validator = TrainingMetric(self.epochs)
             self.callbacks.append(self.train_validator)
 
         print(self.model.summary())
@@ -77,7 +82,7 @@ class SingleLSTMModel:
     def set_weights(self, weights):
         self.model.set_weights(weights)
 
-    def get_weights(self, weights):
+    def get_weights(self):
         return self.model.get_weights()
 
     def predict(self, X):
