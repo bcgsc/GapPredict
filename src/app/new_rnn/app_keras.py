@@ -49,15 +49,15 @@ def main():
     spacing = 0
 
     arguments = sys.argv[1:]
-    paths = arguments if len(arguments) > 0 else ['../data/ecoli_contigs/ecoli_contig_1000.fastq']
+    paths = arguments if len(arguments) > 0 else ['../data/real_gaps/7238340:33119-35277.fastq']
     importer = SequenceImporter()
     reads = importer.import_fastq(paths, include_reverse_complement)
 
-    path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
-    reference_sequence = importer.import_fasta([path])[0]
-    gap_length = 200
+    path = '../data/real_gaps/7238340:33119-35277.fasta'
+    raw_reference_sequence = importer.import_fasta([path])
+    gap_length = 34277-34119
     #TODO: this is hard coded right now
-    reference_sequences = [reference_sequence[:400] + "N" * gap_length + reference_sequence[600:]]
+    reference_sequences = [raw_reference_sequence[0] + "N" * gap_length + raw_reference_sequence[1]]
 
     with_gpu=True
     log_samples=False
@@ -71,8 +71,8 @@ def main():
     # doubling latent_dim seems to increase # parameters by ~3X
     # doubling embedding_dim seems to increase # parameters by ~1.5X
     batch_sizes = [128]
-    embedding_dims = [128]
-    latent_dims = [64]
+    embedding_dims = [256]
+    latent_dims = [128]
 
     reverse=False
     if reverse:

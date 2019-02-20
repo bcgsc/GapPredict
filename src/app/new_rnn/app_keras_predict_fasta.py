@@ -17,12 +17,12 @@ def main():
     min_seed_length = 26
     importer = SequenceImporter()
 
-    path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
+    path =  '../data/real_gaps/7238340:33119-35277.fasta'
     static_offset = 0
-    sequence = importer.import_fasta([path])[0]
+    sequence = importer.import_fasta([path])
 
-    embedding_dim = 128
-    latent_dim = 64
+    embedding_dim = 256
+    latent_dim = 128
 
     implementation = IMP_CONSTANTS.SINGLE_BASE_PREDICTION
     if implementation == IMP_CONSTANTS.STATIC_PREDICTION:
@@ -46,7 +46,8 @@ def main():
 
 def predict(model, implementation, min_seed_length, full_sequence, static_offset, directory=None):
     sequence = str(full_sequence)
-    sequence = sequence[:400] + "N"*200 + sequence[600:] #TODO: hardcoded gap
+    gap_length = 34277-34119
+    sequence = sequence[0] + "N" * gap_length + sequence[1]
     validator = SequenceMatchCalculator()
     viz = SequenceRegenerationViz(directory)
     label_encoder = KmerLabelEncoder()
@@ -59,7 +60,7 @@ def predict(model, implementation, min_seed_length, full_sequence, static_offset
 
     matches = validator.compare_sequences(predicted_sequence, actual_sequence)
     full_offset = static_offset+min_seed_length
-    decoy_actual_sequence = actual_sequence[:400-full_offset] + predicted_sequence[400-full_offset:600-full_offset] + actual_sequence[600-full_offset:] #TODO: hardcoded gap
+    decoy_actual_sequence = actual_sequence[:1000-full_offset] + predicted_sequence[1000-full_offset:1000+gap_length-full_offset] + actual_sequence[1000+gap_length-full_offset:] #TODO: hardcoded gap
     correct_index_vector = label_encoder.encode_kmers([decoy_actual_sequence], [], [])[0][0]
 
     viz.compare_sequences(sequence, predicted_string_with_seed, min_seed_length, matches, offset=static_offset)
