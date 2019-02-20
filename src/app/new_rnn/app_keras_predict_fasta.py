@@ -37,16 +37,20 @@ def main():
                                 with_gpu=True)
 
     model.load_weights('../weights/forward/my_model_weights.h5')
-    predict(model, implementation, min_seed_length, sequence, static_offset, directory="forward")
+    forward_predict = predict(model, implementation, min_seed_length, sequence, static_offset, directory="forward")
     model.load_weights('../weights/reverse/my_model_weights.h5')
-    predict(model, implementation, min_seed_length, sequence[::-1], static_offset, directory="reverse")
+    reverse_predict = predict(model, implementation, min_seed_length, sequence[::-1], static_offset, directory="reverse")
 
-def predict(model, implementation, min_seed_length, sequence, static_offset, directory=None):
+    viz = SequenceRegenerationViz()
+    viz.align_bidirectional_prediction(forward_predict, reverse_predict, min_seed_length, static_offset)
+
+def predict(model, implementation, min_seed_length, full_sequence, static_offset, directory=None):
+    sequence = str(full_sequence)
+    sequence = sequence[:400] + "N"*200 + sequence[600:] #TODO: hardcoded gap
     validator = SequenceMatchCalculator()
     viz = SequenceRegenerationViz(directory)
     label_encoder = KmerLabelEncoder()
-    sequence_length = len(sequence)
-    offset_sequence = sequence[static_offset:sequence_length]
+    offset_sequence = sequence[static_offset:]
 
     predicted_string_with_seed, basewise_probabilities = helper.regenerate_sequence(implementation, min_seed_length, model, offset_sequence)
 
@@ -54,8 +58,9 @@ def predict(model, implementation, min_seed_length, sequence, static_offset, dir
     actual_sequence = offset_sequence[min_seed_length:]
 
     matches = validator.compare_sequences(predicted_sequence, actual_sequence)
-
-    correct_index_vector = label_encoder.encode_kmers([actual_sequence], [], [])[0][0]
+    full_offset = static_offset+min_seed_length
+    decoy_actual_sequence = actual_sequence[:400-full_offset] + predicted_sequence[400-full_offset:600-full_offset] + actual_sequence[600-full_offset:] #TODO: hardcoded gap
+    correct_index_vector = label_encoder.encode_kmers([decoy_actual_sequence], [], [])[0][0]
 
     viz.compare_sequences(sequence, predicted_string_with_seed, min_seed_length, matches, offset=static_offset)
     viz.top_base_probability_plot(basewise_probabilities, correct_index_vector, offset=min_seed_length+static_offset)
@@ -63,6 +68,7 @@ def predict(model, implementation, min_seed_length, sequence, static_offset, dir
 
     top_base_probability = np.max(basewise_probabilities, axis=1)
     viz.sliding_window_average_plot(top_base_probability, offset=min_seed_length+static_offset, id="rnn_top_prediction_")
+    return predicted_string_with_seed
 
 if __name__ == "__main__":
     main()

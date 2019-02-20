@@ -128,6 +128,18 @@ class TestSequenceMatchCalculator(TestCase):
             [[]]
         ))
 
+    def test_compare_with_wild_card_sequence(self):
+        np.testing.assert_array_equal(np.array([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]), self.matcher.compare_sequences(
+            [["N", "N", "N", "N", "N", "N", "N", "N", "N", "N"]],
+            [["A", "T", "G", "C", "A", "T", "G", "C", "A", "T"]]
+        ))
+
+    def test_compare_with_partial_wild_card_sequence(self):
+        np.testing.assert_array_equal(np.array([[1, 0, 1, 0, 1, 1, 0, 1, 1, 1]]), self.matcher.compare_sequences(
+            [["A", "T", "G", "C", "A", "T", "G", "C", "A", "T"]],
+            [["A", "G", "G", "A", "A", "T", "C", "C", "N", "N"]]
+        ))
+
     def test_compare_same_sequences(self):
         np.testing.assert_array_equal(np.array([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]), self.matcher.compare_sequences(
             [["A", "T", "G", "C", "A", "T", "G", "C", "A", "T"]],
