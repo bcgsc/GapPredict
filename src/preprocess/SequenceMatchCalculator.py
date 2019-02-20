@@ -27,7 +27,7 @@ class SequenceMatchCalculator:
                 continue
             for j in range(seq_length):
                 base_idx = j + start_idx
-                if seq1[base_idx] == seq2[base_idx]:
+                if seq1[base_idx] == seq2[base_idx] or seq1[base_idx] == "N" or seq2[base_idx] == "N":
                     match_matrix[i][j] = 1
 
         return match_matrix

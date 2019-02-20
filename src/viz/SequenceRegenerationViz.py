@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from preprocess.SequenceMatchCalculator import SequenceMatchCalculator
 import numpy as np
 import os
 
@@ -17,6 +18,59 @@ class SequenceRegenerationViz:
 
         if not os.path.exists(self.root_path):
             os.makedirs(self.root_path)
+
+    def align_bidirectional_prediction(self, forward_prediction, reverse_prediction, seed_length, static_offset=0):
+        validator = SequenceMatchCalculator()
+        file = open(self.root_path + 'bidirectional_align.txt', 'w+')
+        padded_forward_pred = "N" * static_offset + forward_prediction
+        padded_reverse_pred = ("N" * static_offset + reverse_prediction)[::-1]
+        matches = validator.compare_sequences(padded_forward_pred, padded_reverse_pred)
+
+        forward_comparison_string = ""
+        reverse_comparison_string = ""
+
+        #TODO: refactor!
+        for i in range(static_offset):
+            if matches[i]:
+                forward_comparison_string += "-"
+            else:
+                forward_comparison_string += "X"
+
+        for i in range(seed_length):
+            forward_comparison_string += "S"
+
+        for i in range(len(forward_prediction) - seed_length):
+            if matches[i+static_offset+seed_length]:
+                forward_comparison_string += "-"
+            else:
+                forward_comparison_string += "X"
+
+        for i in range(len(reverse_prediction) - seed_length):
+            if matches[i]:
+                reverse_comparison_string += "-"
+            else:
+                reverse_comparison_string += "X"
+
+        for i in range(seed_length):
+            reverse_comparison_string += "S"
+
+        for i in range(static_offset):
+            if matches[i+len(reverse_prediction)+seed_length]:
+                reverse_comparison_string += "-"
+            else:
+                reverse_comparison_string += "X"
+
+        file.write("FORWARD\n")
+        file.write('\n')
+        file.write(padded_forward_pred + '\n')
+        file.write(forward_comparison_string + '\n')
+        file.write(reverse_comparison_string + '\n')
+        file.write(padded_reverse_pred + '\n')
+        file.write('\n')
+        file.write('REVERSE\n')
+        meaningful_matches = matches[static_offset:len(matches)-static_offset]
+        file.write('Mean Match: ' + str(round(np.mean(meaningful_matches), 2)) +'\n')
+        file.close()
 
 
     def compare_multiple_sequences(self, reference_sequence, alignment_data, seed_length, static_offset=0):

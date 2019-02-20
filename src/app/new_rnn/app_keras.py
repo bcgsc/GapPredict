@@ -55,7 +55,9 @@ def main():
 
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
     reference_sequence = importer.import_fasta([path])[0]
-    reference_sequences = [reference_sequence[0:500], reference_sequence[500:]]
+    gap_length = 200
+    #TODO: this is hard coded right now
+    reference_sequences = [reference_sequence[:400] + "N" * gap_length + reference_sequence[600:]]
 
     with_gpu=True
     log_samples=False
@@ -72,7 +74,7 @@ def main():
     embedding_dims = [128]
     latent_dims = [64]
 
-    reverse=True
+    reverse=False
     if reverse:
         for i in range(len(reference_sequences)):
             reference_sequences[i] = reference_sequences[i][::-1]

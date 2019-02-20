@@ -131,7 +131,7 @@ class ValidationMetric(keras.callbacks.Callback):
                 decoded_prediction = one_hot_decoder.decode_sequences(prediction)[0][0]
                 bases_predicted = bases_to_predict - remaining_length
                 expected_base = string_to_predict[bases_predicted]
-                if decoded_prediction != expected_base:
+                if expected_base != "N" and decoded_prediction != expected_base:
                     break
 
                 current_sequence += decoded_prediction
