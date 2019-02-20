@@ -16,16 +16,10 @@ import numpy as np
 def main():
     min_seed_length = 26
     importer = SequenceImporter()
-    validator = SequenceMatchCalculator()
-    viz = SequenceRegenerationViz()
-    label_encoder = KmerLabelEncoder()
 
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
     static_offset = 0
     sequence = importer.import_fasta([path])[0]
-    sequence_length = len(sequence)
-
-    offset_sequence = sequence[static_offset:sequence_length]
 
     embedding_dim = 128
     latent_dim = 64
@@ -42,7 +36,17 @@ def main():
         model = SingleLSTMModel(min_seed_length=min_seed_length, embedding_dim=embedding_dim, latent_dim=latent_dim,
                                 with_gpu=True)
 
-    model.load_weights('../weights/my_model_weights.h5')
+    model.load_weights('../weights/forward/my_model_weights.h5')
+    predict(model, implementation, min_seed_length, sequence, static_offset, directory="forward")
+    model.load_weights('../weights/reverse/my_model_weights.h5')
+    predict(model, implementation, min_seed_length, sequence[::-1], static_offset, directory="reverse")
+
+def predict(model, implementation, min_seed_length, sequence, static_offset, directory=None):
+    validator = SequenceMatchCalculator()
+    viz = SequenceRegenerationViz(directory)
+    label_encoder = KmerLabelEncoder()
+    sequence_length = len(sequence)
+    offset_sequence = sequence[static_offset:sequence_length]
 
     predicted_string_with_seed, basewise_probabilities = helper.regenerate_sequence(implementation, min_seed_length, model, offset_sequence)
 
@@ -59,7 +63,6 @@ def main():
 
     top_base_probability = np.max(basewise_probabilities, axis=1)
     viz.sliding_window_average_plot(top_base_probability, offset=min_seed_length+static_offset, id="rnn_top_prediction_")
-
 
 if __name__ == "__main__":
     main()

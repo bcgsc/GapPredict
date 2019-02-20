@@ -2,14 +2,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-if os.name == 'nt':
-    root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\'
-else:
-    root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/'
-
 class SequenceRegenerationViz:
+    def __init__(self, directory=None):
+        if os.name == 'nt':
+            self.root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\predict_results\\'
+        else:
+            self.root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/predict_results'
+
+        if directory is not None:
+            if os.name == 'nt':
+                self.root_path += directory + '\\'
+            else:
+                self.root_path += directory + '/'
+
+        if not os.path.exists(self.root_path):
+            os.makedirs(self.root_path)
+
+
     def compare_multiple_sequences(self, reference_sequence, alignment_data, seed_length, static_offset=0):
-        file = open(root_path + 'multi_align.txt', 'w+')
+        file = open(self.root_path + 'multi_align.txt', 'w+')
 
         for i in range(len(alignment_data)):
             alignment_tuple = alignment_data[i]
@@ -76,7 +87,7 @@ class SequenceRegenerationViz:
                 break
 
 
-        file = open(root_path + 'align.txt', 'w+')
+        file = open(self.root_path + 'align.txt', 'w+')
 
         file.write("ACTUAL\n")
         file.write('\n')
@@ -108,7 +119,7 @@ class SequenceRegenerationViz:
         plt.xlim(0, int(max(position) * 1.05))
         plt.xlabel("Base Index")
         plt.ylabel("Avg Probability (Window = " + str(window_length) + ")")
-        plt.savefig(root_path + id + 'sliding_window_probability.png')
+        plt.savefig(self.root_path + id + 'sliding_window_probability.png')
         plt.clf()
 
     def top_base_probability_plot(self, class_probabilities, correct_index_vector, top=2, offset=0, id=""):
@@ -129,7 +140,7 @@ class SequenceRegenerationViz:
 
         for i in range(top):
             plt.figure()
-            label = root_path + id + 'top_' + str(i+1) + '_probability'
+            label = self.root_path + id + 'top_' + str(i+1) + '_probability'
             plt.scatter(position, y[i])
             plt.ylim(0, 1.1)
             plt.xlim(0, int(max(position) * 1.05))
@@ -144,5 +155,5 @@ class SequenceRegenerationViz:
         plt.xlim(0, int(max(position) * 1.05))
         plt.xlabel("Base Index")
         plt.ylabel("Probability")
-        plt.savefig(root_path + id + 'correct_base_probability.png')
+        plt.savefig(self.root_path + id + 'correct_base_probability.png')
         plt.clf()
