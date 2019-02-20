@@ -71,6 +71,15 @@ def main():
     batch_sizes = [128]
     embedding_dims = [128]
     latent_dims = [64]
+
+    reverse=True
+    if reverse:
+        for i in range(len(reference_sequences)):
+            reference_sequences[i] = reference_sequences[i][::-1]
+
+        for i in range(len(reads)):
+            reads[i] = reads[i][::-1]
+
     for batch_size in batch_sizes:
         for embedding_dim in embedding_dims:
             for latent_dim in latent_dims:

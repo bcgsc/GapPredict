@@ -100,6 +100,7 @@ def regenerate_sequence(implementation, min_seed_length, model, full_sequence):
             lower_bound += 1
             upper_bound += 1
     elif implementation == IMP_CONSTANTS.SINGLE_BASE_PREDICTION:
+        model.reset_states()
         current_sequence = str(start_string)
         length = min_seed_length
 
