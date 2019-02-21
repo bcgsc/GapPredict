@@ -8,6 +8,7 @@ import os
 
 from predict.new_rnn.SingleLSTMModel import SingleLSTMModel
 from preprocess.SequenceImporter import SequenceImporter
+from preprocess.SequenceReverser import SequenceReverser
 
 def _plot_training_validation(epochs, validation_metrics, training_accuracy, directory_name, legend=None, best_epoch=None):
     if os.name == 'nt':
@@ -51,13 +52,12 @@ def main():
     arguments = sys.argv[1:]
     paths = arguments if len(arguments) > 0 else ['../data/ecoli_contigs/ecoli_contig_1000.fastq']
     importer = SequenceImporter()
+    reverse_complementer = SequenceReverser()
     reads = importer.import_fastq(paths, include_reverse_complement)
 
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
     reference_sequence = importer.import_fasta([path])[0]
-    gap_length = 200
-    #TODO: this is hard coded right now
-    reference_sequences = [reference_sequence[:400] + "N" * gap_length + reference_sequence[600:]]
+    reference_sequences = [reference_sequence, reverse_complementer.reverse_complement(reference_sequence)]
 
     with_gpu=True
     log_samples=False
@@ -65,7 +65,7 @@ def main():
     epochs = 1000
     replicates = 1
     early_stopping=True
-    legend=['Left Flank', 'Right Flank'] if len(reference_sequences) > 1 else None
+    legend=['Normal Polarity', 'Reverse Complement'] if len(reference_sequences) > 1 else None
 
     # (128, 1024, 1024) probably don't go further than this
     # doubling latent_dim seems to increase # parameters by ~3X
@@ -73,14 +73,6 @@ def main():
     batch_sizes = [128]
     embedding_dims = [128]
     latent_dims = [64]
-
-    reverse=False
-    if reverse:
-        for i in range(len(reference_sequences)):
-            reference_sequences[i] = reference_sequences[i][::-1]
-
-        for i in range(len(reads)):
-            reads[i] = reads[i][::-1]
 
     for batch_size in batch_sizes:
         for embedding_dim in embedding_dims:
