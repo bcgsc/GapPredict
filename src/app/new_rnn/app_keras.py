@@ -65,7 +65,7 @@ def main():
     epochs = 1000
     replicates = 1
     early_stopping=True
-    legend=['Normal Polarity', 'Reverse Complement'] if len(reference_sequences) > 1 else None
+    legend=['Mean Sequence']
 
     # (128, 1024, 1024) probably don't go further than this
     # doubling latent_dim seems to increase # parameters by ~3X
