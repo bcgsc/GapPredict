@@ -3,6 +3,7 @@ sys.path.append('../../')
 
 from predict.new_rnn.SingleLSTMModel import SingleLSTMModel
 from preprocess.SequenceImporter import SequenceImporter
+from preprocess.SequenceReverser import SequenceReverser
 from preprocess.SequenceMatchCalculator import SequenceMatchCalculator
 from viz.SequenceRegenerationViz import SequenceRegenerationViz
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
@@ -16,6 +17,7 @@ import numpy as np
 def main():
     min_seed_length = 26
     importer = SequenceImporter()
+    reverser = SequenceReverser()
 
     path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
     static_offset = 0
@@ -37,11 +39,12 @@ def main():
                                 with_gpu=True)
 
     model.load_weights('../weights/my_model_weights.h5')
+
     forward_predict = predict(model, implementation, min_seed_length, sequence, static_offset, directory="forward")
-    # reverse_predict = predict(model, implementation, min_seed_length, #TODO, static_offset, directory="reverse_complement")
-    #
-    # viz = SequenceRegenerationViz()
-    # viz.align_bidirectional_prediction(forward_predict, reverse_predict, min_seed_length, static_offset)
+    reverse_predict = predict(model, implementation, min_seed_length, reverser.reverse_complement(sequence), static_offset, directory="reverse_complement")
+
+    viz = SequenceRegenerationViz()
+    viz.align_complements(forward_predict, reverse_predict, min_seed_length, static_offset)
 
 def predict(model, implementation, min_seed_length, sequence, static_offset, directory=None):
     validator = SequenceMatchCalculator()

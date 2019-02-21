@@ -1,14 +1,17 @@
-import matplotlib.pyplot as plt
-from preprocess.SequenceMatchCalculator import SequenceMatchCalculator
-import numpy as np
 import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from preprocess.SequenceComplementCalculator import SequenceComplementCalculator
+
 
 class SequenceRegenerationViz:
     def __init__(self, directory=None):
         if os.name == 'nt':
             self.root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\predict_results\\'
         else:
-            self.root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/predict_results'
+            self.root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/predict_results/'
 
         if directory is not None:
             if os.name == 'nt':
@@ -19,46 +22,39 @@ class SequenceRegenerationViz:
         if not os.path.exists(self.root_path):
             os.makedirs(self.root_path)
 
-    def align_bidirectional_prediction(self, forward_prediction, reverse_prediction, seed_length, static_offset=0):
-        validator = SequenceMatchCalculator()
+    def _get_match_char(self, match):
+        if match:
+            return "-"
+        else:
+            return "X"
+
+    def align_complements(self, forward_prediction, reverse_complement, seed_length, static_offset=0):
+        complement_validator = SequenceComplementCalculator()
         file = open(self.root_path + 'bidirectional_align.txt', 'w+')
         padded_forward_pred = "N" * static_offset + forward_prediction
-        padded_reverse_pred = ("N" * static_offset + reverse_prediction)[::-1]
-        matches = validator.compare_sequences(padded_forward_pred, padded_reverse_pred)
+        padded_reverse_pred = ("N" * static_offset + reverse_complement)[::-1]
+        matches = complement_validator.compare_sequences(padded_forward_pred, padded_reverse_pred)
 
         forward_comparison_string = ""
         reverse_comparison_string = ""
 
-        #TODO: refactor!
         for i in range(static_offset):
-            if matches[i]:
-                forward_comparison_string += "-"
-            else:
-                forward_comparison_string += "X"
+            forward_comparison_string += self._get_match_char(matches[i])
 
         for i in range(seed_length):
             forward_comparison_string += "S"
 
         for i in range(len(forward_prediction) - seed_length):
-            if matches[i+static_offset+seed_length]:
-                forward_comparison_string += "-"
-            else:
-                forward_comparison_string += "X"
+            forward_comparison_string += self._get_match_char(matches[i + static_offset + seed_length])
 
-        for i in range(len(reverse_prediction) - seed_length):
-            if matches[i]:
-                reverse_comparison_string += "-"
-            else:
-                reverse_comparison_string += "X"
+        for i in range(len(reverse_complement) - seed_length):
+            reverse_comparison_string += self._get_match_char(matches[i])
 
         for i in range(seed_length):
             reverse_comparison_string += "S"
 
         for i in range(static_offset):
-            if matches[i+len(reverse_prediction)+seed_length]:
-                reverse_comparison_string += "-"
-            else:
-                reverse_comparison_string += "X"
+            reverse_comparison_string += self._get_match_char(matches[i + len(reverse_complement) + seed_length])
 
         file.write("FORWARD\n")
         file.write('\n')
@@ -67,7 +63,7 @@ class SequenceRegenerationViz:
         file.write(reverse_comparison_string + '\n')
         file.write(padded_reverse_pred + '\n')
         file.write('\n')
-        file.write('REVERSE\n')
+        file.write('REVERSE COMPLEMENT\n')
         meaningful_matches = matches[static_offset:len(matches)-static_offset]
         file.write('Mean Match: ' + str(round(np.mean(meaningful_matches), 2)) +'\n')
         file.close()
@@ -91,10 +87,7 @@ class SequenceRegenerationViz:
                 comparison_string += "S"
 
             for j in range(len(matches)):
-                if matches[j]:
-                    comparison_string += "-"
-                else:
-                    comparison_string += "X"
+                comparison_string += self._get_match_char(matches[j])
 
             first_mismatch_idx = None
             for j in range(len(matches)):
@@ -129,10 +122,7 @@ class SequenceRegenerationViz:
             comparison_string += "S"
 
         for i in range(len(matches)):
-            if matches[i]:
-                comparison_string += "-"
-            else:
-                comparison_string += "X"
+            comparison_string += self._get_match_char(matches[i])
 
         first_mismatch_idx = None
         for i in range(len(matches)):

@@ -1,12 +1,6 @@
+from constants.PreprocessConstants import COMPLEMENT_MAP as COMPLEMENT_MAP
 from models.ParsedFastqRecord import ParsedFastqRecord
 
-COMPLEMENT_MAP = {
-    "A": "T",
-    "T": "A",
-    "G": "C",
-    "C": "G",
-    "N": "N"
-}
 
 class SequenceReverser:
     def __init__(self):

@@ -21,12 +21,6 @@ class TestSequenceMatchCalculator(TestCase):
             ["TGCATGCATG"]
         ))
 
-    def test_compare_different_sequences_strings(self):
-        np.testing.assert_array_equal(np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]), self.matcher.compare_sequences(
-            ["ATGCATGCAT"],
-            ["TGCATGCATG"]
-        ))
-
     def test_compare_with_empty_sequence_strings(self):
         np.testing.assert_array_equal(np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]), self.matcher.compare_sequences(
             ["ATGCATGCAT"],
