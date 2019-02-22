@@ -29,6 +29,10 @@ class ValidationMetric(keras.callbacks.Callback):
     def _transfer_model_weights(self):
         self.validation_model.set_weights(self.model.get_weights())
 
+    def _weighted_mean(self, metrics):
+        lengths = np.array(list(map(lambda x:len(x), self.reference_seqs)))
+        return np.sum(metrics*lengths)/np.sum(lengths)
+
     def on_epoch_end(self, epoch, logs=None):
         self.validation_model.reset_states()
         self._transfer_model_weights()
@@ -38,13 +42,11 @@ class ValidationMetric(keras.callbacks.Callback):
             if self.best_epoch < 0:
                 best_mean_model_metric_so_far = -1
             else:
-                best_mean_model_metric_so_far = np.mean(self.data[self.best_epoch])
+                best_mean_model_metric_so_far = self._weighted_mean(self.data[self.best_epoch])
             #TODO: this will pick the first model with the highest validation metric but it seems pretty easy to reach 1.0 evenutally
             #TODO: perhaps it is worth also storing the weights for the model that reaches 1.0 and hangs onto it for the longest epochs to
             #TODO: compare, it tests whether a stable model is better than a model least likely to overfit
-
-            #TODO: is mean the right way to do it?
-            mean_current_metric = np.mean(validation_metrics)
+            mean_current_metric = self._weighted_mean(validation_metrics)
             if mean_current_metric > best_mean_model_metric_so_far:
                 self.model_weight_checkpoint = self.model.get_weights()
                 self.best_epoch = epoch
