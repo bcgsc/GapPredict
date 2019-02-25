@@ -16,14 +16,14 @@ class ValidationMetric(keras.callbacks.Callback):
         self.min_seed_length = min_seed_length
         self.spacing = spacing
         self.num_epochs = epochs
-        self.data = np.zeros((self.num_epochs, len(self.reference_seqs)))
+        self.data = []
         self.early_stopping = early_stopping
         self.optimistic = optimistic
         if self.optimistic:
             self.validator = SequenceMatchCalculator()
         if self.early_stopping:
             self.model_weight_checkpoint = None
-            self.patience = 300
+            self.patience = 200
             self.best_epoch = -1
 
     def _transfer_model_weights(self):
@@ -37,7 +37,7 @@ class ValidationMetric(keras.callbacks.Callback):
         self.validation_model.reset_states()
         self._transfer_model_weights()
         validation_metrics = self._percentage_matched() if self.optimistic else self._percentage_until_mismatch()
-        self.data[epoch] = validation_metrics
+        self.data.append(validation_metrics)
         if self.early_stopping:
             if self.best_epoch < 0:
                 best_mean_model_metric_so_far = -1
@@ -57,7 +57,7 @@ class ValidationMetric(keras.callbacks.Callback):
         self.model.set_weights(self.model_weight_checkpoint)
 
     def get_data(self):
-        return self.data
+        return np.array(self.data)
 
     def get_best_epoch(self):
         return self.best_epoch
