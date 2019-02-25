@@ -22,6 +22,16 @@ class SequenceRegenerationViz:
         if not os.path.exists(self.root_path):
             os.makedirs(self.root_path)
 
+    def _configure_plot(self):
+        figure_dimensions = (12, 9)
+        plt.figure(figsize=figure_dimensions)
+        plt.rc('xtick', labelsize=14)
+        plt.rc('ytick', labelsize=14)
+        font = {
+            'size': 16
+        }
+        plt.rc('font', **font)
+
     def _get_match_char(self, match):
         if match:
             return "-"
@@ -157,7 +167,7 @@ class SequenceRegenerationViz:
             average = np.mean(window)
             averages[i] = average
 
-        plt.figure()
+        self._configure_plot()
         plt.plot(position, averages)
         plt.ylim(0, 1.1)
         plt.xlim(0, int(max(position) * 1.05))
@@ -183,7 +193,7 @@ class SequenceRegenerationViz:
             correct_base_probability[i] = probability
 
         for i in range(top):
-            plt.figure()
+            self._configure_plot()
             label = self.root_path + id + 'top_' + str(i+1) + '_probability'
             plt.scatter(position, y[i])
             plt.ylim(0, 1.1)
@@ -193,7 +203,7 @@ class SequenceRegenerationViz:
             plt.savefig(label + '.png')
             plt.clf()
 
-        plt.figure()
+        self._configure_plot()
         plt.scatter(position, correct_base_probability)
         plt.ylim(0, 1.1)
         plt.xlim(0, int(max(position) * 1.05))

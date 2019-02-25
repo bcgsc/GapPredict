@@ -8,7 +8,6 @@ from viz.SequenceRegenerationViz import SequenceRegenerationViz
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 import app.new_rnn.predict_helper as helper
-import app.new_rnn.implementation_constants as IMP_CONSTANTS
 import numpy as np
 
 def main():
@@ -28,19 +27,10 @@ def main():
     embedding_dim = 25
     latent_dim = 100
 
-    implementation = IMP_CONSTANTS.SINGLE_BASE_PREDICTION
-    if implementation == IMP_CONSTANTS.STATIC_PREDICTION:
-        model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=False, embedding_dim=embedding_dim,
-                                latent_dim=latent_dim,
-                                with_gpu=True)
-    if implementation == IMP_CONSTANTS.SINGLE_BASE_PREDICTION:
-        model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=True, batch_size=1, embedding_dim=embedding_dim, latent_dim=latent_dim,
-                                with_gpu=True)
-    elif implementation == IMP_CONSTANTS.EXTENDING_SEQUENCE_PREDICTION:
-        model = SingleLSTMModel(min_seed_length=min_seed_length, embedding_dim=embedding_dim, latent_dim=latent_dim,
-                                with_gpu=True)
+    model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=True, batch_size=1, embedding_dim=embedding_dim,
+                            latent_dim=latent_dim, with_gpu=True)
     model.load_weights('../weights/my_model_weights.h5')
-    results = helper.regenerate_sequence_with_reseeding(implementation, min_seed_length, model, offset_sequence)
+    results = helper.regenerate_sequence_with_reseeding(min_seed_length, model, offset_sequence)
 
     alignment_data = []
 
