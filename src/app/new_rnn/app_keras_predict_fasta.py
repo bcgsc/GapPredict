@@ -9,7 +9,6 @@ from viz.SequenceRegenerationViz import SequenceRegenerationViz
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 import app.new_rnn.predict_helper as helper
-import app.new_rnn.implementation_constants as IMP_CONSTANTS
 
 import numpy as np
 
@@ -26,22 +25,13 @@ def main():
     embedding_dim = 128
     latent_dim = 64
 
-    implementation = IMP_CONSTANTS.SINGLE_BASE_PREDICTION
-    if implementation == IMP_CONSTANTS.STATIC_PREDICTION:
-        model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=False, embedding_dim=embedding_dim,
-                                latent_dim=latent_dim,
-                                with_gpu=True)
-    elif implementation == IMP_CONSTANTS.SINGLE_BASE_PREDICTION:
-        model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=True, batch_size=1, embedding_dim=embedding_dim, latent_dim=latent_dim,
-                                with_gpu=True)
-    elif implementation == IMP_CONSTANTS.EXTENDING_SEQUENCE_PREDICTION:
-        model = SingleLSTMModel(min_seed_length=min_seed_length, embedding_dim=embedding_dim, latent_dim=latent_dim,
-                                with_gpu=True)
+    model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=True, batch_size=1, embedding_dim=embedding_dim,
+                            latent_dim=latent_dim, with_gpu=True)
 
     model.load_weights('../weights/my_model_weights.h5')
 
-    forward_predict = predict(model, implementation, min_seed_length, sequence, static_offset, directory="forward")
-    reverse_predict = predict(model, implementation, min_seed_length, reverser.reverse_complement(sequence), static_offset, directory="reverse_complement")
+    forward_predict = predict(model, min_seed_length, sequence, static_offset, directory="forward")
+    reverse_predict = predict(model, min_seed_length, reverser.reverse_complement(sequence), static_offset, directory="reverse_complement")
 
     viz = SequenceRegenerationViz()
     viz.align_complements(forward_predict, reverse_predict, min_seed_length, static_offset)
