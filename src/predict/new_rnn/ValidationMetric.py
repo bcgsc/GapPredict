@@ -79,13 +79,13 @@ class ValidationMetric(keras.callbacks.Callback):
             length = self.min_seed_length
 
             current_sequence = str(start_string)
-            seed = current_sequence[0:length - 1]
+            seed = reference_seq[0:length - 1]
             input_seq = label_encoder.encode_kmers([seed], [], with_shifted_output=False)[0]
 
             self.validation_model.reset_states()
             self.validation_model.predict(input_seq)
             while remaining_length > 0:
-                base = current_sequence[length-1:length]
+                base = reference_seq[length-1:length]
                 base_encoding = label_encoder.encode_kmers([base], [], with_shifted_output=False)[0]
 
                 prediction = self.validation_model.predict(base_encoding)
