@@ -23,7 +23,7 @@ def main():
     sequence = importer.import_fasta([path])[0]
 
     embedding_dim = 128
-    latent_dim = 64
+    latent_dim = 256
 
     model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=True, batch_size=1, embedding_dim=embedding_dim,
                             latent_dim=latent_dim, with_gpu=True)
@@ -36,13 +36,13 @@ def main():
     viz = SequenceRegenerationViz()
     viz.align_complements(forward_predict, reverse_predict, min_seed_length, static_offset)
 
-def predict(model, implementation, min_seed_length, sequence, static_offset, directory=None):
+def predict(model, min_seed_length, sequence, static_offset, directory=None):
     validator = SequenceMatchCalculator()
     viz = SequenceRegenerationViz(directory)
     label_encoder = KmerLabelEncoder()
     offset_sequence = sequence[static_offset:]
 
-    predicted_string_with_seed, basewise_probabilities = helper.regenerate_sequence(implementation, min_seed_length, model, offset_sequence)
+    predicted_string_with_seed, basewise_probabilities = helper.regenerate_sequence(min_seed_length, model, offset_sequence)
 
     predicted_sequence = predicted_string_with_seed[min_seed_length:]
     actual_sequence = offset_sequence[min_seed_length:]
