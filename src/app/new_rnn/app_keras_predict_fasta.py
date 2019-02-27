@@ -20,7 +20,7 @@ def main():
 
     path = '../data/real_gaps/sealer_unfilled/7238340_33119-35277.fasta'
     static_offset = 0
-    sequence = importer.import_fasta([path])[0]
+    sequence = importer.import_fasta([path])[1]
 
     embedding_dim = 128
     latent_dim = 512

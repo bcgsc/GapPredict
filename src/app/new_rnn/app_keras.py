@@ -86,7 +86,7 @@ def main():
     # (128, 1024, 1024) probably don't go further than this
     # doubling latent_dim seems to increase # parameters by ~3X
     # doubling embedding_dim seems to increase # parameters by ~1.5X
-    batch_sizes = [256]
+    batch_sizes = [128]
     rnn_dims = [512]
     embedding_dims = [128]
 
