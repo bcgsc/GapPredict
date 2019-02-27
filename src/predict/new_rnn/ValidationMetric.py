@@ -23,7 +23,7 @@ class ValidationMetric(keras.callbacks.Callback):
             self.validator = SequenceMatchCalculator()
         if self.early_stopping:
             self.model_weight_checkpoint = None
-            self.patience = 200
+            self.patience = 300
             self.best_epoch = -1
 
     def _transfer_model_weights(self):

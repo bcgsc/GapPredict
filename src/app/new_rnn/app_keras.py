@@ -26,10 +26,13 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy, dir
     if not os.path.exists(root_path):
         os.makedirs(root_path)
 
-    plt.rc('xtick', labelsize=16)
-    plt.rc('ytick', labelsize=16)
+    np.save(root_path + "training", training_accuracy)
+    np.save(root_path + "validation", validation_metrics)
+
+    plt.rc('xtick', labelsize=28)
+    plt.rc('ytick', labelsize=28)
     font = {
-        'size': 18
+        'size': 30
     }
     plt.rc('font', **font)
 
@@ -40,7 +43,7 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy, dir
     plt.xlim(0, epochs)
     plt.xlabel('Epoch')
     plt.ylabel('Training Accuracy')
-    plt.plot(np.arange(len(training_accuracy)), training_accuracy)
+    plt.plot(np.arange(len(training_accuracy)), training_accuracy, linewidth=3)
     plt.savefig(root_path + 'training_accuracy.png')
     plt.clf()
 
@@ -50,11 +53,11 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy, dir
     plt.xlabel('Epoch')
     plt.ylabel('% Predicted')
     mean = np.sum(validation_metrics * lengths, axis=1) / np.sum(lengths)
-    plt.plot(np.arange(len(mean)), mean)
+    plt.plot(np.arange(len(mean)), mean, linewidth=3)
     if best_epoch is not None:
-        plt.axvline(best_epoch, color='r', linestyle='dashed')
+        plt.axvline(best_epoch, color='r', linestyle='dashed', linewidth=3)
     if legend is not None:
-        plt.legend(legend+["Best Epoch"], loc='upper left')
+        plt.legend(legend+["Best Epoch"], loc='best')
     plt.savefig(root_path + 'percent_predicted_till_mismatch.png')
     plt.clf()
 
@@ -64,12 +67,12 @@ def main():
     spacing = 0
 
     arguments = sys.argv[1:]
-    paths = arguments if len(arguments) > 0 else ['../data/real_gaps/sealer_unfilled/7238340_33119-35277.fastq']
+    paths = arguments if len(arguments) > 0 else ['../data/real_gaps/sealer_filled/7465348_13506-14596.fastq']
     importer = SequenceImporter()
     reverse_complementer = SequenceReverser()
     reads = importer.import_fastq(paths, include_reverse_complement)
 
-    path = '../data/real_gaps/sealer_unfilled/7238340_33119-35277.fasta'
+    path = '../data/real_gaps/sealer_filled/7465348_13506-14596.fasta'
     reference_sequence = importer.import_fasta([path])
     reference_sequences = [reference_sequence[0], reverse_complementer.reverse_complement(reference_sequence[0]),
                            reference_sequence[1], reverse_complementer.reverse_complement(reference_sequence[1])]
