@@ -64,14 +64,15 @@ def main():
     spacing = 0
 
     arguments = sys.argv[1:]
-    paths = arguments if len(arguments) > 0 else ['../data/ecoli_contigs/ecoli_contig_1000.fastq']
+    paths = arguments if len(arguments) > 0 else ['../data/real_gaps/sealer_unfilled/7238340_33119-35277.fastq']
     importer = SequenceImporter()
     reverse_complementer = SequenceReverser()
     reads = importer.import_fastq(paths, include_reverse_complement)
 
-    path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
-    reference_sequence = importer.import_fasta([path])[0]
-    reference_sequences = [reference_sequence, reverse_complementer.reverse_complement(reference_sequence)]
+    path = '../data/real_gaps/sealer_unfilled/7238340_33119-35277.fasta'
+    reference_sequence = importer.import_fasta([path])
+    reference_sequences = [reference_sequence[0], reverse_complementer.reverse_complement(reference_sequence[0]),
+                           reference_sequence[1], reverse_complementer.reverse_complement(reference_sequence[1])]
     lengths = np.array(list(map(lambda x: len(x), reference_sequences)))
 
     with_gpu=True
@@ -85,8 +86,8 @@ def main():
     # (128, 1024, 1024) probably don't go further than this
     # doubling latent_dim seems to increase # parameters by ~3X
     # doubling embedding_dim seems to increase # parameters by ~1.5X
-    batch_sizes = [128]
-    rnn_dims = [256]
+    batch_sizes = [256]
+    rnn_dims = [512]
     embedding_dims = [128]
 
     for batch_size in batch_sizes:

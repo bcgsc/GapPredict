@@ -18,12 +18,12 @@ def main():
     importer = SequenceImporter()
     reverser = SequenceReverser()
 
-    path = '../data/ecoli_contigs/ecoli_contig_1000.fasta'
+    path = '../data/real_gaps/sealer_unfilled/7238340_33119-35277.fasta'
     static_offset = 0
     sequence = importer.import_fasta([path])[0]
 
     embedding_dim = 128
-    latent_dim = 256
+    latent_dim = 512
 
     model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=True, batch_size=1, embedding_dim=embedding_dim,
                             latent_dim=latent_dim, with_gpu=True)
