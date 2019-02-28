@@ -21,14 +21,13 @@ def main():
     id="7465348_13506-14596"
     sequences = importer.import_fasta([path])
 
-    seed_length = 500
     prediction_length=750
     left_flank = sequences[0]
     right_flank = reverser.reverse_complement(sequences[1])
     reference = None
 
     embedding_dim = 128
-    latent_dim = 512
+    latent_dim = 256
 
     model = SingleLSTMModel(min_seed_length=None, stateful=True, batch_size=1, embedding_dim=embedding_dim,
                             latent_dim=latent_dim, with_gpu=True)
@@ -39,7 +38,7 @@ def main():
     reverse_predict = predict(model, right_flank, prediction_length, reference, directory="reverse_complement")
 
     viz = SequenceRegenerationViz()
-    viz.align_complements(forward_predict, reverse_predict, id)
+    viz.save_complements(forward_predict, reverse_predict, id)
 
 def predict(model, seed, prediction_length, reference, directory=None):
     validator = SequenceMatchCalculator()

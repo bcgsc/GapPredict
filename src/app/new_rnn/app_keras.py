@@ -82,7 +82,7 @@ def main():
     log_samples=False
     log_training=False
     epochs = 1000
-    replicates = 2
+    replicates = 1
     early_stopping=True
     legend=['Mean Sequence']
 
@@ -90,7 +90,7 @@ def main():
     # doubling latent_dim seems to increase # parameters by ~3X
     # doubling embedding_dim seems to increase # parameters by ~1.5X
     batch_sizes = [128]
-    rnn_dims = [512]
+    rnn_dims = [256]
     embedding_dims = [128]
 
     for batch_size in batch_sizes:

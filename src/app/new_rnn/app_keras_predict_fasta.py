@@ -23,7 +23,7 @@ def main():
     sequence = importer.import_fasta([path])[1]
 
     embedding_dim = 128
-    latent_dim = 512
+    latent_dim = 256
 
     model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=True, batch_size=1, embedding_dim=embedding_dim,
                             latent_dim=latent_dim, with_gpu=True)
