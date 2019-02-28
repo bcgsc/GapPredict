@@ -82,21 +82,23 @@ def main():
     log_samples=False
     log_training=False
     epochs = 1000
-    replicates = 1
+    replicates = 2
     early_stopping=True
     legend=['Mean Sequence']
 
     # (128, 1024, 1024) probably don't go further than this
     # doubling latent_dim seems to increase # parameters by ~3X
     # doubling embedding_dim seems to increase # parameters by ~1.5X
-    batch_sizes = [128]
-    rnn_dims = [512]
+    batch_sizes = [64, 128]
+    rnn_dims = [128, 256, 512]
     embedding_dims = [128]
 
     for batch_size in batch_sizes:
         for embedding_dim in embedding_dims:
             for latent_dim in rnn_dims:
                 for i in range(replicates):
+                    directory_name = "BS_" + str(batch_size) + "_ED_" + str(embedding_dim) + "_LD_" + str(latent_dim) \
+                                     + "_E_" + str(epochs) + "_R_" + str(i)
                     model = SingleLSTMModel(min_seed_length=min_seed_length, spacing=spacing, stateful=False,
                                             batch_size=batch_size,
                                             epochs=epochs, embedding_dim=embedding_dim, latent_dim=latent_dim,
@@ -117,8 +119,6 @@ def main():
                         training_accuracy = history.history['acc']
                     if early_stopping:
                         best_epoch = model.get_best_epoch()
-                    directory_name = "BS_" + str(batch_size) + "_ED_" + str(embedding_dim) + "_LD_" + str(latent_dim) \
-                                     + "_E_" + str(epochs) + "_R_" + str(i)
                     _plot_training_validation(epochs, validation_metrics, training_accuracy, directory_name, lengths, legend=legend, best_epoch=best_epoch)
 
 
