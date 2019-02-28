@@ -3,8 +3,6 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from preprocess.SequenceComplementCalculator import SequenceComplementCalculator
-
 
 class SequenceRegenerationViz:
     def __init__(self, directory=None):
@@ -38,44 +36,15 @@ class SequenceRegenerationViz:
         else:
             return "X"
 
-    def align_complements(self, forward_prediction, reverse_complement, seed_length, static_offset=0):
-        complement_validator = SequenceComplementCalculator()
-        file = open(self.root_path + 'bidirectional_align.txt', 'w+')
-        padded_forward_pred = "N" * static_offset + forward_prediction
-        padded_reverse_pred = ("N" * static_offset + reverse_complement)[::-1]
-        matches = complement_validator.compare_sequences(padded_forward_pred, padded_reverse_pred)
+    def align_complements(self, forward_prediction, reverse_complement, id):
+        file = open(self.root_path + 'gap_predict_align.fa', 'w+')
+        padded_forward_pred = forward_prediction
+        padded_reverse_pred = reverse_complement[::-1]
 
-        forward_comparison_string = ""
-        reverse_comparison_string = ""
-
-        for i in range(static_offset):
-            forward_comparison_string += self._get_match_char(matches[i])
-
-        for i in range(seed_length):
-            forward_comparison_string += "S"
-
-        for i in range(len(forward_prediction) - seed_length):
-            forward_comparison_string += self._get_match_char(matches[i + static_offset + seed_length])
-
-        for i in range(len(reverse_complement) - seed_length):
-            reverse_comparison_string += self._get_match_char(matches[i])
-
-        for i in range(seed_length):
-            reverse_comparison_string += "S"
-
-        for i in range(static_offset):
-            reverse_comparison_string += self._get_match_char(matches[i + len(reverse_complement) + seed_length])
-
-        file.write("FORWARD\n")
-        file.write('\n')
+        file.write(">" + id + "_forward" + "\n")
         file.write(padded_forward_pred + '\n')
-        file.write(forward_comparison_string + '\n')
-        file.write(reverse_comparison_string + '\n')
+        file.write(">" + id + "_reverse_complement" + "\n")
         file.write(padded_reverse_pred + '\n')
-        file.write('\n')
-        file.write('REVERSE COMPLEMENT\n')
-        meaningful_matches = matches[static_offset:len(matches)-static_offset]
-        file.write('Mean Match: ' + str(round(np.mean(meaningful_matches), 2)) +'\n')
         file.close()
 
 

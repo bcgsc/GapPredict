@@ -18,7 +18,7 @@ def main():
     importer = SequenceImporter()
     reverser = SequenceReverser()
 
-    path = '../data/real_gaps/sealer_unfilled/7238340_33119-35277.fasta'
+    path = '../data/real_gaps/sealer_filled/7465348_13506-14596.fasta'
     static_offset = 0
     sequence = importer.import_fasta([path])[1]
 
