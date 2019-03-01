@@ -89,49 +89,6 @@ class SequenceRegenerationViz:
         file.write(padded_reverse_pred + '\n')
         file.close()
 
-
-    def compare_multiple_sequences(self, reference_sequence, alignment_data, seed_length, static_offset=0):
-        file = open(self.root_path + 'multi_align.txt', 'w+')
-
-        for i in range(len(alignment_data)):
-            alignment_tuple = alignment_data[i]
-            predicted_sequence = alignment_tuple[0]
-            matches = alignment_tuple[1]
-            current_lower_bound = alignment_tuple[2]
-
-            static_padding = ""
-            for j in range(static_offset):
-                static_padding += " "
-
-            comparison_string = str(static_padding)
-            for j in range(seed_length):
-                comparison_string += "S"
-
-            for j in range(len(matches)):
-                comparison_string += self._get_match_char(matches[j])
-
-            first_mismatch_idx = None
-            for j in range(len(matches)):
-                if not matches[j]:
-                    first_mismatch_idx = seed_length + current_lower_bound + j
-                    break
-
-            padding = ""
-            for j in range(current_lower_bound):
-                padding += " "
-
-            file.write("SEQ " + str(i) + "\n")
-            file.write(reference_sequence + '\n')
-            file.write(padding + comparison_string + '\n')
-            file.write(static_padding + padding + predicted_sequence + '\n')
-            file.write('\n')
-            file.write('Mean Match: ' + str(round(np.mean(matches),2)) + '\n')
-            if first_mismatch_idx is not None:
-                file.write('First Mismatch: ' + str(first_mismatch_idx) + '\n')
-            file.write('\n')
-        file.close()
-
-
     def compare_sequences(self, actual, predicted, seed_length, matches, offset=0):
         static_padding = ""
 
