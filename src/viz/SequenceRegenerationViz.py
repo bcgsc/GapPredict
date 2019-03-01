@@ -3,21 +3,22 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
+import utils.directory_utils as UTILS
 from preprocess.SequenceComplementCalculator import SequenceComplementCalculator
 
 
 class SequenceRegenerationViz:
-    def __init__(self, directory=None):
-        if os.name == 'nt':
-            self.root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\predict_results\\'
+    def __init__(self, root_directory=None, directory=None):
+        if root_directory is None:
+            if os.name == 'nt':
+                self.root_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\new_rnn\\out\\predict_results\\'
+            else:
+                self.root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/predict_results/'
         else:
-            self.root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/predict_results/'
+            self.root_path = UTILS.clean_directory_string(root_directory)
 
         if directory is not None:
-            if os.name == 'nt':
-                self.root_path += directory + '\\'
-            else:
-                self.root_path += directory + '/'
+            self.root_path = UTILS.clean_directory_string(self.root_path + directory)
 
         if not os.path.exists(self.root_path):
             os.makedirs(self.root_path)
@@ -78,8 +79,9 @@ class SequenceRegenerationViz:
         file.write('Mean Match: ' + str(round(np.mean(meaningful_matches), 2)) +'\n')
         file.close()
 
-    def save_complements(self, forward_prediction, reverse_complement, id):
-        file = open(self.root_path + 'gap_predict_align.fa', 'w+')
+    def save_complements(self, forward_prediction, reverse_complement, id, fasta_ref=None):
+        file_name = self.root_path + 'gap_predict_align.fa'
+        file = open(file_name, 'w+')
         padded_forward_pred = forward_prediction
         padded_reverse_pred = reverse_complement[::-1]
 
@@ -87,6 +89,12 @@ class SequenceRegenerationViz:
         file.write(padded_forward_pred + '\n')
         file.write(">" + id + "_reverse_complement" + "\n")
         file.write(padded_reverse_pred + '\n')
+
+        if fasta_ref is not None:
+            with open(fasta_ref) as fasta:
+                for line in fasta:
+                    file.write(line)
+
         file.close()
 
     def compare_sequences(self, actual, predicted, seed_length, matches, offset=0):
@@ -143,6 +151,14 @@ class SequenceRegenerationViz:
         plt.ylabel("Avg Probability (Window = " + str(window_length) + ")")
         plt.savefig(self.root_path + id + 'sliding_window_probability.png')
         plt.clf()
+
+    def save_probabilities(self, probabilities, id=None):
+        if id is not None:
+            id_string = id + "_"
+        else:
+            id_string = ""
+        path = self.root_path + id_string + "predicted_probabilities"
+        np.save(path, probabilities)
 
     def top_base_probability_plot(self, class_probabilities, correct_index_vector, top=2, offset=0, id=""):
         position = np.arange(len(correct_index_vector)) + 1 + offset
