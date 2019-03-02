@@ -1,8 +1,12 @@
+import os
 import sys
-sys.path.append('../../')
+
+if os.name == 'nt':
+    sys.path.append('E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\')
+else:
+    sys.path.append('/home/echen/Desktop/Projects/Sealer_NN/src/')
 
 import argparse
-import os
 import utils.directory_utils as UTILS
 
 from app.new_rnn.train_model import train_model

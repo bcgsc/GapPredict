@@ -5,6 +5,7 @@ import numpy as np
 
 import utils.directory_utils as UTILS
 from preprocess.SequenceComplementCalculator import SequenceComplementCalculator
+from preprocess.SequenceReverser import SequenceReverser
 
 
 class SequenceRegenerationViz:
@@ -82,13 +83,14 @@ class SequenceRegenerationViz:
     def save_complements(self, forward_prediction, reverse_complement, id, fasta_ref=None):
         file_name = self.root_path + 'gap_predict_align.fa'
         file = open(file_name, 'w+')
-        padded_forward_pred = forward_prediction
-        padded_reverse_pred = reverse_complement[::-1]
+        reverser = SequenceReverser()
+        forward_pred = forward_prediction
+        reverse_pred = reverser.reverse_complement(reverse_complement)
 
         file.write(">" + id + "_forward" + "\n")
-        file.write(padded_forward_pred + '\n')
+        file.write(forward_pred + '\n')
         file.write(">" + id + "_reverse_complement" + "\n")
-        file.write(padded_reverse_pred + '\n')
+        file.write(reverse_pred + '\n')
 
         if fasta_ref is not None:
             with open(fasta_ref) as fasta:
