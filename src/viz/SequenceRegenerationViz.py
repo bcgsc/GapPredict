@@ -99,7 +99,7 @@ class SequenceRegenerationViz:
 
         file.close()
 
-    def compare_sequences(self, actual, predicted, seed_length, matches, offset=0):
+    def compare_sequences(self, actual, predicted, seed_length, matches, offset=0, append=False):
         static_padding = ""
 
         for i in range(offset):
@@ -118,8 +118,8 @@ class SequenceRegenerationViz:
                 first_mismatch_idx = offset + seed_length + i
                 break
 
-
-        file = open(self.root_path + 'align.txt', 'w+')
+        mode = "a" if append else "w+"
+        file = open(self.root_path + 'align.txt', mode)
 
         file.write("ACTUAL\n")
         file.write('\n')
@@ -131,6 +131,9 @@ class SequenceRegenerationViz:
         file.write('Mean Match: ' + str(round(np.mean(matches), 2)) +'\n')
         if first_mismatch_idx is not None:
             file.write('First Mismatch: ' + str(first_mismatch_idx) + '\n')
+        file.write('\n')
+        file.write('-----------------------------------------------------\n')
+        file.write('\n')
         file.close()
 
     def sliding_window_average_plot(self, correctness_vector, window_length=10, offset=0, id=""):
