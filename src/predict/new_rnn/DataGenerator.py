@@ -1,3 +1,5 @@
+import os
+
 import keras.utils
 import numpy as np
 
@@ -5,8 +7,10 @@ from constants import EncodingConstants as CONSTANTS
 from onehot.OneHotVector import OneHotVectorEncoder
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
-output_file = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\predict\\new_rnn\\out\\training.csv'
-#output_file = '/home/echen/Desktop/Projects/Sealer_NN/src/predict/new_rnn/out/training.csv'
+if os.name == 'nt':
+    output_file = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\predict\\new_rnn\\out\\training.csv'
+else:
+    output_file = '/home/echen/Desktop/Projects/Sealer_NN/src/predict/new_rnn/out/training.csv'
 
 class DataGenerator(keras.utils.Sequence):
     def __init__(self, reads, min_seed_length, batch_size=64, spacing=0, log_samples=False, log_training=False):
