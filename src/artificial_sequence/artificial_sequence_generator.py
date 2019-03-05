@@ -49,32 +49,11 @@ def dissect_sequence(sequence):
     gap = seq_of_interest[flank_length:gap_length+flank_length]
     return seq_of_interest, left_flank, right_flank, gap
 
-def generate_repetitive_sequence(motif):
-    motif_length = len(motif)
-    length = get_total_length()
-    repeats = math.ceil(length / motif_length)
-    full_sequence = ""
-    for i in range(repeats):
-        full_sequence += motif
-
-    full_sequence = full_sequence[:length]
-
-    seq_of_interest, left_flank, right_flank, gap = dissect_sequence(full_sequence)
-
-    write_fasta("repetitive.fasta", full_sequence, seq_of_interest, left_flank, right_flank, gap)
-    generate_fastq_reads("repetitive.fastq", full_sequence)
-
-def generate_random_sequence():
-    length = get_total_length()
-    random_bases = np.random.randint(0, 4, length)
-
-    full_sequence = "".join(bases[random_bases])
-
-    seq_of_interest, left_flank, right_flank, gap = dissect_sequence(full_sequence)
-
-    write_fasta("random.fasta", full_sequence, seq_of_interest, left_flank, right_flank, gap)
-    generate_fastq_reads("random.fastq", full_sequence)
-
+def write_fastq(sequence, id, file):
+    file.write(str(id) + "\n")
+    file.write(sequence + "\n")
+    file.write("+\n")
+    file.write("\n")
 
 def extract_reads(sequence, idx):
     read = sequence[idx:idx + read_length]
@@ -82,12 +61,7 @@ def extract_reads(sequence, idx):
     reverse_complement_pair = reverser.reverse_complement(pair)
     return read, reverse_complement_pair
 
-
-def write_fastq(sequence, id, file):
-    file.write(str(id) + "\n")
-    file.write(sequence + "\n")
-    file.write("+\n")
-    file.write("\n")
+    file.close()
 
 def generate_fastq_reads(fastq_name, sequence):
     length = get_total_length()
@@ -110,7 +84,32 @@ def generate_fastq_reads(fastq_name, sequence):
         write_fastq(reverse_complement_pair, read_id, file)
         read_id += 1
 
-    file.close()
+def generate_repetitive_sequence(motif, id=None):
+    motif_length = len(motif)
+    length = get_total_length()
+    repeats = math.ceil(length / motif_length)
+    full_sequence = ""
+    for i in range(repeats):
+        full_sequence += motif
 
-generate_random_sequence()
-generate_repetitive_sequence("ATGC")
+    full_sequence = full_sequence[:length]
+
+    seq_of_interest, left_flank, right_flank, gap = dissect_sequence(full_sequence)
+    id_string = "" if id is None else "_" + id
+
+    write_fasta("repetitive" + id_string + ".fasta", full_sequence, seq_of_interest, left_flank, right_flank, gap)
+    generate_fastq_reads("repetitive" + id_string + ".fastq", full_sequence)
+
+def generate_random_sequence():
+    length = get_total_length()
+    random_bases = np.random.randint(0, 4, length)
+
+    full_sequence = "".join(bases[random_bases])
+
+    seq_of_interest, left_flank, right_flank, gap = dissect_sequence(full_sequence)
+
+    write_fasta("random.fasta", full_sequence, seq_of_interest, left_flank, right_flank, gap)
+    generate_fastq_reads("random.fastq", full_sequence)
+
+#generate_random_sequence()
+generate_repetitive_sequence("A"*300+"T", "longer_than_read")
