@@ -136,17 +136,22 @@ class SequenceRegenerationViz:
         file.write('\n')
         file.close()
 
+    def sliding_window_average(self, vector, window_length=10):
+        length = len(vector)
+        averages = np.zeros(length)
+        for i in range(length):
+            if i < window_length:
+                window = vector[0:i+window_length+1]
+            else:
+                window = vector[i-window_length:i+window_length+1]
+            average = np.mean(window)
+            averages[i] = average
+        return averages
+
     def sliding_window_average_plot(self, correctness_vector, window_length=10, offset=0, id=""):
         bases = len(correctness_vector)
         position = np.arange(bases) + 1 + offset
-        averages = np.zeros(bases)
-        for i in range(bases):
-            if i < window_length:
-                window = correctness_vector[0:i+window_length+1]
-            else:
-                window = correctness_vector[i-window_length:i+window_length+1]
-            average = np.mean(window)
-            averages[i] = average
+        averages = self.sliding_window_average(correctness_vector, window_length=window_length)
 
         self._configure_plot()
         plt.plot(position, averages)
