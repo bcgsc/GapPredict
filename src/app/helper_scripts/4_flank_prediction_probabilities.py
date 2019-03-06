@@ -6,11 +6,11 @@ import numpy as np
 from viz.SequenceRegenerationViz import SequenceRegenerationViz
 
 def set_up_plot():
-    max_length = 1500
-    plt.rc('xtick', labelsize=28)
-    plt.rc('ytick', labelsize=28)
+    max_length = 1700
+    plt.rc('xtick', labelsize=30)
+    plt.rc('ytick', labelsize=30)
     font = {
-        'size': 30
+        'size': 40
     }
     plt.rc('font', **font)
 
@@ -66,7 +66,7 @@ def main():
     seed_length = 26
 
     font = {
-        'size': 18
+        'size': 35
     }
 
     colours = {"256": 'r', "384": 'c', "512": 'y'}

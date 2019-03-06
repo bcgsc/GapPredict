@@ -4,12 +4,12 @@ import utils.directory_utils as UTILS
 import matplotlib.pyplot as plt
 import numpy as np
 
-def set_up_plot():
+def set_up_plot(is_training):
     epochs = 1000
-    plt.rc('xtick', labelsize=28)
-    plt.rc('ytick', labelsize=28)
+    plt.rc('xtick', labelsize=30)
+    plt.rc('ytick', labelsize=30)
     font = {
-        'size': 30
+        'size': 40
     }
     plt.rc('font', **font)
 
@@ -19,7 +19,7 @@ def set_up_plot():
     plt.ylim(0, 1.1)
     plt.xlim(0, epochs)
     plt.xlabel('Epoch')
-    plt.ylabel('Training Accuracy')
+    plt.ylabel('Training Accuracy' if is_training else 'Validation Accuracy')
 
 def main():
     if os.name == 'nt':
@@ -53,7 +53,7 @@ def main():
 
     for id in ids:
         for i in range(replicates):
-            set_up_plot()
+            set_up_plot(True)
             plot_id = id + "_training" + "_R_" + str(i)
             for rnn_dim in rnn_dim_directories:
                 folder = id + "_R_" + str(i)
@@ -71,7 +71,7 @@ def main():
 
     for id in ids:
         for i in range(replicates):
-            set_up_plot()
+            set_up_plot(False)
             plot_id = id + "_validation" + "_R_" + str(i)
             for rnn_dim in rnn_dim_directories:
                 folder = id + "_R_" + str(i)

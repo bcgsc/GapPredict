@@ -6,11 +6,11 @@ import numpy as np
 from viz.SequenceRegenerationViz import SequenceRegenerationViz
 
 def set_up_plot():
-    max_length = 1500
-    plt.rc('xtick', labelsize=28)
-    plt.rc('ytick', labelsize=28)
+    max_length = 1700
+    plt.rc('xtick', labelsize=30)
+    plt.rc('ytick', labelsize=30)
     font = {
-        'size': 30
+        'size': 40
     }
     plt.rc('font', **font)
 
@@ -63,7 +63,7 @@ def main():
     left_flank_length = 500 #TODO:hardcoded
 
     font = {
-        'size': 18
+        'size': 35
     }
 
     for id in ids:
@@ -87,6 +87,11 @@ def main():
                 gap_length = gap_lengths[id]
                 rc_start = left_flank_length + gap_length
                 rc_pos = np.arange(rc_start - rc_length, rc_start)
+                gap_left = left_flank_length
+                gap_right = left_flank_length + gap_length
+
+                plt.axvline(gap_left, color="black", linestyle='dashed', linewidth=3)
+                plt.axvline(gap_right, color="black", linestyle='dashed', linewidth=3)
 
                 plt.plot(forward_pos, avg_f, linewidth=linewidth, alpha=alpha, label="LD_" + str(rnn_dim)+"_F")
                 plt.plot(rc_pos, avg_rc, linewidth=linewidth, alpha=alpha, label="LD_" + str(rnn_dim)+"_RC")
