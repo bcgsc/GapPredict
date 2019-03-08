@@ -100,47 +100,4 @@ class ValidationMetric(keras.callbacks.Callback):
             percentages[i] = percentage_predicted
         return percentages
 
-    def _percentage_until_mismatch(self):
-        label_encoder = KmerLabelEncoder()
-        prediction_length = 1
-        one_hot_decoder = OneHotVectorDecoder(prediction_length, encoding_constants=CONSTANTS)
-        total_seqs = len(self.reference_seqs)
-        percentages = np.zeros(total_seqs)
-
-        for i in range(len(self.reference_seqs)):
-            reference_seq = self.reference_seqs[i]
-            sequence_length = len(reference_seq)
-            known_length = self.min_seed_length + self.spacing
-            start_string = reference_seq[0:known_length]
-            string_to_predict = reference_seq[known_length:]
-
-            bases_to_predict = sequence_length - known_length
-
-            remaining_length = bases_to_predict
-            length = self.min_seed_length
-
-            current_sequence = str(start_string)
-            seed = current_sequence[0:length - 1]
-            input_seq = label_encoder.encode_kmers([seed], [], with_shifted_output=False)[0]
-
-            self.validation_model.reset_states()
-            self.validation_model.predict(input_seq)
-            while remaining_length > 0:
-                base = current_sequence[length-1:length]
-                base_encoding = label_encoder.encode_kmers([base], [], with_shifted_output=False)[0]
-
-                prediction = self.validation_model.predict(base_encoding)
-                decoded_prediction = one_hot_decoder.decode_sequences(prediction)[0][0]
-                bases_predicted = bases_to_predict - remaining_length
-                expected_base = string_to_predict[bases_predicted]
-                if expected_base != "N" and decoded_prediction != expected_base:
-                    break
-
-                current_sequence += decoded_prediction
-                remaining_length -= 1
-                length += 1
-            percentage_predicted = bases_predicted/bases_to_predict
-            percentages[i] = percentage_predicted
-        return percentages
-
 
