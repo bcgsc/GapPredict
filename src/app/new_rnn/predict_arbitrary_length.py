@@ -40,7 +40,8 @@ def predict_arbitrary_length(weights_path, id, fasta_path, embedding_dim, latent
     reverse_predict = predict(model, right_flank, length_to_predict, reference, base_path=base_path, directory="predict_gap/reverse_complement", gpu=gpu)
 
     viz = SequenceRegenerationViz(root_directory=base_path)
-    viz.save_complements(forward_predict, reverse_predict, id, fasta_ref=fasta_path)
+    postfix = "_LD_"+str(latent_dim)
+    viz.save_complements(forward_predict, reverse_predict, id, postfix=postfix, fasta_ref=fasta_path)
 
 def predict(model, seed, prediction_length, reference, base_path=None, directory=None, gpu="0"):
     validator = SequenceMatchCalculator()

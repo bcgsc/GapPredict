@@ -80,16 +80,16 @@ class SequenceRegenerationViz:
         file.write('Mean Match: ' + str(round(np.mean(meaningful_matches), 2)) +'\n')
         file.close()
 
-    def save_complements(self, forward_prediction, reverse_complement, id, fasta_ref=None):
+    def save_complements(self, forward_prediction, reverse_complement, id, postfix="", fasta_ref=None):
         file_name = self.root_path + 'gap_predict_align.fa'
         file = open(file_name, 'w+')
         reverser = SequenceReverser()
         forward_pred = forward_prediction
         reverse_pred = reverser.reverse_complement(reverse_complement)
 
-        file.write(">" + id + "_forward" + "\n")
+        file.write(">" + id + "_forward" + postfix + "\n")
         file.write(forward_pred + '\n')
-        file.write(">" + id + "_reverse_complement" + "\n")
+        file.write(">" + id + "_reverse_complement" + postfix + "\n")
         file.write(reverse_pred + '\n')
 
         if fasta_ref is not None:
@@ -97,6 +97,19 @@ class SequenceRegenerationViz:
                 for line in fasta:
                     file.write(line)
 
+        file.close()
+
+    def _write_fasta(self, id, seq, file):
+        file.write('>' + id + "\n")
+        file.write(seq + "\n")
+
+    def write_flank_predict_fasta(self, forward_left_flank, rc_left_flank, forward_right_flank, rc_right_flank,
+                                  latent_dim, id):
+        file = open(self.root_path + 'flank_predict.fasta', 'w+')
+        self._write_fasta(id + "_left_flank_forward_LD_" + str(latent_dim), forward_left_flank, file)
+        self._write_fasta(id + "_left_flank_reverse_complement_LD_" + str(latent_dim), rc_left_flank, file)
+        self._write_fasta(id + "_right_flank_forward_LD_" + str(latent_dim), forward_right_flank, file)
+        self._write_fasta(id + "_right_flank_reverse_complement_LD_" + str(latent_dim), rc_right_flank, file)
         file.close()
 
     def compare_sequences(self, actual, predicted, seed_length, matches, offset=0, append=False):
