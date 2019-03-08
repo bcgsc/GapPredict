@@ -13,7 +13,7 @@ import app.new_rnn.predict_helper as helper
 
 import numpy as np
 
-def predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_seed_length, plots=False, base_path=None, gpu="0"):
+def predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_seed_length, id, plots=False, base_path=None, gpu="0"):
     importer = SequenceImporter()
     reverser = SequenceReverser()
 
@@ -24,23 +24,37 @@ def predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_s
 
     model.load_weights(weights_path + 'my_model_weights.h5')
 
-    #TODO: this is... a bit questionable
     terminal_directory_character = UTILS.get_terminal_directory_character()
+    first_directory = "regenerate_seq" + terminal_directory_character
+    forward_left_flank = None
+    rc_left_flank = None
+    forward_right_flank = None
+    rc_right_flank = None
     for i in range(len(sequences)):
         sequence = sequences[i]
 
         #TODO: messy
-        first_directory = "regenerate_seq" + terminal_directory_character
-        base_static_path = UTILS.clean_directory_string(base_path) + first_directory
         if i == 0:
             static_path = first_directory + "left_flank" + terminal_directory_character
         elif i == 1:
             static_path = first_directory + "right_flank" + terminal_directory_character
+
+        viz = SequenceRegenerationViz(root_directory=base_path, directory=static_path)
+
         forward_predict = predict(model, min_seed_length, sequence, base_path=base_path, directory=static_path + "forward", plots=plots, gpu=gpu)
         reverse_predict = predict(model, min_seed_length, reverser.reverse_complement(sequence), base_path=base_path, directory=static_path + "reverse_complement", plots=plots, gpu=gpu)
 
-    viz = SequenceRegenerationViz(root_directory=base_static_path)
-    viz.align_complements(forward_predict, reverse_predict, min_seed_length)
+        if i == 0:
+            forward_left_flank = forward_predict
+            rc_left_flank = reverse_predict
+        elif i == 1:
+            forward_right_flank = forward_predict
+            rc_right_flank = reverse_predict
+
+        viz.align_complements(forward_predict, reverse_predict, min_seed_length)
+
+    viz = SequenceRegenerationViz(root_directory=base_path, directory=first_directory)
+    viz.write_flank_predict_fasta(forward_left_flank, rc_left_flank, forward_right_flank, rc_right_flank, latent_dim, id)
 
 def predict(model, min_seed_length, sequence, base_path=None, directory=None, plots=False, gpu="0"):
     validator = SequenceMatchCalculator()
@@ -74,8 +88,9 @@ def main():
     latent_dim = 256
     min_seed_length = 26
     plots = True
+    id="7465348_13506-14596"
 
-    predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_seed_length, plots=plots)
+    predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_seed_length, id, plots=plots)
 
 if __name__ == "__main__":
     main()

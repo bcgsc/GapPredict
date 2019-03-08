@@ -57,7 +57,7 @@ def main():
             os.makedirs(output_directory)
 
         train_model(output_directory, min_seed_length, ref_file, read_file, epochs, [batch_size], [rnn_dim], [embedding_dim], 1, gpu=gpu)
-        predict_reference(output_directory, ref_file, embedding_dim, rnn_dim, min_seed_length, base_path=output_directory, gpu=gpu)
+        predict_reference(output_directory, ref_file, embedding_dim, rnn_dim, min_seed_length, id, base_path=output_directory, gpu=gpu)
         predict_arbitrary_length(output_directory, id, ref_file, embedding_dim, rnn_dim, prediction_length, base_path=output_directory, gpu=gpu)
 
 if __name__ == "__main__":
