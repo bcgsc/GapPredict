@@ -54,7 +54,7 @@ def main():
     for id in ids:
         for i in range(replicates):
             set_up_plot(True)
-            plot_id = id + "_training" + "_R_" + str(i)
+            plot_id = id + "_training_R_" + str(i)
             for rnn_dim in rnn_dim_directories:
                 folder = id + "_R_" + str(i)
                 folder_path = root + rnn_dim + terminal_char + folder + terminal_char
@@ -72,7 +72,7 @@ def main():
     for id in ids:
         for i in range(replicates):
             set_up_plot(False)
-            plot_id = id + "_validation" + "_R_" + str(i)
+            plot_id = id + "_validation_R_" + str(i)
             for rnn_dim in rnn_dim_directories:
                 folder = id + "_R_" + str(i)
                 folder_path = root + rnn_dim + terminal_char + folder + terminal_char
