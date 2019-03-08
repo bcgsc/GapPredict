@@ -12,9 +12,6 @@ from preprocess.SequenceImporter import SequenceImporter
 from preprocess.SequenceReverser import SequenceReverser
 
 def _plot_training_validation(epochs, validation_metrics, training_accuracy, lengths, directory_path, legend=None, best_epoch=None):
-    np.save(directory_path + "training", training_accuracy)
-    np.save(directory_path + "validation", validation_metrics)
-
     plt.rc('xtick', labelsize=28)
     plt.rc('ytick', labelsize=28)
     font = {
@@ -38,14 +35,19 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy, len
     plt.xlim(0, epochs)
     plt.xlabel('Epoch')
     plt.ylabel('% Predicted')
-    mean = np.sum(validation_metrics * lengths, axis=1) / np.sum(lengths)
-    plt.plot(np.arange(len(mean)), mean, linewidth=3)
+    weighted_mean = np.sum(validation_metrics * lengths, axis=1) / np.sum(lengths)
+    plt.plot(np.arange(len(weighted_mean)), weighted_mean, linewidth=3)
     if best_epoch is not None:
         plt.axvline(best_epoch, color='r', linestyle='dashed', linewidth=3)
     if legend is not None:
         plt.legend(legend+["Best Epoch"], loc='best')
     plt.savefig(directory_path + 'percent_predicted_till_mismatch.png')
     plt.clf()
+
+    np.save(directory_path + "training", training_accuracy)
+    np.save(directory_path + "validation", validation_metrics)
+    np.save(directory_path + "lengths", lengths)
+    np.save(directory_path + "weighted_mean", weighted_mean)
 
 def train_model(base_directory, min_seed_length, reference, reads, epochs, batch_sizes, rnn_dims, embedding_dims, replicates, gpu="0"):
     include_reverse_complement = True
