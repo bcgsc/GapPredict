@@ -71,10 +71,10 @@ def predict(model, min_seed_length, sequence, base_path=None, directory=None, pl
     correct_index_vector = label_encoder.encode_kmers([actual_sequence], [], [])[0][0]
 
     viz.compare_sequences(sequence, predicted_string_with_seed, min_seed_length, matches)
-    viz.sliding_window_average_plot(matches, offset=min_seed_length)
     viz.save_probabilities(basewise_probabilities)
 
     if plots:
+        viz.sliding_window_average_plot(matches, offset=min_seed_length)
         viz.top_base_probability_plot(basewise_probabilities, correct_index_vector, offset=min_seed_length)
         top_base_probability = np.max(basewise_probabilities, axis=1)
         viz.sliding_window_average_plot(top_base_probability, offset=min_seed_length, id="rnn_top_prediction_")
