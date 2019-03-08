@@ -76,6 +76,7 @@ def main():
                 forward = np.max(np.load(folder_path + f + terminal_char + file_name), axis=1)
                 reverse_complement = np.max(np.load(folder_path + rc + terminal_char + file_name), axis=1)[::-1]
 
+                #TODO: in hindsight this should be in a different module
                 avg_f = viz.sliding_window_average(forward)
                 avg_rc = viz.sliding_window_average(reverse_complement)
 

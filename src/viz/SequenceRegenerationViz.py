@@ -172,8 +172,8 @@ class SequenceRegenerationViz:
         plt.xlim(0, int(max(position) * 1.05))
         plt.xlabel("Base Index")
         plt.ylabel("Avg Probability (Window = " + str(window_length) + ")")
-        plt.savefig(self.root_path + id + 'sliding_window_probability.png')
-        plt.clf()
+        fig = plt.savefig(self.root_path + id + 'sliding_window_probability.png')
+        plt.close(fig)
 
     def save_probabilities(self, probabilities, id=None):
         if id is not None:
@@ -207,8 +207,8 @@ class SequenceRegenerationViz:
             plt.xlim(0, int(max(position) * 1.05))
             plt.xlabel("Base Index")
             plt.ylabel("Probability")
-            plt.savefig(label + '.png')
-            plt.clf()
+            fig = plt.savefig(label + '.png')
+            plt.close(fig)
 
         self._configure_plot()
         plt.scatter(position, correct_base_probability)
@@ -216,5 +216,5 @@ class SequenceRegenerationViz:
         plt.xlim(0, int(max(position) * 1.05))
         plt.xlabel("Base Index")
         plt.ylabel("Probability")
-        plt.savefig(self.root_path + id + 'correct_base_probability.png')
-        plt.clf()
+        fig = plt.savefig(self.root_path + id + 'correct_base_probability.png')
+        plt.close(fig)

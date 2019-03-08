@@ -27,8 +27,8 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy, len
     plt.xlabel('Epoch')
     plt.ylabel('Training Accuracy')
     plt.plot(np.arange(len(training_accuracy)), training_accuracy, linewidth=3)
-    plt.savefig(directory_path + 'training_accuracy.png')
-    plt.clf()
+    fig = plt.savefig(directory_path + 'training_accuracy.png')
+    plt.close(fig)
 
     plt.figure(figsize=figure_dimensions)
     plt.ylim(0, 1.1)
@@ -41,8 +41,8 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy, len
         plt.axvline(best_epoch, color='r', linestyle='dashed', linewidth=3)
     if legend is not None:
         plt.legend(legend+["Best Epoch"], loc='best')
-    plt.savefig(directory_path + 'percent_predicted_till_mismatch.png')
-    plt.clf()
+    fig = plt.savefig(directory_path + 'percent_predicted_till_mismatch.png')
+    plt.close(fig)
 
     np.save(directory_path + "training", training_accuracy)
     np.save(directory_path + "validation", validation_metrics)

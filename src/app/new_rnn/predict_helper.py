@@ -33,13 +33,12 @@ def predict_next_n_bases(model, seed, n):
         length += 1
     return current_sequence, basewise_probabilities
 
-def regenerate_sequence(min_seed_length, model, full_sequence):
+def regenerate_sequence(min_seed_length, model, full_sequence, use_reference_to_seed=True):
     label_encoder = KmerLabelEncoder()
     prediction_length = 1
     one_hot_decoder = OneHotVectorDecoder(prediction_length, encoding_constants=CONSTANTS)
 
     sequence_length = len(full_sequence)
-    start_string = full_sequence[0:min_seed_length]
 
     bases_to_predict = sequence_length - min_seed_length
 
@@ -47,14 +46,16 @@ def regenerate_sequence(min_seed_length, model, full_sequence):
 
     remaining_length = bases_to_predict
     model.reset_states()
-    current_sequence = str(start_string)
+    current_sequence = str(full_sequence[0:min_seed_length])
     length = min_seed_length
 
-    seed = current_sequence[0:length - 1]
+    reference = full_sequence if use_reference_to_seed else current_sequence
+
+    seed = reference[0:length - 1]
     input_seq = label_encoder.encode_kmers([seed], [], with_shifted_output=False)[0]
     model.predict(input_seq)
     while remaining_length > 0:
-        base = current_sequence[length-1:length]
+        base = reference[length-1:length]
         base_encoding = label_encoder.encode_kmers([base], [], with_shifted_output=False)[0]
 
         prediction = model.predict(base_encoding)

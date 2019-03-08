@@ -7,3 +7,6 @@ CCTCCCTCCCTCCCCCTTTCAGAACACTCAATGTCGGAACGTTCCGAAGATGACGTCGGAGCGTTCTCGAATCCCGTGTC
 PREDICTED
 Mean Match: 1.0
 First Mismatch: 255
+
+-----------------------------------------------------
+
