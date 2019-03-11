@@ -1,8 +1,10 @@
 import os
 
-import utils.directory_utils as UTILS
 import matplotlib.pyplot as plt
 import numpy as np
+
+import utils.directory_utils as UTILS
+
 
 def set_up_plot(is_training):
     epochs = 1000
@@ -45,7 +47,7 @@ def main():
             ids.add(fasta_id)
 
     training_file = "training.npy"
-    validation_file = "validation.npy"
+    validation_file = "weighted_mean.npy"
 
     linewidth = 5
     alpha = 0.7
@@ -65,6 +67,10 @@ def main():
                         training_metrics = np.load(training_folder + training_file)
                         training_epochs = np.arange(len(training_metrics))
                         plt.plot(training_epochs, training_metrics, linewidth=linewidth, alpha=alpha, color=colours[rnn_dim], label="LD " + str(rnn_dim))
+
+                        validation_metrics = np.load(training_folder + validation_file)
+                        best_epoch = np.argmax(validation_metrics)
+                        plt.axvline(best_epoch, linewidth=linewidth, alpha=alpha, color=colours[rnn_dim])
             plt.legend(loc="best")
             fig = plt.savefig(output_folder + plot_id)
             plt.close(fig)
@@ -82,8 +88,10 @@ def main():
                         training_folder = folder_path + results_file + terminal_char
                         validation_metrics = np.load(training_folder + validation_file)
                         validation_epochs = np.arange(len(validation_metrics))
-                        mean = np.mean(validation_metrics, axis=1)
-                        plt.plot(validation_epochs, mean, linewidth=linewidth, alpha=alpha, color=colours[rnn_dim], label="LD " + str(rnn_dim))
+                        plt.plot(validation_epochs, validation_metrics, linewidth=linewidth, alpha=alpha, color=colours[rnn_dim], label="LD " + str(rnn_dim))
+
+                        best_epoch = np.argmax(validation_metrics)
+                        plt.axvline(best_epoch, linewidth=linewidth, alpha=alpha, color=colours[rnn_dim])
             plt.legend(loc="best")
             fig = plt.savefig(output_folder + plot_id)
             plt.close(fig)
