@@ -21,18 +21,13 @@ class TestDataGenerator(TestCase):
 
     def test_process_batch(self):
         np.random.seed(0)
-        total_reads = len(self.reads)
-        idx = np.arange(total_reads)
-        np.random.shuffle(idx)
-
-        batch_idx = idx[0:self.batch_size]
+        batch_idx = np.array([5, 0, 3, 3])
         batch = self.reads[batch_idx]
         expected_batch = np.array([
-            "GCCGCTGGCTTTACGCTATATCCGGTGGCGATGGCATGGGCTTGCGAGAAAGTTGAACATCATCAACTGGTGGC",
-            "GTAAGGCCTGGTTCATCGCCACCAGTTGATGATGTTCAACTTTCTCGCAAGCCCATGCCATCGCCAC",
+            "CCTCGGTGCCGCTGGCTTTACGCTATATCCGGTGGCGATGGCATGGGCTTGCGAGAAAGTTGAACATCATCAACTGGTGGCGATGAAC",
             "CCTCGGTGCCGCTGGCTTTACGCTATATCCGGTGGCGATGGCATGGGCTTGCGAGAAAGTTGAACATCATCAACTGGTGGCGATGAACCAGGCCTTAC",
-            "TCATGGGTGTTTATCTTTGCACTCTATTTCACACCTTATGCGCTAATTGTTGGTCAGTTAGGCTCGACATTCAAAGATGGGAAGGGCGGGGTCAGTAC"
-
+            "GTAAGGCCTGGTTCATCGCCACCAGTTGATGATGTTCAACTTTCTCGCAAGCCCATGCCATCGCCAC",
+            "GTAAGGCCTGGTTCATCGCCACCAGTTGATGATGTTCAACTTTCTCGCAAGCCCATGCCATCGCCAC"
         ], dtype='U98')
         np.testing.assert_array_equal(batch, expected_batch)
 
@@ -40,33 +35,28 @@ class TestDataGenerator(TestCase):
         input, output = self.generator.__getitem__(0)
 
         expected_processed_batch = np.array([
-            'TATCCGGTGGCGATGGCATGGGCTTGCGAGAAAGTTGAACATCATCA',
-            'GGCCTGGTTCATCGCCACCAGTTGATGATGTTCAACTTTCTCGCAAG',
-            'TATATCCGGTGGCGATGGCATGGGCTTGCGAGAAAGTTGAACATCAT',
-            'GTGTTTATCTTTGCACTCTATTTCACACCTTATGCGCTAATTGTTGG'
+            'CGCTGGCTTTACGCTATATCCGGTGGCGATGGCATGGGCTTGCGAGAAAGTTGAACATCATCAAC',
+            'ACGCTATATCCGGTGGCGATGGCATGGGCTTGCGAGAAAGTTGAACATCATCAACTGGTGGCGAT',
+            'TAAGGCCTGGTTCATCGCCACCAGTTGATGATGTTCAACTTTCTCGCAAGCCCATGCCATCGCCA',
+            'GTAAGGCCTGGTTCATCGCCACCAGTTGATGATGTTCAACTTTCTCGCAAGCCCATGCCATCGCC'
         ])
         X = self.encoder.encode_kmers(expected_processed_batch, [], with_shifted_output=False)[0]
 
         np.testing.assert_array_equal(input, X)
-        np.testing.assert_array_equal(output, np.array([[1, 0, 0, 0],
+        np.testing.assert_array_equal(output, np.array([[0, 0, 0, 1],
+                                                        [0, 0, 1, 0],
                                                         [0, 1, 0, 0],
-                                                        [0, 1, 0, 0],
-                                                        [0, 0, 0, 1]]))
+                                                        [1, 0, 0, 0]]))
 
     def test_process_batch_with_errors(self):
         np.random.seed(0)
-        total_reads = len(self.error_reads)
-        idx = np.arange(total_reads)
-        np.random.shuffle(idx)
-
-        batch_idx = idx[0:self.batch_size]
+        batch_idx = np.array([5, 0, 3, 3])
         batch = self.error_reads[batch_idx]
         expected_batch = np.array([
-            "GCCGCTGGCTTTACGCTATATCCGGTGGCGATGGNATGGGCTTGCGAGAAAGTTGAACATCATCAACTGGTGGC",
+            "CCTCGGTGCCGCTGGCTTTACGCTATATCCGGTGGCGATGGCATGGGCTTGCGAGAAAGTTGAACATCATCAACTGGTGGCGATGAAC",
+            "CCTCGGTGCCGCTGGCTTTACGCTATATCCGGTGGCGATGGCATGGGCTTGCGAGAAAGTTGAACATCATCAACTGGTGGCGATGAACCAGGCCTTAC",
             "GTAAGGCCTGGTTCATCGCCACCAGTTGATGATGTTCAACTTTCTCGCAAGCCCATGCCATCGCNAC",
-            "CCTNGGTGCCGCTGGCTTTACGCTATATCCGGTGGCGATGGCATGGGCTTGCGAGAAAGTTGAACATCATCAACTGGTGGCGATGAACCAGGCCTTAC",
-            "TCATGGGTGTTTATCTTTGCACTCTATTTCACACCTTATGCGCTAATTGTTGGTCAGTTAGGCTCGACATTCAAANATGGGAAGGGCGGGGTCAGTAN"
-
+            "GTAAGGCCTGGTTCATCGCCACCAGTTGATGATGTTCAACTTTCTCGCAAGCCCATGCCATCGCNAC"
         ], dtype='U98')
         np.testing.assert_array_equal(batch, expected_batch)
 
@@ -74,12 +64,23 @@ class TestDataGenerator(TestCase):
         input, output = self.error_generator.__getitem__(0)
 
         expected_processed_batch = np.array([
-            'TGCCGCTGGCTTTACGCTATATCCGGTGGCGATGGCATGGGCTTGCG',
-            'TATTTCACACCTTATGCGCTAATTGTTGGTCAGTTAGGCTCGACATT'
+            'CGCTGGCTTTACGCTATATCCGGTGGCGATGGC',
+            'ACGCTATATCCGGTGGCGATGGCATGGGCTTGC',
+            'CCACCAGTTGATGATGTTCAACTTTCTCGCAAG'
         ])
         X = self.encoder.encode_kmers(expected_processed_batch, [], with_shifted_output=False)[0]
 
         np.testing.assert_array_equal(input, X)
-        np.testing.assert_array_equal(output, np.array([[1, 0, 0, 0],
-                                                        [1, 0, 0, 0]]))
+        np.testing.assert_array_equal(output, np.array([[0, 0, 1, 0],
+                                                        [1, 0, 0, 0],
+                                                        [0, 1, 0, 0]]))
 
+    def test_len(self):
+        self.assertEqual(self.generator.__len__(), 3)
+        reads = []
+        for i in range(200):
+            reads.append("A"*500)
+        np_reads = np.array(reads)
+
+        generator = DataGenerator(np_reads, 26, batch_size=30)
+        self.assertEqual(generator.__len__(), 34)

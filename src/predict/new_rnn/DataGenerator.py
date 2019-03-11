@@ -2,6 +2,7 @@ import os
 
 import keras.utils
 import numpy as np
+import math
 
 from constants import EncodingConstants as CONSTANTS
 from onehot.OneHotVector import OneHotVectorEncoder
@@ -35,15 +36,17 @@ class DataGenerator(keras.utils.Sequence):
         return len(read) >= minimum_length
 
     def __len__(self):
-        return int(np.ceil(len(self.reads)/self.batch_size))
+        max_read_length = max(list(map(lambda x: len(x), self.reads)))
+        expected_length = 100
+        multiplier = max_read_length/expected_length
+        base_iterations = len(self.reads)/self.batch_size
+        return int(np.ceil(base_iterations * multiplier))
 
     def __getitem__(self, index):
         total_reads = len(self.reads)
-        idx = np.arange(total_reads)
-        np.random.shuffle(idx)
+        idx = np.random.randint(total_reads, size=self.batch_size)
 
-        batch_idx = idx[0:self.batch_size]
-        batch = self.reads[batch_idx]
+        batch = self.reads[idx]
         X, y = self._process_batch(batch)
         return X, y
 
