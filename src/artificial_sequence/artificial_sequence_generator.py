@@ -34,11 +34,11 @@ def write_sequence_to_fasta(id, sequence, file):
 
 def write_fasta(file_name, full_seq, seq_of_interest, left_flank, right_flank, gap):
     file = open(root_path + file_name, "w+")
-    write_sequence_to_fasta("full_seq", full_seq, file)
-    write_sequence_to_fasta("seq_of_interest", seq_of_interest, file)
     write_sequence_to_fasta("left_flank", left_flank, file)
     write_sequence_to_fasta("right_flank", right_flank, file)
     write_sequence_to_fasta("gap", gap, file)
+    write_sequence_to_fasta("full_seq", full_seq, file)
+    write_sequence_to_fasta("seq_of_interest", seq_of_interest, file)
     file.close()
 
 def dissect_sequence(sequence):
@@ -111,5 +111,5 @@ def generate_random_sequence():
     write_fasta("random.fasta", full_sequence, seq_of_interest, left_flank, right_flank, gap)
     generate_fastq_reads("random.fastq", full_sequence)
 
-#generate_random_sequence()
-generate_repetitive_sequence("A"*300+"T", "longer_than_read")
+generate_random_sequence()
+generate_repetitive_sequence("ATGC")
