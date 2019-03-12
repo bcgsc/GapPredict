@@ -6,7 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import utils.directory_utils as UTILS
-import tensorflow as tf
 from predict.new_rnn.SingleLSTMModel import SingleLSTMModel
 from preprocess.SequenceImporter import SequenceImporter
 from preprocess.SequenceReverser import SequenceReverser
@@ -49,7 +48,7 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy, len
     np.save(directory_path + "lengths", lengths)
     np.save(directory_path + "weighted_mean", weighted_mean)
 
-def train_model(base_directory, min_seed_length, reference, reads, epochs, batch_sizes, rnn_dims, embedding_dims, replicates, gpu="0"):
+def train_model(base_directory, min_seed_length, reference, reads, epochs, batch_sizes, rnn_dims, embedding_dims, replicates):
     include_reverse_complement = True
 
     importer = SequenceImporter()
@@ -94,8 +93,7 @@ def train_model(base_directory, min_seed_length, reference, reads, epochs, batch
                                             log_training=log_training, early_stopping=early_stopping)
 
                     start_time = time.time()
-                    with tf.device('/gpu:' + gpu):
-                        history = model.fit(reads)
+                    history = model.fit(reads)
                     model.save_weights(weights_path + 'my_model_weights.h5')
                     end_time = time.time()
                     print("Fitting took " + str(end_time - start_time) + "s")

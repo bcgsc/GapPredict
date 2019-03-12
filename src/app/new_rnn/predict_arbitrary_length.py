@@ -9,7 +9,6 @@ from viz.SequenceRegenerationViz import SequenceRegenerationViz
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 import app.new_rnn.predict_helper as helper
-import tensorflow as tf
 import numpy as np
 
 def main():
@@ -21,7 +20,7 @@ def main():
     length_to_predict = 750
     predict_arbitrary_length(weights_path, id, fasta_path, embedding_dim, latent_dim, length_to_predict)
 
-def predict_arbitrary_length(weights_path, id, fasta_path, embedding_dim, latent_dim, length_to_predict, base_path=None, gpu="0"):
+def predict_arbitrary_length(weights_path, id, fasta_path, embedding_dim, latent_dim, length_to_predict, base_path=None):
     importer = SequenceImporter()
     reverser = SequenceReverser()
 
@@ -36,20 +35,19 @@ def predict_arbitrary_length(weights_path, id, fasta_path, embedding_dim, latent
 
     model.load_weights(weights_path + 'my_model_weights.h5')
 
-    forward_predict = predict(model, left_flank, length_to_predict, reference, base_path=base_path, directory="predict_gap/forward", gpu=gpu)
-    reverse_predict = predict(model, right_flank, length_to_predict, reference, base_path=base_path, directory="predict_gap/reverse_complement", gpu=gpu)
+    forward_predict = predict(model, left_flank, length_to_predict, reference, base_path=base_path, directory="predict_gap/forward")
+    reverse_predict = predict(model, right_flank, length_to_predict, reference, base_path=base_path, directory="predict_gap/reverse_complement")
 
     viz = SequenceRegenerationViz(root_directory=base_path)
     postfix = "_LD_"+str(latent_dim)
     viz.save_complements(forward_predict, reverse_predict, id, postfix=postfix, fasta_ref=fasta_path)
 
-def predict(model, seed, prediction_length, reference, base_path=None, directory=None, gpu="0"):
+def predict(model, seed, prediction_length, reference, base_path=None, directory=None):
     validator = SequenceMatchCalculator()
     label_encoder = KmerLabelEncoder()
 
     seed_length = len(seed)
-    with tf.device('/gpu:' + gpu):
-        predicted_string_with_seed, basewise_probabilities = helper.predict_next_n_bases(model, seed, prediction_length)
+    predicted_string_with_seed, basewise_probabilities = helper.predict_next_n_bases(model, seed, prediction_length)
 
     viz = SequenceRegenerationViz(root_directory=base_path, directory=directory)
     viz.save_probabilities(basewise_probabilities)

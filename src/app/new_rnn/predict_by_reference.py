@@ -8,12 +8,11 @@ from preprocess.SequenceMatchCalculator import SequenceMatchCalculator
 from viz.SequenceRegenerationViz import SequenceRegenerationViz
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 import utils.directory_utils as UTILS
-import tensorflow as tf
 import app.new_rnn.predict_helper as helper
 
 import numpy as np
 
-def predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_seed_length, id, plots=False, base_path=None, gpu="0"):
+def predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_seed_length, id, plots=False, base_path=None):
     importer = SequenceImporter()
     reverser = SequenceReverser()
 
@@ -41,8 +40,8 @@ def predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_s
 
         viz = SequenceRegenerationViz(root_directory=base_path, directory=static_path)
 
-        forward_predict = predict(model, min_seed_length, sequence, base_path=base_path, directory=static_path + "forward", plots=plots, gpu=gpu)
-        reverse_predict = predict(model, min_seed_length, reverser.reverse_complement(sequence), base_path=base_path, directory=static_path + "reverse_complement", plots=plots, gpu=gpu)
+        forward_predict = predict(model, min_seed_length, sequence, base_path=base_path, directory=static_path + "forward", plots=plots)
+        reverse_predict = predict(model, min_seed_length, reverser.reverse_complement(sequence), base_path=base_path, directory=static_path + "reverse_complement", plots=plots)
 
         if i == 0:
             forward_left_flank = forward_predict
@@ -56,13 +55,12 @@ def predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_s
     viz = SequenceRegenerationViz(root_directory=base_path, directory=first_directory)
     viz.write_flank_predict_fasta(forward_left_flank, rc_left_flank, forward_right_flank, rc_right_flank, latent_dim, id)
 
-def predict(model, min_seed_length, sequence, base_path=None, directory=None, plots=False, gpu="0"):
+def predict(model, min_seed_length, sequence, base_path=None, directory=None, plots=False):
     validator = SequenceMatchCalculator()
     viz = SequenceRegenerationViz(root_directory=base_path, directory=directory)
     label_encoder = KmerLabelEncoder()
 
-    with tf.device('/gpu:' + gpu):
-        predicted_string_with_seed, basewise_probabilities = helper.regenerate_sequence(min_seed_length, model, sequence)
+    predicted_string_with_seed, basewise_probabilities = helper.regenerate_sequence(min_seed_length, model, sequence)
 
     predicted_sequence = predicted_string_with_seed[min_seed_length:]
     actual_sequence = sequence[min_seed_length:]
