@@ -36,7 +36,7 @@ def main():
         os.makedirs(output_folder)
 
     rnn_dim_directories = os.listdir(root)
-    replicates = 3
+    replicates = 2
 
     ids = set()
     for rnn_dim in rnn_dim_directories:
@@ -64,6 +64,10 @@ def main():
 
     font = {
         'size': 35
+    }
+
+    legend_font = {
+        'size': 28
     }
 
     for id in ids:
@@ -96,10 +100,9 @@ def main():
 
                 plt.plot(forward_pos, avg_f, linewidth=linewidth, alpha=alpha, label="LD_" + str(rnn_dim)+"_F")
                 plt.plot(rc_pos, avg_rc, linewidth=linewidth, alpha=alpha, label="LD_" + str(rnn_dim)+"_RC")
-            plt.legend(loc="best", prop=font)
+            plt.legend(loc=4, prop=legend_font)
             fig = plt.savefig(output_folder + plot_id)
             plt.close(fig)
-    #TODO: maybe add vertical lines for the first mismatch each model makes
 
 if __name__ == "__main__":
     main()

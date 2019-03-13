@@ -19,7 +19,7 @@ def main():
         os.makedirs(output_folder)
 
     rnn_dim_directories = os.listdir(root)
-    replicates = 3
+    replicates = 2
 
     ids = set()
     for rnn_dim in rnn_dim_directories:
@@ -42,10 +42,7 @@ def main():
                             acc = 0
                             for line in fasta:
                                 if acc < 4:
-                                    if acc % 2 == 0:
-                                        file.write(line[0:len(line)-1] + "_LD_" + str(rnn_dim) + "\n") #TODO: don't need to do this if i manage to fix how we do IDs for later model batches
-                                    else:
-                                        file.write(line)
+                                    file.write(line)
                                 acc += 1
         file.close()
 

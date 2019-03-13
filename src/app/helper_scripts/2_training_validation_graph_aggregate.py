@@ -36,7 +36,7 @@ def main():
         os.makedirs(output_folder)
 
     rnn_dim_directories = os.listdir(root)
-    replicates = 3
+    replicates = 2
 
     ids = set()
     for rnn_dim in rnn_dim_directories:
@@ -51,7 +51,7 @@ def main():
 
     linewidth = 5
     alpha = 0.7
-    colours = {"256": 'r', "384": 'c', "512": 'y'}
+    colours = {"384_SL_52": 'r', "384_SL_104": 'orange', "512_SL_52": 'c', "512_SL_104": 'blue'}
 
     for id in ids:
         for i in range(replicates):
