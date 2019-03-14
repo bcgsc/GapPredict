@@ -10,7 +10,7 @@ from predict.new_rnn.SingleLSTMModel import SingleLSTMModel
 from preprocess.SequenceImporter import SequenceImporter
 from preprocess.SequenceReverser import SequenceReverser
 
-def _plot_training_validation(epochs, validation_metrics, training_accuracy, lengths, directory_path, legend=None, best_epoch=None):
+def _plot_training_validation(epochs, accuracy, loss, training_accuracy, training_loss, lengths, directory_path, legend=None, best_epoch=None):
     plt.rc('xtick', labelsize=28)
     plt.rc('ytick', labelsize=28)
     font = {
@@ -26,7 +26,19 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy, len
     plt.xlabel('Epoch')
     plt.ylabel('Training Accuracy')
     plt.plot(np.arange(len(training_accuracy)), training_accuracy, linewidth=3)
+    if best_epoch is not None:
+        plt.axvline(best_epoch, color='r', linestyle='dashed', linewidth=3)
     fig = plt.savefig(directory_path + 'training_accuracy.png')
+    plt.close(fig)
+
+    plt.figure(figsize=figure_dimensions)
+    plt.xlim(0, epochs)
+    plt.xlabel('Epoch')
+    plt.ylabel('Training Loss')
+    plt.plot(np.arange(len(training_loss)), training_loss, linewidth=3)
+    if best_epoch is not None:
+        plt.axvline(best_epoch, color='r', linestyle='dashed', linewidth=3)
+    fig = plt.savefig(directory_path + 'training_loss.png')
     plt.close(fig)
 
     plt.figure(figsize=figure_dimensions)
@@ -34,21 +46,35 @@ def _plot_training_validation(epochs, validation_metrics, training_accuracy, len
     plt.xlim(0, epochs)
     plt.xlabel('Epoch')
     plt.ylabel('% Predicted')
-    weighted_mean = np.sum(validation_metrics * lengths, axis=1) / np.sum(lengths)
-    plt.plot(np.arange(len(weighted_mean)), weighted_mean, linewidth=3)
+    weighted_mean_accuracy = np.sum(accuracy * lengths, axis=1) / np.sum(lengths)
+    plt.plot(np.arange(len(weighted_mean_accuracy)), weighted_mean_accuracy, linewidth=3)
     if best_epoch is not None:
         plt.axvline(best_epoch, color='r', linestyle='dashed', linewidth=3)
     if legend is not None:
         plt.legend(legend+["Best Epoch"], loc='best')
-    fig = plt.savefig(directory_path + 'percent_predicted_till_mismatch.png')
+    fig = plt.savefig(directory_path + 'validation_accuracy.png')
     plt.close(fig)
 
-    np.save(directory_path + "training", training_accuracy)
-    np.save(directory_path + "validation", validation_metrics)
-    np.save(directory_path + "lengths", lengths)
-    np.save(directory_path + "weighted_mean", weighted_mean)
+    plt.figure(figsize=figure_dimensions)
+    plt.xlim(0, epochs)
+    plt.xlabel('Epoch')
+    plt.ylabel('Validation Loss')
+    weighted_mean_loss = np.sum(loss * lengths, axis=1) / np.sum(lengths)
+    plt.plot(np.arange(len(weighted_mean_loss)), weighted_mean_loss, linewidth=3)
+    if best_epoch is not None:
+        plt.axvline(best_epoch, color='r', linestyle='dashed', linewidth=3)
+    if legend is not None:
+        plt.legend(legend+["Best Epoch"], loc='best')
+    fig = plt.savefig(directory_path + 'validation_loss.png')
+    plt.close(fig)
 
-def train_model(base_directory, min_seed_length, reference, reads, epochs, batch_sizes, rnn_dims, embedding_dims, replicates):
+    np.save(directory_path + "training_accuracy", training_accuracy)
+    np.save(directory_path + "training_loss", training_loss)
+    np.save(directory_path + "validation_accuracy", accuracy)
+    np.save(directory_path + "validation_loss", loss)
+    np.save(directory_path + "lengths", lengths)
+
+def train_model(base_directory, min_seed_length, reference, reads, epochs, batch_sizes, rnn_dims, embedding_dims, replicates, patience):
     include_reverse_complement = True
 
     importer = SequenceImporter()
@@ -90,7 +116,8 @@ def train_model(base_directory, min_seed_length, reference, reads, epochs, batch
                                             epochs=epochs, embedding_dim=embedding_dim, latent_dim=latent_dim,
                                             with_gpu=with_gpu, log_samples=log_samples,
                                             reference_sequences=reference_sequences,
-                                            log_training=log_training, early_stopping=early_stopping)
+                                            log_training=log_training, early_stopping=early_stopping,
+                                            patience=patience)
 
                     start_time = time.time()
                     history = model.fit(reads)
@@ -98,14 +125,15 @@ def train_model(base_directory, min_seed_length, reference, reads, epochs, batch
                     end_time = time.time()
                     print("Fitting took " + str(end_time - start_time) + "s")
 
-                    validation_metrics = model.validation_history()
+                    accuracy, loss = model.validation_history()
                     if log_training:
                         training_accuracy = model.training_history()
                     else:
                         training_accuracy = history.history['acc']
+                    training_loss = history.history['loss']
                     if early_stopping:
                         best_epoch = model.get_best_epoch()
-                    _plot_training_validation(epochs, validation_metrics, training_accuracy, lengths, viz_path, legend=legend, best_epoch=best_epoch)
+                    _plot_training_validation(epochs, accuracy, loss, training_accuracy, training_loss, lengths, viz_path, legend=legend, best_epoch=best_epoch)
 
 def main():
     if os.name == 'nt':
@@ -126,7 +154,8 @@ def main():
     embedding_dims = [128]
     epochs = 1000
     replicates = 1
-    train_model(base_directory, min_seed_length, reference, reads, epochs, batch_sizes, rnn_dims, embedding_dims, replicates)
+    patience = 200
+    train_model(base_directory, min_seed_length, reference, reads, epochs, batch_sizes, rnn_dims, embedding_dims, replicates, patience)
 
 if __name__ == "__main__":
     main()

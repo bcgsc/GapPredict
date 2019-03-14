@@ -31,7 +31,7 @@ class SingleLSTMModel:
 
     def __init__(self, min_seed_length, spacing=0, batch_size=64, stateful=False, epochs=100, embedding_dim=25,
                  latent_dim=100, with_gpu=True, log_samples=True, reference_sequences=None, log_training=False,
-                 early_stopping=False):
+                 early_stopping=False, patience=200):
         self.encoding = CONSTANTS.ONE_HOT_ENCODING
         encoding_length = self.encoding.shape[1]
 
@@ -47,6 +47,7 @@ class SingleLSTMModel:
         self.log_samples = log_samples
         self.spacing = spacing
         self.early_stopping = early_stopping
+        self.patience = patience
         self._initialize_models()
 
         self.log_training = log_training
@@ -54,7 +55,8 @@ class SingleLSTMModel:
         if reference_sequences is not None:
             from predict.new_rnn.ValidationMetric import ValidationMetric
             self.validator = ValidationMetric(reference_sequences, self.min_seed_length, self.spacing,
-                                              self.embedding_dim, self.latent_dim, self.epochs, self.early_stopping)
+                                              self.embedding_dim, self.latent_dim, self.epochs, self.patience,
+                                                early_stopping=self.early_stopping)
             self.callbacks.append(self.validator)
         if self.log_training:
             self.train_validator = TrainingMetric(self.epochs)

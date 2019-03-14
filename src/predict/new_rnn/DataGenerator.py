@@ -2,7 +2,6 @@ import os
 
 import keras.utils
 import numpy as np
-import math
 
 from constants import EncodingConstants as CONSTANTS
 from onehot.OneHotVector import OneHotVectorEncoder
@@ -17,7 +16,7 @@ class DataGenerator(keras.utils.Sequence):
     def __init__(self, reads, min_seed_length, batch_size=64, spacing=0, log_samples=False, log_training=False):
         self.batch_size = batch_size
         self.min_seed_length = min_seed_length
-        self.encoder = OneHotVectorEncoder(1, encoding_constants=CONSTANTS)
+        self.one_hot_encoder = OneHotVectorEncoder(1, encoding_constants=CONSTANTS)
         self.label_encoder = KmerLabelEncoder()
         self.output_length = 1
         self.log_samples = log_samples
@@ -84,7 +83,7 @@ class DataGenerator(keras.utils.Sequence):
             self._save_batch(np_inputs, np_outputs)
 
         X, y = self.label_encoder.encode_kmers(np_inputs, np_outputs, with_shifted_output=False)[0:2]
-        y = self.encoder.encode_sequences(y)
+        y = self.one_hot_encoder.encode_sequences(y)
 
         if self.log_training:
             self.batches.append((X, y))
