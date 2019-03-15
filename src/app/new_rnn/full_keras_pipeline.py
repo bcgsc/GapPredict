@@ -16,6 +16,7 @@ arg_parser.add_argument('-e', type=int, nargs=1, default=[1000], help="training 
 arg_parser.add_argument('-sl', type=int, nargs=1, default=[26], help="minimum seed length for training")
 arg_parser.add_argument('-gpu', type=int, nargs=1, default=[0], help="GPU device ID to use")
 arg_parser.add_argument('-pl', type=int, nargs=1, default=[750], help="prediction length")
+arg_parser.add_argument('-es', type=int, nargs=1, default=[200], help="early stopping patience epochs")
 
 args = arg_parser.parse_args()
 
@@ -51,6 +52,7 @@ def main(args):
     min_seed_length = args.sl[0]
     replicates = args.r[0]
     prediction_length = args.pl[0]
+    patience = args.es[0]
 
     terminal_directory_character = UTILS.get_terminal_directory_character()
     id = ref_file.split(terminal_directory_character)[-1].split(".")[0]
@@ -62,7 +64,7 @@ def main(args):
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        train_model(output_directory, min_seed_length, ref_file, read_file, epochs, [batch_size], [rnn_dim], [embedding_dim], 1)
+        train_model(output_directory, min_seed_length, ref_file, read_file, epochs, [batch_size], [rnn_dim], [embedding_dim], 1, patience)
         predict_reference(output_directory, ref_file, embedding_dim, rnn_dim, min_seed_length, id, base_path=output_directory)
         predict_arbitrary_length(output_directory, id, ref_file, embedding_dim, rnn_dim, prediction_length, base_path=output_directory)
 
