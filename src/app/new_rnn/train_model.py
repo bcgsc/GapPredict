@@ -5,7 +5,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-import utils.directory_utils as UTILS
+import utils.directory_utils as dir_utils
 from predict.new_rnn.SingleLSTMModel import SingleLSTMModel
 from preprocess.SequenceImporter import SequenceImporter
 from preprocess.SequenceReverser import SequenceReverser
@@ -93,23 +93,20 @@ def train_model(base_directory, min_seed_length, reference, reads, epochs, batch
     early_stopping=True
     legend=['Mean Sequence']
 
-    terminal_directory_character = UTILS.get_terminal_directory_character()
+    terminal_directory_character = dir_utils.get_terminal_directory_character()
 
     for batch_size in batch_sizes:
         for embedding_dim in embedding_dims:
             for latent_dim in rnn_dims:
                 for i in range(replicates):
-                    weights_path = UTILS.clean_directory_string(base_directory)
+                    weights_path = dir_utils.clean_directory_string(base_directory)
                     inner_directory = "BS_" + str(batch_size) + "_ED_" + str(embedding_dim) + "_LD_" + str(latent_dim) \
                                       + "_E_" + str(epochs) + "_R_" + str(i)
 
                     viz_path = weights_path + inner_directory + terminal_directory_character
 
-                    if not os.path.exists(weights_path):
-                        os.makedirs(weights_path)
-
-                    if not os.path.exists(viz_path):
-                        os.makedirs(viz_path)
+                    dir_utils.mkdir(weights_path)
+                    dir_utils.mkdir(viz_path)
 
                     model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=False,
                                             batch_size=batch_size,

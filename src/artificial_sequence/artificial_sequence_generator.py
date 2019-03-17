@@ -2,7 +2,7 @@ import math
 import os
 
 import numpy as np
-
+import utils.directory_utils as dir_utils
 from preprocess.SequenceReverser import SequenceReverser
 
 if os.name == 'nt':
@@ -10,8 +10,7 @@ if os.name == 'nt':
 else:
     root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/data/artificial/'
 
-if not os.path.exists(root_path):
-    os.makedirs(root_path)
+dir_utils.mkdir(root_path)
 
 read_length = 250
 gap_length = 350

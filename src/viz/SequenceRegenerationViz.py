@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-import utils.directory_utils as UTILS
+import utils.directory_utils as dir_utils
 from preprocess.SequenceComplementCalculator import SequenceComplementCalculator
 from preprocess.SequenceReverser import SequenceReverser
 
@@ -16,13 +16,12 @@ class SequenceRegenerationViz:
             else:
                 self.root_path = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/predict_results/'
         else:
-            self.root_path = UTILS.clean_directory_string(root_directory)
+            self.root_path = dir_utils.clean_directory_string(root_directory)
 
         if directory is not None:
-            self.root_path = UTILS.clean_directory_string(self.root_path + directory)
+            self.root_path = dir_utils.clean_directory_string(self.root_path + directory)
 
-        if not os.path.exists(self.root_path):
-            os.makedirs(self.root_path)
+        dir_utils.mkdir(self.root_path)
 
     def _configure_plot(self):
         figure_dimensions = (12, 9)
