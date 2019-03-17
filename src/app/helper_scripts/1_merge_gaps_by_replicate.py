@@ -1,6 +1,6 @@
 import os
 
-import utils.directory_utils as UTILS
+import utils.directory_utils as dir_utils
 
 
 def get_aggregate_fasta_name(replicate, rnn_dim):
@@ -12,11 +12,11 @@ def main():
     else:
         root = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/models/'
 
-    terminal_char = UTILS.get_terminal_directory_character()
+    terminal_char = dir_utils.get_terminal_directory_character()
 
     output_folder = root + ".." + terminal_char + "aggregate" + terminal_char + "predicted_sequences" + terminal_char
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+
+    dir_utils.mkdir(output_folder)
 
     rnn_dim_directories = os.listdir(root)
     replicates = 2

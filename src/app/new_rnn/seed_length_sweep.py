@@ -32,14 +32,13 @@ if os.name == 'nt':
 else:
     sys.path.append('/home/echen/Desktop/Projects/Sealer_NN/src/')
 
-import utils.directory_utils as UTILS
+import utils.directory_utils as dir_utils
 from app.new_rnn.train_model import train_model
 
 def main(args):
-    base_output_directory = UTILS.clean_directory_string(args.o[0])
+    base_output_directory = dir_utils.clean_directory_string(args.o[0])
 
-    if not os.path.exists(base_output_directory):
-        os.makedirs(base_output_directory)
+    dir_utils.mkdir(base_output_directory)
 
     ref_file = args.fa[0]
     read_file = args.fq[0]
@@ -53,15 +52,15 @@ def main(args):
     patience = args.es[0]
     seed_range_upper = args.sr[0]
 
-    terminal_directory_character = UTILS.get_terminal_directory_character()
+    terminal_directory_character = dir_utils.get_terminal_directory_character()
     id = ref_file.split(terminal_directory_character)[-1].split(".")[0]
 
     base_output_directory += id
     log_samples=False
     for i in range(replicates):
-        output_directory = UTILS.clean_directory_string(base_output_directory + "_R_" + str(i))
-        if not os.path.exists(output_directory):
-            os.makedirs(output_directory)
+        output_directory = dir_utils.clean_directory_string(base_output_directory + "_R_" + str(i))
+
+        dir_utils.mkdir(output_directory)
 
         train_model(output_directory, min_seed_length, ref_file, read_file, epochs, [batch_size], [rnn_dim], [embedding_dim], 1, patience, seed_range_upper, log_samples=log_samples)
 
