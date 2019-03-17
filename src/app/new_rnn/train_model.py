@@ -74,7 +74,7 @@ def _plot_training_validation(epochs, accuracy, loss, training_accuracy, trainin
     np.save(directory_path + "validation_loss", loss)
     np.save(directory_path + "lengths", lengths)
 
-def train_model(base_directory, min_seed_length, reference, reads, epochs, batch_sizes, rnn_dims, embedding_dims, replicates, patience):
+def train_model(base_directory, min_seed_length, reference, reads, epochs, batch_sizes, rnn_dims, embedding_dims, replicates, patience, seed_range_upper, log_samples=False):
     include_reverse_complement = True
 
     importer = SequenceImporter()
@@ -88,7 +88,7 @@ def train_model(base_directory, min_seed_length, reference, reads, epochs, batch
 
     with_gpu=True
     #TODO: more parameters to bring out maybe
-    log_samples=False
+    log_samples=log_samples
     log_training=False
     early_stopping=True
     legend=['Mean Sequence']
@@ -117,7 +117,7 @@ def train_model(base_directory, min_seed_length, reference, reads, epochs, batch
                                             with_gpu=with_gpu, log_samples=log_samples,
                                             reference_sequences=reference_sequences,
                                             log_training=log_training, early_stopping=early_stopping,
-                                            patience=patience)
+                                            patience=patience, seed_range_upper=seed_range_upper, base_path=base_directory)
 
                     start_time = time.time()
                     history = model.fit(reads)
