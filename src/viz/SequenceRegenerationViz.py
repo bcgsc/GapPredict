@@ -111,7 +111,7 @@ class SequenceRegenerationViz:
         self._write_fasta(id + "_right_flank_reverse_complement_LD_" + str(latent_dim), rc_right_flank, file)
         file.close()
 
-    def compare_sequences(self, actual, predicted, seed_length, matches, offset=0, append=False):
+    def compare_sequences(self, actual, predicted, seed_length, matches, offset=0, append=False, id=None):
         static_padding = ""
 
         for i in range(offset):
@@ -131,7 +131,12 @@ class SequenceRegenerationViz:
                 break
 
         mode = "a" if append else "w+"
-        file = open(self.root_path + 'align.txt', mode)
+
+        if id is not None:
+            id_string = id + "_"
+        else:
+            id_string = ""
+        file = open(self.root_path + id_string + 'align.txt', mode)
 
         file.write("ACTUAL\n")
         file.write('\n')

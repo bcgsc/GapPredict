@@ -48,7 +48,6 @@ def regenerate_sequence(min_seed_length, model, full_sequence, use_reference_to_
     model.reset_states()
     current_sequence = str(full_sequence[0:min_seed_length])
     length = min_seed_length
-
     reference = full_sequence if use_reference_to_seed else current_sequence
 
     seed = reference[0:length - 1]
@@ -66,3 +65,35 @@ def regenerate_sequence(min_seed_length, model, full_sequence, use_reference_to_
         remaining_length -= 1
         length += 1
     return current_sequence, basewise_probabilities
+
+def regenerate_sequence_randomly(min_seed_length, model, full_sequence):
+    label_encoder = KmerLabelEncoder()
+
+    sequence_length = len(full_sequence)
+
+    bases_to_predict = sequence_length - min_seed_length
+
+    probability_vector = np.zeros(bases_to_predict)
+
+    remaining_length = bases_to_predict
+    model.reset_states()
+    current_sequence = str(full_sequence[0:min_seed_length])
+    length = min_seed_length
+    reference = full_sequence
+
+    seed = reference[0:length - 1]
+    input_seq = label_encoder.encode_kmers([seed], [], with_shifted_output=False)[0]
+    model.predict(input_seq)
+    while remaining_length > 0:
+        base = reference[length-1:length]
+        base_encoding = label_encoder.encode_kmers([base], [], with_shifted_output=False)[0]
+
+        prediction = model.predict(base_encoding)
+        random_base_idx = np.random.randint(len(CONSTANTS.ONE_HOT_ENCODING))
+        random_base = CONSTANTS.REVERSE_INTEGER_ENCODING[random_base_idx]
+        current_sequence += random_base
+        probability_vector[length - min_seed_length] = prediction[0][random_base_idx]
+
+        remaining_length -= 1
+        length += 1
+    return current_sequence, probability_vector
