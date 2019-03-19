@@ -32,7 +32,7 @@ def predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_s
     for i in range(len(sequences)):
         sequence = sequences[i]
 
-        #TODO: messy
+        #TODO: messy since we assume that i will always be [0, 1]
         if i == 0:
             static_path = first_directory + "left_flank" + terminal_directory_character
         elif i == 1:
@@ -55,21 +55,39 @@ def predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_s
     viz = SequenceRegenerationViz(root_directory=base_path, directory=first_directory)
     viz.write_flank_predict_fasta(forward_left_flank, rc_left_flank, forward_right_flank, rc_right_flank, latent_dim, id)
 
-def predict(model, min_seed_length, sequence, base_path=None, directory=None, plots=False):
+def validate(predicted_sequence_with_seed, sequence, min_seed_length):
     validator = SequenceMatchCalculator()
-    viz = SequenceRegenerationViz(root_directory=base_path, directory=directory)
-    label_encoder = KmerLabelEncoder()
-
-    predicted_string_with_seed, basewise_probabilities = helper.regenerate_sequence(min_seed_length, model, sequence)
-
-    predicted_sequence = predicted_string_with_seed[min_seed_length:]
+    predicted_sequence = predicted_sequence_with_seed[min_seed_length:]
     actual_sequence = sequence[min_seed_length:]
 
     matches = validator.compare_sequences(predicted_sequence, actual_sequence)
-    correct_index_vector = label_encoder.encode_kmers([actual_sequence], [], [])[0][0]
+
+    return matches
+
+def predict(model, min_seed_length, sequence, base_path=None, directory=None, plots=False):
+    viz = SequenceRegenerationViz(root_directory=base_path, directory=directory)
+    label_encoder = KmerLabelEncoder()
+
+    sequence_without_seed = sequence[min_seed_length:]
+    correct_index_vector = label_encoder.encode_kmers([sequence_without_seed], [], [])[0][0]
+
+    predicted_string_with_seed, basewise_probabilities = helper.regenerate_sequence(min_seed_length, model, sequence)
+    predicted_string_greedy_with_seed, basewise_probabilities_greedy = helper.regenerate_sequence(min_seed_length, model, sequence, use_reference_to_seed=False)
+    predicted_string_random_with_seed, random_probability_vector = helper.regenerate_sequence_randomly(min_seed_length, model, sequence)
+
+    matches = validate(predicted_string_with_seed, sequence, min_seed_length)
+    matches_greedy = validate(predicted_string_greedy_with_seed, sequence, min_seed_length)
+    matches_random = validate(predicted_string_random_with_seed, sequence, min_seed_length)
 
     viz.compare_sequences(sequence, predicted_string_with_seed, min_seed_length, matches)
     viz.save_probabilities(basewise_probabilities)
+
+    #TODO: weird way to do ID
+    viz.compare_sequences(sequence, predicted_string_greedy_with_seed, min_seed_length, matches_greedy, id="greedy")
+    viz.save_probabilities(basewise_probabilities_greedy, id="greedy")
+
+    viz.compare_sequences(sequence, predicted_string_random_with_seed, min_seed_length, matches_random, id="random")
+    viz.save_probabilities(random_probability_vector, id="random")
 
     if plots:
         viz.sliding_window_average_plot(matches, offset=min_seed_length)
