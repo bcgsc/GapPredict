@@ -48,13 +48,12 @@ def regenerate_sequence(min_seed_length, model, full_sequence, use_reference_to_
     model.reset_states()
     current_sequence = str(full_sequence[0:min_seed_length])
     length = min_seed_length
-    reference = full_sequence if use_reference_to_seed else current_sequence
 
-    seed = reference[0:length - 1]
+    seed = full_sequence[0:length - 1]
     input_seq = label_encoder.encode_kmers([seed], [], with_shifted_output=False)[0]
     model.predict(input_seq)
     while remaining_length > 0:
-        base = reference[length-1:length]
+        base = full_sequence[length-1:length] if use_reference_to_seed else current_sequence[length-1:length]
         base_encoding = label_encoder.encode_kmers([base], [], with_shifted_output=False)[0]
 
         prediction = model.predict(base_encoding)
@@ -79,13 +78,12 @@ def regenerate_sequence_randomly(min_seed_length, model, full_sequence):
     model.reset_states()
     current_sequence = str(full_sequence[0:min_seed_length])
     length = min_seed_length
-    reference = full_sequence
 
-    seed = reference[0:length - 1]
+    seed = full_sequence[0:length - 1]
     input_seq = label_encoder.encode_kmers([seed], [], with_shifted_output=False)[0]
     model.predict(input_seq)
     while remaining_length > 0:
-        base = reference[length-1:length]
+        base = current_sequence[length-1:length]
         base_encoding = label_encoder.encode_kmers([base], [], with_shifted_output=False)[0]
 
         prediction = model.predict(base_encoding)
