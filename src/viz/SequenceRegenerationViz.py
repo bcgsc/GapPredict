@@ -102,6 +102,12 @@ class SequenceRegenerationViz:
         file.write('>' + fig_id + "\n")
         file.write(seq + "\n")
 
+    def write_beam_search_results(self, predictions, flank_id):
+        file = open(self.root_path + "predict.fasta", "w+")
+        for i in range(len(predictions)):
+            self._write_fasta(flank_id + "_" + str(i), predictions[i], file)
+        file.close()
+
     def write_flank_predict_fasta(self, forward_left_flank, rc_left_flank, forward_right_flank, rc_right_flank,
                                   latent_dim, fig_id):
         file = open(self.root_path + 'flank_predict.fasta', 'w+')
