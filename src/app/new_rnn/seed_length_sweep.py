@@ -34,6 +34,12 @@ else:
 
 import utils.directory_utils as dir_utils
 from app.new_rnn.train_model import train_model
+from keras import backend as K
+import tensorflow as tf
+
+def reset_states():
+    K.clear_session()
+    tf.reset_default_graph()
 
 def main(args):
     base_output_directory = dir_utils.clean_directory_string(args.o[0])
@@ -63,6 +69,8 @@ def main(args):
         dir_utils.mkdir(output_directory)
 
         train_model(output_directory, min_seed_length, ref_file, read_file, epochs, [batch_size], [rnn_dim], [embedding_dim], 1, patience, seed_range_upper, log_samples=log_samples)
+
+        reset_states()
 
 if __name__ == "__main__":
     main(args)
