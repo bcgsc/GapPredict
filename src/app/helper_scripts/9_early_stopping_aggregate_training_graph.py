@@ -34,7 +34,7 @@ def main():
     dir_utils.mkdir(output_folder)
 
     lstm_cell_directories = os.listdir(root)
-    replicates = 6
+    replicates = 10
 
     ids = set()
     for lstm_cells in lstm_cell_directories:
