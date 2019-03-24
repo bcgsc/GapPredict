@@ -36,6 +36,12 @@ import utils.directory_utils as dir_utils
 from app.new_rnn.train_model import train_model
 from app.new_rnn.predict_by_reference import predict_reference
 from app.new_rnn.predict_arbitrary_length import predict_arbitrary_length
+from keras import backend as K
+import tensorflow as tf
+
+def reset_states():
+    K.clear_session()
+    tf.reset_default_graph()
 
 def main(args):
     base_output_directory = dir_utils.clean_directory_string(args.o[0])
@@ -68,6 +74,8 @@ def main(args):
         train_model(output_directory, min_seed_length, ref_file, read_file, epochs, [batch_size], [rnn_dim], [embedding_dim], 1, patience, seed_range_upper)
         predict_reference(output_directory, ref_file, embedding_dim, rnn_dim, min_seed_length, id, base_path=output_directory)
         predict_arbitrary_length(output_directory, id, ref_file, embedding_dim, rnn_dim, prediction_length, base_path=output_directory)
+
+        reset_states()
 
 if __name__ == "__main__":
     main(args)
