@@ -138,7 +138,8 @@ def main():
     else:
         base_directory = '/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/training_metrics/'
 
-    min_seed_length = 26
+    min_seed_length = 52
+    seed_range_upper = -1
     reference = '../data/real_gaps/sealer_filled/7465348_13506-14596.fasta'
     reads = '../data/real_gaps/sealer_filled/7465348_13506-14596.fastq'
 
@@ -147,12 +148,12 @@ def main():
     # doubling embedding_dim seems to increase # parameters by ~1.5X
 
     batch_sizes = [128]
-    rnn_dims = [256]
+    rnn_dims = [512]
     embedding_dims = [128]
     epochs = 1000
     replicates = 1
     patience = 200
-    train_model(base_directory, min_seed_length, reference, reads, epochs, batch_sizes, rnn_dims, embedding_dims, replicates, patience)
+    train_model(base_directory, min_seed_length, reference, reads, epochs, batch_sizes, rnn_dims, embedding_dims, replicates, patience, seed_range_upper)
 
 if __name__ == "__main__":
     main()

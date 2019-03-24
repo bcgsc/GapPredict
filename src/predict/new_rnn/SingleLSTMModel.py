@@ -1,4 +1,5 @@
 import keras.optimizers as optimizers
+#from keras.utils import plot_model
 from keras.layers import CuDNNLSTM, LSTM, Embedding, Dense
 from keras.models import Sequential
 
@@ -51,6 +52,8 @@ class SingleLSTMModel:
         self.seed_range_upper = seed_range_upper
         self.base_path = base_path
         self._initialize_models()
+
+        #plot_model(self.model, to_file="model.png", show_shapes=True)
 
         self.log_training = log_training
         self.callbacks = []
