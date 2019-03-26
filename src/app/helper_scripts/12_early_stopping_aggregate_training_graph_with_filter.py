@@ -1,3 +1,4 @@
+import math
 import os
 
 import matplotlib.pyplot as plt
@@ -7,18 +8,33 @@ import seaborn as sns
 
 import utils.directory_utils as dir_utils
 
+primary_text_font_size=45
+secondary_text_font_size=35
 
 def set_up_plot():
-    plt.rc('xtick', labelsize=20)
-    plt.rc('ytick', labelsize=20)
+    plt.rc('xtick', labelsize=secondary_text_font_size)
+    plt.rc('ytick', labelsize=secondary_text_font_size)
     font = {
-        'size': 25
+        'size': primary_text_font_size
     }
     plt.rc('font', **font)
 
-    figure_dimensions=(12, 8)
+    figure_dimensions=(13, 13)
 
     plt.figure(figsize=figure_dimensions)
+
+def save_fig(data, y_label, output_folder, file_name):
+    set_up_plot()
+    ax = sns.boxplot(data=data, x="seed_range", y=y_label, hue="lstm_cells")
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=60)
+    plt.tight_layout()
+
+    legend_font = {
+        'size': secondary_text_font_size
+    }
+    plt.legend(loc="best", prop=legend_font)
+    fig = plt.savefig(output_folder + file_name)
+    plt.close(fig)
 
 
 def main():
@@ -50,7 +66,7 @@ def main():
     validation_loss_file = "validation_loss.npy"
     lengths_file = "lengths.npy"
 
-    headers = np.array(["", "lstm_cells", "seed_range", "best_epoch", "valid_acc", "train_acc", "valid_loss", "train_loss"])
+    headers = np.array(["", "lstm_cells", "seed_range", "best_epoch", "valid_acc", "train_acc", "valid_loss", "train_loss",  "min_range", "max_range"])
     numeric_headers = headers[3:]
     data_list = [headers]
 
@@ -101,7 +117,7 @@ def main():
                         chosen_train_loss = training_loss[best_epoch]
 
                         row = [row_id, dims, full_range, best_epoch, chosen_valid_accuracy,
-                               chosen_train_accuracy, chosen_valid_loss, chosen_train_loss]
+                               chosen_train_accuracy, chosen_valid_loss, chosen_train_loss, int(min_seed_length), int(max_seed_length) if max_seed_length != "N" else math.inf]
 
                         data_list.append(row)
                         row_id += 1
@@ -110,26 +126,12 @@ def main():
     df = pd.DataFrame(data=data[1:, 1:], index=data[1:,0], columns=data[0, 1:])
 
     df[numeric_headers] = df[numeric_headers].apply(pd.to_numeric)
+    df.sort_values(by=['min_range', 'max_range'], inplace=True)
 
-    set_up_plot()
-    sns.boxplot(data=df, x="seed_range", y="valid_acc", hue="lstm_cells")
-    fig = plt.savefig(output_folder + "valid_acc_drilldown.png")
-    plt.close(fig)
-
-    set_up_plot()
-    sns.boxplot(data=df, x="seed_range", y="train_acc", hue="lstm_cells")
-    fig = plt.savefig(output_folder + "train_acc_drilldown.png")
-    plt.close(fig)
-
-    set_up_plot()
-    sns.boxplot(data=df, x="seed_range", y="valid_loss", hue="lstm_cells")
-    fig = plt.savefig(output_folder + "valid_loss_drilldown.png")
-    plt.close(fig)
-
-    set_up_plot()
-    sns.boxplot(data=df, x="seed_range", y="train_loss", hue="lstm_cells")
-    fig = plt.savefig(output_folder + "train_loss_drilldown.png")
-    plt.close(fig)
+    save_fig(df, "valid_acc", output_folder, "valid_acc_drilldown.png")
+    save_fig(df, "train_acc", output_folder, "train_acc_drilldown.png")
+    save_fig(df, "valid_loss", output_folder, "valid_loss_drilldown.png")
+    save_fig(df, "train_loss", output_folder, "train_loss_drilldown.png")
 
 if __name__ == "__main__":
     main()
