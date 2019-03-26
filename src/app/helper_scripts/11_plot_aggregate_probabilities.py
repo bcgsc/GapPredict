@@ -8,16 +8,18 @@ import seaborn as sns
 import utils.directory_utils as dir_utils
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
+primary_text_font_size=45
+secondary_text_font_size=35
 
 def set_up_plot():
-    plt.rc('xtick', labelsize=20)
-    plt.rc('ytick', labelsize=20)
+    plt.rc('xtick', labelsize=secondary_text_font_size)
+    plt.rc('ytick', labelsize=secondary_text_font_size)
     font = {
-        'size': 25
+        'size': primary_text_font_size
     }
     plt.rc('font', **font)
 
-    figure_dimensions=(12, 8)
+    figure_dimensions=(13, 13)
 
     plt.figure(figsize=figure_dimensions)
 
@@ -55,22 +57,25 @@ def main():
 
     dir_utils.mkdir(output_folder)
 
-    lstm_cell_directories = os.listdir(root)
-    replicates = 6
+    sets = os.listdir(root)
+    replicates = 30
 
     ids = set()
-    for lstm_cells in lstm_cell_directories:
-        dim_path = root + lstm_cells + terminal_char
-        experiments = os.listdir(dim_path)
-        for id in experiments:
-            fasta_id = id.split("_R_")[0]
-            ids.add(fasta_id)
+    for set_num in sets:
+        cwd = root + set_num + terminal_char
+        lstm_cell_directories = os.listdir(cwd)
+        for lstm_cells in lstm_cell_directories:
+            dim_path = cwd + lstm_cells + terminal_char
+            experiments = os.listdir(dim_path)
+            for id in experiments:
+                fasta_id = id.split("_R_")[0]
+                ids.add(fasta_id)
 
     greedy_predicted = "greedy_predicted_probabilities.npy"
     teacher_forcing_predicted = "predicted_probabilities.npy"
     random_predicted = "random_predicted_probabilities.npy"
 
-    headers = np.array(["", "type", "sum(ln(probability))"])
+    headers = np.array(["", "type", "log-sum-probability"])
     numeric_headers = headers[2:]
     data_list = [headers]
 
@@ -85,36 +90,39 @@ def main():
     row_id = 0
     for id in ids:
         assert(len(ids) == 1)
-        for lstm_cells in lstm_cell_directories:
-            tokens = lstm_cells.split("_")
-            min_seed_length = int(tokens[2])
+        for set_num in sets:
+            cwd = root + set_num + terminal_char
+            lstm_cell_directories = os.listdir(cwd)
+            for lstm_cells in lstm_cell_directories:
+                tokens = lstm_cells.split("_")
+                min_seed_length = int(tokens[2])
 
-            for i in range(replicates):
-                folder = id + "_R_" + str(i)
-                folder_path = root + lstm_cells + terminal_char + folder + terminal_char + "regenerate_seq" + terminal_char
+                for i in range(replicates):
+                    folder = id + "_R_" + str(i)
+                    folder_path = cwd + lstm_cells + terminal_char + folder + terminal_char + "regenerate_seq" + terminal_char
 
-                for flank in flanks:
-                    for strand in strands:
-                        probability_folder = folder_path + flank + terminal_char + strand + terminal_char
-                        greedy_probabilities = np.max(np.load(probability_folder + greedy_predicted), axis=1)
+                    for flank in flanks:
+                        for strand in strands:
+                            probability_folder = folder_path + flank + terminal_char + strand + terminal_char
+                            greedy_probabilities = np.max(np.load(probability_folder + greedy_predicted), axis=1)
 
-                        teacher_force_txt = probability_folder + "align.txt"
-                        actual_encoded_sequence = read_and_encode_actual_sequence(teacher_force_txt, min_seed_length, 2)
-                        teacher_forcing_probabilities_all = np.load(probability_folder + teacher_forcing_predicted)
-                        teacher_forcing_probabilities = dereference_indices(teacher_forcing_probabilities_all, actual_encoded_sequence)
+                            teacher_force_txt = probability_folder + "align.txt"
+                            actual_encoded_sequence = read_and_encode_actual_sequence(teacher_force_txt, min_seed_length, 2)
+                            teacher_forcing_probabilities_all = np.load(probability_folder + teacher_forcing_predicted)
+                            teacher_forcing_probabilities = dereference_indices(teacher_forcing_probabilities_all, actual_encoded_sequence)
 
-                        random_probabilities = np.load(probability_folder + random_predicted)
+                            random_probabilities = np.load(probability_folder + random_predicted)
 
-                        aggregate_greedy = aggregate_probability(greedy_probabilities)
-                        aggregate_teacher_force = aggregate_probability(teacher_forcing_probabilities)
-                        aggregate_random = aggregate_probability(random_probabilities)
+                            aggregate_greedy = aggregate_probability(greedy_probabilities)
+                            aggregate_teacher_force = aggregate_probability(teacher_forcing_probabilities)
+                            aggregate_random = aggregate_probability(random_probabilities)
 
-                        data_list.append([row_id, "greedy", aggregate_greedy])
-                        row_id += 1
-                        data_list.append([row_id, "teacher_force", aggregate_teacher_force])
-                        row_id += 1
-                        data_list.append([row_id, "random", aggregate_random])
-                        row_id += 1
+                            data_list.append([row_id, "greedy", aggregate_greedy])
+                            row_id += 1
+                            data_list.append([row_id, "teacher_force", aggregate_teacher_force])
+                            row_id += 1
+                            data_list.append([row_id, "random", aggregate_random])
+                            row_id += 1
 
     data = np.array(data_list)
     df = pd.DataFrame(data=data[1:, 1:], index=data[1:,0], columns=data[0, 1:])
@@ -122,8 +130,16 @@ def main():
     df[numeric_headers] = df[numeric_headers].apply(pd.to_numeric)
 
     set_up_plot()
-    sns.boxplot(data=df, x="type", y="sum(ln(probability))")
+    sns.boxplot(data=df, x="type", y="log-sum-probability")
+    plt.tight_layout()
     fig = plt.savefig(output_folder + "aggregate_probability.png")
+    plt.close(fig)
+
+    df_drilldown = df.loc[df['type'] != "random"]
+    set_up_plot()
+    sns.boxplot(data=df_drilldown, x="type", y="log-sum-probability")
+    plt.tight_layout()
+    fig = plt.savefig(output_folder + "aggregate_probability_drilldown.png")
     plt.close(fig)
 
 if __name__ == "__main__":
