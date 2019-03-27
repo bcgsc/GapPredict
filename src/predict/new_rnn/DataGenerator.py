@@ -45,7 +45,11 @@ class DataGenerator(keras.utils.Sequence):
         return len(read) >= minimum_length
 
     def __len__(self):
-        return int(np.ceil(len(self.reads) / self.batch_size))
+        max_read_length = max(list(map(lambda x: len(x), self.reads)))
+        expected_length = 100
+        multiplier = max_read_length/expected_length
+        base_iterations = len(self.reads)/self.batch_size
+        return int(np.ceil(base_iterations * multiplier))
 
     def __getitem__(self, index):
         total_reads = len(self.reads)
