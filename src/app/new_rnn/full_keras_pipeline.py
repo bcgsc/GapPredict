@@ -18,6 +18,7 @@ arg_parser.add_argument('-sr', type=int, nargs=1, default=[None], help="maximum 
 arg_parser.add_argument('-gpu', type=int, nargs=1, default=[0], help="GPU device ID to use")
 arg_parser.add_argument('-pl', type=int, nargs=1, default=[750], help="prediction length")
 arg_parser.add_argument('-es', type=int, nargs=1, default=[200], help="early stopping patience epochs")
+arg_parser.add_argument('-os', type=int, nargs=1, default=[0], help="replicate offset")
 
 args = arg_parser.parse_args()
 
@@ -60,6 +61,7 @@ def main(args):
     prediction_length = args.pl[0]
     patience = args.es[0]
     seed_range_upper = args.sr[0]
+    replicate_offset = args.os[0]
 
     terminal_directory_character = dir_utils.get_terminal_directory_character()
     id = ref_file.split(terminal_directory_character)[-1].split(".")[0]
@@ -67,7 +69,8 @@ def main(args):
     base_output_directory += id
 
     for i in range(replicates):
-        output_directory = dir_utils.clean_directory_string(base_output_directory + "_R_" + str(i))
+        replicate_num = i + replicate_offset
+        output_directory = dir_utils.clean_directory_string(base_output_directory + "_R_" + str(replicate_num))
 
         dir_utils.mkdir(output_directory)
 
