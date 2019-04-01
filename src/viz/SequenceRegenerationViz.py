@@ -79,16 +79,16 @@ class SequenceRegenerationViz:
         file.write('Mean Match: ' + str(round(np.mean(meaningful_matches), 2)) +'\n')
         file.close()
 
-    def save_complements(self, forward_prediction, reverse_complement, id, postfix="", fasta_ref=None):
+    def save_complements(self, forward_prediction, reverse_complement, fig_id, postfix="", fasta_ref=None):
         file_name = self.root_path + 'gap_predict_align.fa'
         file = open(file_name, 'w+')
         reverser = SequenceReverser()
         forward_pred = forward_prediction
         reverse_pred = reverser.reverse_complement(reverse_complement)
 
-        file.write(">" + id + "_forward" + postfix + "\n")
+        file.write(">" + fig_id + "_forward" + postfix + "\n")
         file.write(forward_pred + '\n')
-        file.write(">" + id + "_reverse_complement" + postfix + "\n")
+        file.write(">" + fig_id + "_reverse_complement" + postfix + "\n")
         file.write(reverse_pred + '\n')
 
         if fasta_ref is not None:
@@ -98,20 +98,20 @@ class SequenceRegenerationViz:
 
         file.close()
 
-    def _write_fasta(self, id, seq, file):
-        file.write('>' + id + "\n")
+    def _write_fasta(self, fig_id, seq, file):
+        file.write('>' + fig_id + "\n")
         file.write(seq + "\n")
 
     def write_flank_predict_fasta(self, forward_left_flank, rc_left_flank, forward_right_flank, rc_right_flank,
-                                  latent_dim, id):
+                                  latent_dim, fig_id):
         file = open(self.root_path + 'flank_predict.fasta', 'w+')
-        self._write_fasta(id + "_left_flank_forward_LD_" + str(latent_dim), forward_left_flank, file)
-        self._write_fasta(id + "_left_flank_reverse_complement_LD_" + str(latent_dim), rc_left_flank, file)
-        self._write_fasta(id + "_right_flank_forward_LD_" + str(latent_dim), forward_right_flank, file)
-        self._write_fasta(id + "_right_flank_reverse_complement_LD_" + str(latent_dim), rc_right_flank, file)
+        self._write_fasta(fig_id + "_left_flank_forward_LD_" + str(latent_dim), forward_left_flank, file)
+        self._write_fasta(fig_id + "_left_flank_reverse_complement_LD_" + str(latent_dim), rc_left_flank, file)
+        self._write_fasta(fig_id + "_right_flank_forward_LD_" + str(latent_dim), forward_right_flank, file)
+        self._write_fasta(fig_id + "_right_flank_reverse_complement_LD_" + str(latent_dim), rc_right_flank, file)
         file.close()
 
-    def compare_sequences(self, actual, predicted, seed_length, matches, offset=0, append=False, id=None):
+    def compare_sequences(self, actual, predicted, seed_length, matches, offset=0, append=False, fig_id=None):
         static_padding = ""
 
         for i in range(offset):
@@ -132,8 +132,8 @@ class SequenceRegenerationViz:
 
         mode = "a" if append else "w+"
 
-        if id is not None:
-            id_string = id + "_"
+        if fig_id is not None:
+            id_string = fig_id + "_"
         else:
             id_string = ""
         file = open(self.root_path + id_string + 'align.txt', mode)
@@ -165,7 +165,7 @@ class SequenceRegenerationViz:
             averages[i] = average
         return averages
 
-    def sliding_window_average_plot(self, correctness_vector, window_length=10, offset=0, id=""):
+    def sliding_window_average_plot(self, correctness_vector, window_length=10, offset=0, fig_id=""):
         bases = len(correctness_vector)
         position = np.arange(bases) + 1 + offset
         averages = self.sliding_window_average(correctness_vector, window_length=window_length)
@@ -176,18 +176,18 @@ class SequenceRegenerationViz:
         plt.xlim(0, int(max(position) * 1.05))
         plt.xlabel("Base Index")
         plt.ylabel("Avg Probability (Window = " + str(window_length) + ")")
-        fig = plt.savefig(self.root_path + id + 'sliding_window_probability.png')
+        fig = plt.savefig(self.root_path + fig_id + 'sliding_window_probability.png')
         plt.close(fig)
 
-    def save_probabilities(self, probabilities, id=None):
-        if id is not None:
-            id_string = id + "_"
+    def save_probabilities(self, probabilities, fig_id=None):
+        if fig_id is not None:
+            id_string = fig_id + "_"
         else:
             id_string = ""
         path = self.root_path + id_string + "predicted_probabilities"
         np.save(path, probabilities)
 
-    def top_base_probability_plot(self, class_probabilities, correct_index_vector, top=2, offset=0, id=""):
+    def top_base_probability_plot(self, class_probabilities, correct_index_vector, top=2, offset=0, fig_id=""):
         position = np.arange(len(correct_index_vector)) + 1 + offset
         sorted_probabilities = np.sort(class_probabilities, axis=1)
 
@@ -205,7 +205,7 @@ class SequenceRegenerationViz:
 
         for i in range(top):
             self._configure_plot()
-            label = self.root_path + id + 'top_' + str(i+1) + '_probability'
+            label = self.root_path + fig_id + 'top_' + str(i + 1) + '_probability'
             plt.scatter(position, y[i])
             plt.ylim(0, 1.1)
             plt.xlim(0, int(max(position) * 1.05))
@@ -220,5 +220,5 @@ class SequenceRegenerationViz:
         plt.xlim(0, int(max(position) * 1.05))
         plt.xlabel("Base Index")
         plt.ylabel("Probability")
-        fig = plt.savefig(self.root_path + id + 'correct_base_probability.png')
+        fig = plt.savefig(self.root_path + fig_id + 'correct_base_probability.png')
         plt.close(fig)

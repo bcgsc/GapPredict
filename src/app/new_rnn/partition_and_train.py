@@ -3,21 +3,20 @@ import os
 import sys
 
 arg_parser = argparse.ArgumentParser(description="Help placeholder")
+arg_parser.add_argument('-f', nargs=1, help="input directory", required=True)
 arg_parser.add_argument('-o', nargs=1, help="output directory", required=True)
-arg_parser.add_argument('-fa', nargs=1, help="FASTA file for flanks and gaps, assumed that sequence 0 and 1 are flanks",
-                        required=True)
-arg_parser.add_argument('-fq', nargs=1, help="FASTQ file with reads mapping to flanks and gaps", required=True)
 arg_parser.add_argument('-hu', type=int, nargs=1, default=[512], help="number of hidden units in the LSTM")
 arg_parser.add_argument('-ed', type=int, nargs=1, default=[128], help="number of dimensions in base embedding vector")
 arg_parser.add_argument('-bs', type=int, nargs=1, default=[128], help="batch sizes")
 arg_parser.add_argument('-r', type=int, nargs=1, default=[1], help="# replicates of models to train")
 arg_parser.add_argument('-e', type=int, nargs=1, default=[1000], help="training epochs")
-arg_parser.add_argument('-sl', type=int, nargs=1, default=[26], help="minimum seed length for training")
+arg_parser.add_argument('-sl', type=int, nargs=1, default=[52], help="minimum seed length for training")
 arg_parser.add_argument('-sr', type=int, nargs=1, default=[None], help="maximum seed extension for training, leave as default to go as long as the read")
 arg_parser.add_argument('-gpu', type=int, nargs=1, default=[0], help="GPU device ID to use")
 arg_parser.add_argument('-pl', type=int, nargs=1, default=[750], help="prediction length")
 arg_parser.add_argument('-es', type=int, nargs=1, default=[200], help="early stopping patience epochs")
 arg_parser.add_argument('-os', type=int, nargs=1, default=[0], help="replicate offset")
+arg_parser.add_argument('-p', type=int, nargs=1, default=[1], help="partition (1-4) to take")
 
 args = arg_parser.parse_args()
 
@@ -44,13 +43,8 @@ def reset_states():
     tf.reset_default_graph()
 
 def main(args):
+    base_directory = dir_utils.clean_directory_string(args.f[0])
     base_output_directory = dir_utils.clean_directory_string(args.o[0])
-
-    dir_utils.mkdir(base_output_directory)
-
-    ref_file = args.fa[0]
-    read_file = args.fq[0]
-
     batch_size = args.bs[0]
     rnn_dim = args.hu[0]
     embedding_dim = args.ed[0]
@@ -61,23 +55,41 @@ def main(args):
     patience = args.es[0]
     seed_range_upper = args.sr[0]
     replicate_offset = args.os[0]
+    partition = args.p[0]
 
     terminal_directory_character = dir_utils.get_terminal_directory_character()
-    gap_id = ref_file.split(terminal_directory_character)[-1].split(".")[0]
 
-    base_output_directory += gap_id
+    gaps = os.listdir(base_directory)
+    gaps.sort()
 
-    for i in range(replicates):
-        replicate_num = i + replicate_offset
-        output_directory = dir_utils.clean_directory_string(base_output_directory + "_R_" + str(replicate_num))
+    lower = (partition - 1) * 5
+    upper = partition * 25
+    gaps = gaps[lower:upper]
 
+    for gap in gaps:
+        inner_directory = base_directory + gap + terminal_directory_character
+        output_directory = base_output_directory + gap + terminal_directory_character
         dir_utils.mkdir(output_directory)
+        ref_file = inner_directory + gap + ".fasta"
+        read_file = inner_directory + gap + ".fastq"
+        gap_id = ref_file.split(terminal_directory_character)[-1].split(".")[0]
 
-        train_model(output_directory, min_seed_length, ref_file, read_file, epochs, [batch_size], [rnn_dim], [embedding_dim], 1, patience, seed_range_upper)
-        predict_reference(output_directory, ref_file, embedding_dim, rnn_dim, min_seed_length, gap_id, base_path=output_directory)
-        predict_arbitrary_length(output_directory, gap_id, ref_file, embedding_dim, rnn_dim, prediction_length, base_path=output_directory)
+        for i in range(replicates):
+            replicate_num = i + replicate_offset
+            replicate_output_directory = dir_utils.clean_directory_string(output_directory + gap + "_R_" + str(replicate_num))
 
-        reset_states()
+            dir_utils.mkdir(replicate_output_directory)
+
+            train_model(replicate_output_directory, min_seed_length, ref_file, read_file, epochs, [batch_size], [rnn_dim],
+                        [embedding_dim], 1, patience, seed_range_upper)
+            predict_reference(replicate_output_directory, ref_file, embedding_dim, rnn_dim, min_seed_length, gap_id,
+                              base_path=replicate_output_directory)
+            predict_arbitrary_length(replicate_output_directory, gap_id, ref_file, embedding_dim, rnn_dim, prediction_length,
+                                     base_path=replicate_output_directory)
+
+            reset_states()
+
+
 
 if __name__ == "__main__":
     main(args)

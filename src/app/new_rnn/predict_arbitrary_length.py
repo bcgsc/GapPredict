@@ -14,13 +14,13 @@ import numpy as np
 def main():
     weights_path = "../weights/"
     fasta_path = '../data/real_gaps/sealer_filled/7465348_13506-14596.fasta'
-    id="7465348_13506-14596"
+    gap_id="7465348_13506-14596"
     embedding_dim = 128
     latent_dim = 256
     length_to_predict = 750
-    predict_arbitrary_length(weights_path, id, fasta_path, embedding_dim, latent_dim, length_to_predict)
+    predict_arbitrary_length(weights_path, gap_id, fasta_path, embedding_dim, latent_dim, length_to_predict)
 
-def predict_arbitrary_length(weights_path, id, fasta_path, embedding_dim, latent_dim, length_to_predict, base_path=None):
+def predict_arbitrary_length(weights_path, gap_id, fasta_path, embedding_dim, latent_dim, length_to_predict, base_path=None):
     importer = SequenceImporter()
     reverser = SequenceReverser()
 
@@ -40,7 +40,7 @@ def predict_arbitrary_length(weights_path, id, fasta_path, embedding_dim, latent
 
     viz = SequenceRegenerationViz(root_directory=base_path)
     postfix = "_LD_"+str(latent_dim)
-    viz.save_complements(forward_predict, reverse_predict, id, postfix=postfix, fasta_ref=fasta_path)
+    viz.save_complements(forward_predict, reverse_predict, gap_id, postfix=postfix, fasta_ref=fasta_path)
 
 def predict(model, seed, prediction_length, reference, base_path=None, directory=None):
     validator = SequenceMatchCalculator()
@@ -64,7 +64,7 @@ def predict(model, seed, prediction_length, reference, base_path=None, directory
         viz.sliding_window_average_plot(matches, offset=seed_length)
 
         top_base_probability = np.max(basewise_probabilities, axis=1)
-        viz.sliding_window_average_plot(top_base_probability, offset=seed_length, id="rnn_top_prediction_")
+        viz.sliding_window_average_plot(top_base_probability, offset=seed_length, fig_id="rnn_top_prediction_")
     return predicted_string_with_seed
 
 if __name__ == "__main__":

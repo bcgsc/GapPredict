@@ -12,7 +12,7 @@ import app.new_rnn.predict_helper as helper
 
 import numpy as np
 
-def predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_seed_length, id, plots=False, base_path=None):
+def predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_seed_length, gap_id, plots=False, base_path=None):
     importer = SequenceImporter()
     reverser = SequenceReverser()
 
@@ -53,7 +53,7 @@ def predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_s
         viz.align_complements(forward_predict, reverse_predict, min_seed_length)
 
     viz = SequenceRegenerationViz(root_directory=base_path, directory=first_directory)
-    viz.write_flank_predict_fasta(forward_left_flank, rc_left_flank, forward_right_flank, rc_right_flank, latent_dim, id)
+    viz.write_flank_predict_fasta(forward_left_flank, rc_left_flank, forward_right_flank, rc_right_flank, latent_dim, gap_id)
 
 def validate(predicted_sequence_with_seed, sequence, min_seed_length):
     validator = SequenceMatchCalculator()
@@ -83,17 +83,17 @@ def predict(model, min_seed_length, sequence, base_path=None, directory=None, pl
     viz.save_probabilities(basewise_probabilities)
 
     #TODO: weird way to do ID
-    viz.compare_sequences(sequence, predicted_string_greedy_with_seed, min_seed_length, matches_greedy, id="greedy")
-    viz.save_probabilities(basewise_probabilities_greedy, id="greedy")
+    viz.compare_sequences(sequence, predicted_string_greedy_with_seed, min_seed_length, matches_greedy, fig_id="greedy")
+    viz.save_probabilities(basewise_probabilities_greedy, fig_id="greedy")
 
-    viz.compare_sequences(sequence, predicted_string_random_with_seed, min_seed_length, matches_random, id="random")
-    viz.save_probabilities(random_probability_vector, id="random")
+    viz.compare_sequences(sequence, predicted_string_random_with_seed, min_seed_length, matches_random, fig_id="random")
+    viz.save_probabilities(random_probability_vector, fig_id="random")
 
     if plots:
         viz.sliding_window_average_plot(matches, offset=min_seed_length)
         viz.top_base_probability_plot(basewise_probabilities, correct_index_vector, offset=min_seed_length)
         top_base_probability = np.max(basewise_probabilities, axis=1)
-        viz.sliding_window_average_plot(top_base_probability, offset=min_seed_length, id="rnn_top_prediction_")
+        viz.sliding_window_average_plot(top_base_probability, offset=min_seed_length, fig_id="rnn_top_prediction_")
     return predicted_string_with_seed
 
 
@@ -104,9 +104,9 @@ def main():
     latent_dim = 256
     min_seed_length = 26
     plots = True
-    id="7465348_13506-14596"
+    gap_id="7465348_13506-14596"
 
-    predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_seed_length, id, plots=plots)
+    predict_reference(weights_path, fasta_path, embedding_dim, latent_dim, min_seed_length, gap_id, plots=plots)
 
 if __name__ == "__main__":
     main()
