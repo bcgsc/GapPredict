@@ -1,4 +1,10 @@
 import os
+import sys
+
+if os.name == 'nt':
+    sys.path.append('E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\')
+else:
+    sys.path.append('/home/echen/Desktop/Projects/Sealer_NN/src/')
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,6 +16,7 @@ from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 primary_text_font_size=45
 secondary_text_font_size=35
+linewidth=3
 
 def set_up_plot():
     plt.rc('xtick', labelsize=secondary_text_font_size)
@@ -57,6 +64,7 @@ def main():
 
     dir_utils.mkdir(output_folder)
 
+    root = '/projects/btl/scratch/echen/March_27_Results_Backup/models/'
     sets = os.listdir(root)
     replicates = 30
 
@@ -130,14 +138,14 @@ def main():
     df[numeric_headers] = df[numeric_headers].apply(pd.to_numeric)
 
     set_up_plot()
-    sns.boxplot(data=df, x="type", y="log-sum-probability")
+    sns.boxplot(data=df, x="type", y="log-sum-probability", linewidth=linewidth)
     plt.tight_layout()
     fig = plt.savefig(output_folder + "aggregate_probability.png")
     plt.close(fig)
 
     df_drilldown = df.loc[df['type'] != "random"]
     set_up_plot()
-    sns.boxplot(data=df_drilldown, x="type", y="log-sum-probability")
+    sns.boxplot(data=df_drilldown, x="type", y="log-sum-probability", linewidth=linewidth)
     plt.tight_layout()
     fig = plt.savefig(output_folder + "aggregate_probability_drilldown.png")
     plt.close(fig)

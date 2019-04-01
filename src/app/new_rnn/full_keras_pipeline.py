@@ -7,7 +7,6 @@ arg_parser.add_argument('-o', nargs=1, help="output directory", required=True)
 arg_parser.add_argument('-fa', nargs=1, help="FASTA file for flanks and gaps, assumed that sequence 0 and 1 are flanks",
                         required=True)
 arg_parser.add_argument('-fq', nargs=1, help="FASTQ file with reads mapping to flanks and gaps", required=True)
-# TODO: might change this to any value between 256 and 512
 arg_parser.add_argument('-hu', type=int, nargs=1, default=[512], help="number of hidden units in the LSTM")
 arg_parser.add_argument('-ed', type=int, nargs=1, default=[128], help="number of dimensions in base embedding vector")
 arg_parser.add_argument('-bs', type=int, nargs=1, default=[128], help="batch sizes")

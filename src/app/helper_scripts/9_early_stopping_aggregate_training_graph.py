@@ -1,5 +1,11 @@
 import math
 import os
+import sys
+
+if os.name == 'nt':
+    sys.path.append('E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\')
+else:
+    sys.path.append('/home/echen/Desktop/Projects/Sealer_NN/src/')
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,6 +16,7 @@ import utils.directory_utils as dir_utils
 
 primary_text_font_size=45
 secondary_text_font_size=35
+linewidth=4
 
 def set_up_plot():
     plt.rc('xtick', labelsize=secondary_text_font_size)
@@ -25,7 +32,7 @@ def set_up_plot():
 
 def save_fig(data, y_label, output_folder, file_name):
     set_up_plot()
-    ax = sns.boxplot(data=data, x="seed_range", y=y_label, hue="lstm_cells")
+    ax = sns.boxplot(data=data, x="seed_range", y=y_label, hue="lstm_cells", linewidth=linewidth)
     ax.set_xticklabels(ax.get_xticklabels(), rotation=60)
     plt.tight_layout()
 
@@ -50,7 +57,7 @@ def main():
     dir_utils.mkdir(output_folder)
 
     lstm_cell_directories = os.listdir(root)
-    replicates = 10
+    replicates = 30
 
     ids = set()
     for lstm_cells in lstm_cell_directories:
