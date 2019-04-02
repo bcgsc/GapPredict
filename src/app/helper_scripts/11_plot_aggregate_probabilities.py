@@ -5,7 +5,7 @@ if os.name == 'nt':
     sys.path.append('E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\')
 else:
     sys.path.append('/home/echen/Desktop/Projects/Sealer_NN/src/')
-
+90
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -15,10 +15,11 @@ import utils.directory_utils as dir_utils
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 primary_text_font_size=45
-secondary_text_font_size=35
+secondary_text_font_size=30
 linewidth=3
+rotation=75
 
-def set_up_plot():
+def save_plot(data, path):
     plt.rc('xtick', labelsize=secondary_text_font_size)
     plt.rc('ytick', labelsize=secondary_text_font_size)
     font = {
@@ -26,9 +27,15 @@ def set_up_plot():
     }
     plt.rc('font', **font)
 
-    figure_dimensions=(13, 13)
+    figure_dimensions=(13, 16)
 
     plt.figure(figsize=figure_dimensions)
+
+    ax = sns.boxplot(data=data, x="type", y="log-sum-probability", linewidth=linewidth)
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation)
+    plt.tight_layout()
+    fig = plt.savefig(path)
+    plt.close(fig)
 
 def read_and_encode_actual_sequence(path, min_seed_length, line_offset):
     file = open(path)
@@ -60,11 +67,11 @@ def main():
 
     terminal_char = dir_utils.get_terminal_directory_character()
 
-    output_folder = root + ".." + terminal_char + "aggregate" + terminal_char + "probability_aggregate" + terminal_char
+    output_folder = root + ".." + terminal_char + "aggregate" + terminal_char + "hyperparameter_optimization_probability_aggregate" + terminal_char
 
     dir_utils.mkdir(output_folder)
 
-    root = '/projects/btl/scratch/echen/March_27_Results_Backup/models/'
+    root = '/projects/btl/scratch/echen/March_27_Results_Backup/scratch/'
     sets = os.listdir(root)
     replicates = 30
 
@@ -82,6 +89,7 @@ def main():
     greedy_predicted = "greedy_predicted_probabilities.npy"
     teacher_forcing_predicted = "predicted_probabilities.npy"
     random_predicted = "random_predicted_probabilities.npy"
+    beam_search_probability = "beam_search_predicted_probabilities.npy"
 
     headers = np.array(["", "type", "log-sum-probability"])
     numeric_headers = headers[2:]
@@ -132,23 +140,33 @@ def main():
                             data_list.append([row_id, "random", aggregate_random])
                             row_id += 1
 
+                    folder_path = cwd + lstm_cells + terminal_char + folder + terminal_char + "beam_search" + terminal_char + "regenerate_seq" + terminal_char
+                    for flank in flanks:
+                        for strand in strands:
+                            probability_folder = folder_path + flank + terminal_char + strand + terminal_char
+                            lg_sum_probabilities = np.load(probability_folder + beam_search_probability)
+                            sorted_sum = np.sort(lg_sum_probabilities)[::-1]
+                            top_four = sorted_sum[0:4]
+
+                            for sum in sorted_sum:
+                                data_list.append([row_id, "beam_search_all", sum])
+                                row_id += 1
+
+                            for sum in top_four:
+                                data_list.append([row_id, "beam_search_top_four", sum])
+                                row_id += 1
+
     data = np.array(data_list)
     df = pd.DataFrame(data=data[1:, 1:], index=data[1:,0], columns=data[0, 1:])
 
     df[numeric_headers] = df[numeric_headers].apply(pd.to_numeric)
+    path = output_folder + "aggregate_probability.png"
+    save_plot(df, path)
 
-    set_up_plot()
-    sns.boxplot(data=df, x="type", y="log-sum-probability", linewidth=linewidth)
-    plt.tight_layout()
-    fig = plt.savefig(output_folder + "aggregate_probability.png")
-    plt.close(fig)
 
     df_drilldown = df.loc[df['type'] != "random"]
-    set_up_plot()
-    sns.boxplot(data=df_drilldown, x="type", y="log-sum-probability", linewidth=linewidth)
-    plt.tight_layout()
-    fig = plt.savefig(output_folder + "aggregate_probability_drilldown.png")
-    plt.close(fig)
+    path = output_folder + "aggregate_probability_drilldown.png"
+    save_plot(df_drilldown, path)
 
 if __name__ == "__main__":
     main()
