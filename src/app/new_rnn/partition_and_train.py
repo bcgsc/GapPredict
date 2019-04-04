@@ -16,7 +16,7 @@ arg_parser.add_argument('-gpu', type=int, nargs=1, default=[0], help="GPU device
 arg_parser.add_argument('-pl', type=int, nargs=1, default=[750], help="prediction length")
 arg_parser.add_argument('-es', type=int, nargs=1, default=[200], help="early stopping patience epochs")
 arg_parser.add_argument('-os', type=int, nargs=1, default=[0], help="replicate offset")
-arg_parser.add_argument('-p', type=int, nargs=1, default=[1], help="partition (1-4) to take")
+arg_parser.add_argument('-p', type=int, nargs=1, default=[1], help="partition to take")
 
 args = arg_parser.parse_args()
 
@@ -62,7 +62,7 @@ def main(args):
     gaps = os.listdir(base_directory)
     gaps.sort()
 
-    partition_length = 25
+    partition_length = 300
     lower = (partition - 1) * partition_length
     upper = partition * partition_length
     gaps = gaps[lower:upper]
