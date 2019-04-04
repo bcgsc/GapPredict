@@ -62,8 +62,9 @@ def main(args):
     gaps = os.listdir(base_directory)
     gaps.sort()
 
-    lower = (partition - 1) * 5
-    upper = partition * 25
+    partition_length = 25
+    lower = (partition - 1) * partition_length
+    upper = partition * partition_length
     gaps = gaps[lower:upper]
 
     for gap in gaps:
