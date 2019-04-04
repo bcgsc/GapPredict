@@ -23,9 +23,8 @@ args = arg_parser.parse_args()
 
 gpu = str(args.gpu[0])
 
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID";
-#change this if someone is competing for GPU
-os.environ["CUDA_VISIBLE_DEVICES"] = gpu;
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = gpu
 
 if os.name == 'nt':
     sys.path.append('E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\')
