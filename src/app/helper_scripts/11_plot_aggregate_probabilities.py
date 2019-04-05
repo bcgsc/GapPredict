@@ -5,7 +5,7 @@ if os.name == 'nt':
     sys.path.append('E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\')
 else:
     sys.path.append('/home/echen/Desktop/Projects/Sealer_NN/src/')
-90
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -16,7 +16,7 @@ from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 primary_text_font_size=45
 secondary_text_font_size=30
-linewidth=3
+linewidth=6
 rotation=75
 
 def save_plot(data, path):
@@ -31,7 +31,13 @@ def save_plot(data, path):
 
     plt.figure(figsize=figure_dimensions)
 
-    ax = sns.boxplot(data=data, x="type", y="log-sum-probability", linewidth=linewidth)
+    flierprops = {
+        'markersize': 10,
+        'markerfacecolor': 'red',
+        'marker': 'o'
+    }
+
+    ax = sns.boxplot(data=data, x="algorithm", y="log-sum-probability", linewidth=linewidth, flierprops=flierprops)
     ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation)
     plt.tight_layout()
     fig = plt.savefig(path)
@@ -91,7 +97,7 @@ def main():
     random_predicted = "random_predicted_probabilities.npy"
     beam_search_probability = "beam_search_predicted_probabilities.npy"
 
-    headers = np.array(["", "type", "log-sum-probability"])
+    headers = np.array(["", "algorithm", "log-sum-probability"])
     numeric_headers = headers[2:]
     data_list = [headers]
 
@@ -135,7 +141,7 @@ def main():
 
                             data_list.append([row_id, "greedy", aggregate_greedy])
                             row_id += 1
-                            data_list.append([row_id, "teacher_force", aggregate_teacher_force])
+                            data_list.append([row_id, "teachforce", aggregate_teacher_force])
                             row_id += 1
                             data_list.append([row_id, "random", aggregate_random])
                             row_id += 1
@@ -147,14 +153,18 @@ def main():
                             lg_sum_probabilities = np.load(probability_folder + beam_search_probability)
                             sorted_sum = np.sort(lg_sum_probabilities)[::-1]
                             top_four = sorted_sum[0:4]
+                            top_one = sorted_sum[0]
 
                             for sum in sorted_sum:
-                                data_list.append([row_id, "beam_search_all", sum])
+                                data_list.append([row_id, "bmsrch_all", sum])
                                 row_id += 1
 
                             for sum in top_four:
-                                data_list.append([row_id, "beam_search_top_four", sum])
+                                data_list.append([row_id, "bmsrch_4", sum])
                                 row_id += 1
+
+                            data_list.append([row_id, "bmsrch_1", top_one])
+                            row_id += 1
 
     data = np.array(data_list)
     df = pd.DataFrame(data=data[1:, 1:], index=data[1:,0], columns=data[0, 1:])
@@ -164,7 +174,7 @@ def main():
     save_plot(df, path)
 
 
-    df_drilldown = df.loc[df['type'] != "random"]
+    df_drilldown = df.loc[df['algorithm'] != "random"]
     path = output_folder + "aggregate_probability_drilldown.png"
     save_plot(df_drilldown, path)
 

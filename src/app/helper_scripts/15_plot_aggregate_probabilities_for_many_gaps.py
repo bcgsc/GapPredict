@@ -16,7 +16,7 @@ from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 primary_text_font_size=45
 secondary_text_font_size=30
-linewidth=3
+linewidth=6
 rotation=75
 
 def save_plot(data, path):
@@ -31,7 +31,13 @@ def save_plot(data, path):
 
     plt.figure(figsize=figure_dimensions)
 
-    ax = sns.boxplot(data=data, x="type", y="log-sum-probability", linewidth=linewidth)
+    flierprops = {
+        'markersize': 10,
+        'markerfacecolor': 'red',
+        'marker': 'o'
+    }
+
+    ax = sns.boxplot(data=data, x="algorithm", y="log-sum-probability", linewidth=linewidth, flierprops=flierprops)
     ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation)
     plt.tight_layout()
     fig = plt.savefig(path)
@@ -61,153 +67,161 @@ def aggregate_probability(probability):
 
 def main():
     terminal_char = dir_utils.get_terminal_directory_character()
-    fixed=False
-    gap_type = "fixed" if fixed else "unfixed"
+    gap_types = ["fixed", "unfixed"]
 
-    root = '/projects/btl/scratch/echen/April_2_Results_Backup/scratch/' + gap_type + terminal_char
-    output_folder = "/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/aggregate" + terminal_char + "gap_prediction_probability_aggregate" + terminal_char + gap_type + terminal_char
-    dir_utils.mkdir(output_folder)
+    for gap_type in gap_types:
+        root = '/projects/btl/scratch/echen/April_2_Results_Backup/scratch/' + gap_type + terminal_char
+        output_folder = "/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/aggregate" + terminal_char + "gap_prediction_probability_aggregate" + terminal_char + gap_type + terminal_char
+        dir_utils.mkdir(output_folder)
 
-    gap_ids = os.listdir(root)
-    num_replicates = 1
+        gap_ids = os.listdir(root)
+        num_replicates = 1
 
-    ids = set()
-    for gap_id in gap_ids:
-        ids.add(gap_id)
+        ids = set()
+        for gap_id in gap_ids:
+            ids.add(gap_id)
 
-    greedy_predicted = "greedy_predicted_probabilities.npy"
-    teacher_forcing_predicted = "predicted_probabilities.npy"
-    random_predicted = "random_predicted_probabilities.npy"
-    beam_search_probability = "beam_search_predicted_probabilities.npy"
+        greedy_predicted = "greedy_predicted_probabilities.npy"
+        teacher_forcing_predicted = "predicted_probabilities.npy"
+        random_predicted = "random_predicted_probabilities.npy"
+        beam_search_probability = "beam_search_predicted_probabilities.npy"
 
-    headers = np.array(["", "type", "log-sum-probability"])
-    numeric_headers = headers[2:]
-    data_list = [headers]
+        headers = np.array(["", "algorithm", "log-sum-probability"])
+        numeric_headers = headers[2:]
+        data_list = [headers]
 
-    lf = "left_flank"
-    rf = "right_flank"
-    f = "forward"
-    rc = "reverse_complement"
+        lf = "left_flank"
+        rf = "right_flank"
+        f = "forward"
+        rc = "reverse_complement"
 
-    flanks = [lf, rf]
-    strands = [f, rc]
+        flanks = [lf, rf]
+        strands = [f, rc]
 
-    row_id = 0
-    min_seed_length=52
-    for gap_id in ids:
-        gap_folder = root + gap_id + terminal_char
-        for i in range(num_replicates):
-            model_folder = gap_id + "_R_" + str(i)
-            parent_folder_path = gap_folder + model_folder + terminal_char
-            files = os.listdir(parent_folder_path)
-            if len(files) == 1:
-                continue
+        row_id = 0
+        min_seed_length=52
+        for gap_id in ids:
+            gap_folder = root + gap_id + terminal_char
+            for i in range(num_replicates):
+                model_folder = gap_id + "_R_" + str(i)
+                parent_folder_path = gap_folder + model_folder + terminal_char
+                files = os.listdir(parent_folder_path)
+                if len(files) == 1:
+                    continue
 
-            flank_prediction_folder = parent_folder_path + "regenerate_seq" + terminal_char
+                flank_prediction_folder = parent_folder_path + "regenerate_seq" + terminal_char
 
-            for flank in flanks:
-                for strand in strands:
-                    probability_folder = flank_prediction_folder + flank + terminal_char + strand + terminal_char
-                    greedy_probabilities = np.max(np.load(probability_folder + greedy_predicted), axis=1)
+                for flank in flanks:
+                    for strand in strands:
+                        probability_folder = flank_prediction_folder + flank + terminal_char + strand + terminal_char
+                        greedy_probabilities = np.max(np.load(probability_folder + greedy_predicted), axis=1)
 
-                    teacher_force_txt = probability_folder + "align.txt"
-                    actual_encoded_sequence = read_and_encode_actual_sequence(teacher_force_txt, min_seed_length, 2)
-                    teacher_forcing_probabilities_all = np.load(probability_folder + teacher_forcing_predicted)
-                    teacher_forcing_probabilities = dereference_indices(teacher_forcing_probabilities_all,
-                                                                        actual_encoded_sequence)
+                        teacher_force_txt = probability_folder + "align.txt"
+                        actual_encoded_sequence = read_and_encode_actual_sequence(teacher_force_txt, min_seed_length, 2)
+                        teacher_forcing_probabilities_all = np.load(probability_folder + teacher_forcing_predicted)
+                        teacher_forcing_probabilities = dereference_indices(teacher_forcing_probabilities_all,
+                                                                            actual_encoded_sequence)
 
-                    random_probabilities = np.load(probability_folder + random_predicted)
+                        random_probabilities = np.load(probability_folder + random_predicted)
+
+                        aggregate_greedy = aggregate_probability(greedy_probabilities)
+                        aggregate_teacher_force = aggregate_probability(teacher_forcing_probabilities)
+                        aggregate_random = aggregate_probability(random_probabilities)
+
+                        data_list.append([row_id, "greedy", aggregate_greedy])
+                        row_id += 1
+                        data_list.append([row_id, "teachforce", aggregate_teacher_force])
+                        row_id += 1
+                        data_list.append([row_id, "random", aggregate_random])
+                        row_id += 1
+
+                beam_search_flank_prediction_folder = parent_folder_path + "beam_search" + terminal_char + "regenerate_seq" + terminal_char
+                for flank in flanks:
+                    for strand in strands:
+                        probability_folder = beam_search_flank_prediction_folder + flank + terminal_char + strand + terminal_char
+                        lg_sum_probabilities = np.load(probability_folder + beam_search_probability)
+                        sorted_sum = np.sort(lg_sum_probabilities)[::-1]
+                        top_four = sorted_sum[0:4]
+                        top_one = sorted_sum[0]
+
+                        for sum in sorted_sum:
+                            data_list.append([row_id, "bmsrch_all", sum])
+                            row_id += 1
+
+                        for sum in top_four:
+                            data_list.append([row_id, "bmsrch_4", sum])
+                            row_id += 1
+
+                        data_list.append([row_id, "bmsrch_1", top_one])
+                        row_id += 1
+
+        data = np.array(data_list)
+        df = pd.DataFrame(data=data[1:, 1:], index=data[1:,0], columns=data[0, 1:])
+
+        df[numeric_headers] = df[numeric_headers].apply(pd.to_numeric)
+        path = output_folder + "flanks_aggregate_probability.png"
+        save_plot(df, path)
+
+
+        df_drilldown = df.loc[df['algorithm'] != "random"]
+        path = output_folder + "flanks_aggregate_probability_drilldown.png"
+        save_plot(df_drilldown, path)
+
+        ####################################################################################################################
+        ####GAPS######
+        ####################################################################################################################
+
+        headers = np.array(["", "algorithm", "log-sum-probability"])
+        numeric_headers = headers[2:]
+        data_list = [headers]
+        predictions = ["forward", "reverse_complement"] #forward = left, rc = right
+
+        row_id = 0
+        for gap_id in ids:
+            gap_folder = root + gap_id + terminal_char
+            for i in range(num_replicates):
+                model_folder = gap_id + "_R_" + str(i)
+                parent_folder_path = gap_folder + model_folder + terminal_char
+                files = os.listdir(parent_folder_path)
+                if len(files) == 1:
+                    continue
+
+                gap_prediction_folder = parent_folder_path + "predict_gap" + terminal_char
+
+                for prediction in predictions:
+                    probability_folder = gap_prediction_folder + prediction + terminal_char
+                    greedy_probabilities = np.max(np.load(probability_folder + "predicted_probabilities.npy"), axis=1)
 
                     aggregate_greedy = aggregate_probability(greedy_probabilities)
-                    aggregate_teacher_force = aggregate_probability(teacher_forcing_probabilities)
-                    aggregate_random = aggregate_probability(random_probabilities)
 
                     data_list.append([row_id, "greedy", aggregate_greedy])
                     row_id += 1
-                    data_list.append([row_id, "teacher_force", aggregate_teacher_force])
-                    row_id += 1
-                    data_list.append([row_id, "random", aggregate_random])
-                    row_id += 1
 
-            beam_search_flank_prediction_folder = parent_folder_path + "beam_search" + terminal_char + "regenerate_seq" + terminal_char
-            for flank in flanks:
-                for strand in strands:
-                    probability_folder = beam_search_flank_prediction_folder + flank + terminal_char + strand + terminal_char
+                beam_search_flank_prediction_folder = parent_folder_path + "beam_search" + terminal_char + "predict_gap" + terminal_char
+                for prediction in predictions:
+                    probability_folder = beam_search_flank_prediction_folder + prediction + terminal_char
                     lg_sum_probabilities = np.load(probability_folder + beam_search_probability)
                     sorted_sum = np.sort(lg_sum_probabilities)[::-1]
                     top_four = sorted_sum[0:4]
+                    top_one = sorted_sum[0]
 
                     for sum in sorted_sum:
-                        data_list.append([row_id, "beam_search_all", sum])
+                        data_list.append([row_id, "bmsrch_all", sum])
                         row_id += 1
 
                     for sum in top_four:
-                        data_list.append([row_id, "beam_search_top_four", sum])
+                        data_list.append([row_id, "bmsrch_4", sum])
                         row_id += 1
 
-    data = np.array(data_list)
-    df = pd.DataFrame(data=data[1:, 1:], index=data[1:,0], columns=data[0, 1:])
-
-    df[numeric_headers] = df[numeric_headers].apply(pd.to_numeric)
-    path = output_folder + "flanks_aggregate_probability.png"
-    save_plot(df, path)
-
-
-    df_drilldown = df.loc[df['type'] != "random"]
-    path = output_folder + "flanks_aggregate_probability_drilldown.png"
-    save_plot(df_drilldown, path)
-
-    ####################################################################################################################
-    ####GAPS######
-    ####################################################################################################################
-
-    headers = np.array(["", "type", "log-sum-probability"])
-    numeric_headers = headers[2:]
-    data_list = [headers]
-    predictions = ["forward", "reverse_complement"] #forward = left, rc = right
-
-    row_id = 0
-    for gap_id in ids:
-        gap_folder = root + gap_id + terminal_char
-        for i in range(num_replicates):
-            model_folder = gap_id + "_R_" + str(i)
-            parent_folder_path = gap_folder + model_folder + terminal_char
-            files = os.listdir(parent_folder_path)
-            if len(files) == 1:
-                continue
-
-            gap_prediction_folder = parent_folder_path + "predict_gap" + terminal_char
-
-            for prediction in predictions:
-                probability_folder = gap_prediction_folder + prediction + terminal_char
-                greedy_probabilities = np.max(np.load(probability_folder + "predicted_probabilities.npy"), axis=1)
-
-                aggregate_greedy = aggregate_probability(greedy_probabilities)
-
-                data_list.append([row_id, "greedy", aggregate_greedy])
-                row_id += 1
-
-            beam_search_flank_prediction_folder = parent_folder_path + "beam_search" + terminal_char + "predict_gap" + terminal_char
-            for prediction in predictions:
-                probability_folder = beam_search_flank_prediction_folder + prediction + terminal_char
-                lg_sum_probabilities = np.load(probability_folder + beam_search_probability)
-                sorted_sum = np.sort(lg_sum_probabilities)[::-1]
-                top_four = sorted_sum[0:4]
-
-                for sum in sorted_sum:
-                    data_list.append([row_id, "beam_search_all", sum])
+                    data_list.append([row_id, "bmsrch_1", top_one])
                     row_id += 1
 
-                for sum in top_four:
-                    data_list.append([row_id, "beam_search_top_four", sum])
-                    row_id += 1
+        data = np.array(data_list)
+        df = pd.DataFrame(data=data[1:, 1:], index=data[1:,0], columns=data[0, 1:])
 
-    data = np.array(data_list)
-    df = pd.DataFrame(data=data[1:, 1:], index=data[1:,0], columns=data[0, 1:])
-
-    df[numeric_headers] = df[numeric_headers].apply(pd.to_numeric)
-    path = output_folder + "gaps_aggregate_probability.png"
-    save_plot(df, path)
+        df[numeric_headers] = df[numeric_headers].apply(pd.to_numeric)
+        path = output_folder + "gaps_aggregate_probability.png"
+        save_plot(df, path)
 
 if __name__ == "__main__":
     main()
