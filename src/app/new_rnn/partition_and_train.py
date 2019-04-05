@@ -60,14 +60,30 @@ def main(args):
     terminal_directory_character = dir_utils.get_terminal_directory_character()
 
     gaps = os.listdir(base_directory)
-    gaps.sort()
-
-    partition_length = 300
-    lower = (partition - 1) * partition_length
-    upper = partition * partition_length
-    gaps = gaps[lower:upper]
-
+    gaps_with_size = []
     for gap in gaps:
+        inner_directory = base_directory + gap + terminal_directory_character
+        read_file = inner_directory + gap + ".fastq"
+        statinfo = os.stat(read_file)
+        gaps_with_size.append({
+            'gap': gap,
+            'size': statinfo.st_size
+        })
+
+    gaps_with_size.sort(key=lambda x: x['size'])
+
+    partitions = []
+    num_partitions = 3
+    for i in range(num_partitions):
+        partitions.append([])
+
+    for i in range(len(gaps_with_size)):
+        gap = gaps_with_size[i]['gap']
+        partition_idx = i % num_partitions
+        partitions[partition_idx].append(gap)
+    gaps_to_train_on = partitions[partition-1]
+
+    for gap in gaps_to_train_on:
         inner_directory = base_directory + gap + terminal_directory_character
         output_directory = base_output_directory + gap + terminal_directory_character
         dir_utils.mkdir(output_directory)
