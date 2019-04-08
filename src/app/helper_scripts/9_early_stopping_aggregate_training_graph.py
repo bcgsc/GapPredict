@@ -16,7 +16,7 @@ import utils.directory_utils as dir_utils
 
 primary_text_font_size=45
 secondary_text_font_size=35
-linewidth=4
+linewidth=5
 rotation=60
 
 def set_up_plot():
@@ -33,7 +33,12 @@ def set_up_plot():
 
 def save_fig(data, y_label, output_folder, file_name):
     set_up_plot()
-    ax = sns.boxplot(data=data, x="seed_range", y=y_label, hue="lstm_cells", linewidth=linewidth)
+    flierprops = {
+        'markersize': 10,
+        'markerfacecolor': 'red',
+        'marker': 'o'
+    }
+    ax = sns.boxplot(data=data, x="seed_range", y=y_label, hue="lstm_cells", linewidth=linewidth, flierprops=flierprops)
     ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation)
     plt.tight_layout()
 
@@ -57,6 +62,7 @@ def main():
 
     dir_utils.mkdir(output_folder)
 
+    root = '/projects/btl/scratch/echen/March_26_Results_Backup/models/'
     lstm_cell_directories = os.listdir(root)
     replicates = 30
 
