@@ -83,7 +83,11 @@ def main(args):
         partitions[partition_idx].append(gap)
     gaps_to_train_on = partitions[partition-1]
 
+    existing_models = os.listdir(base_output_directory)
+
     for gap in gaps_to_train_on:
+        if gap in existing_models:
+            continue
         inner_directory = base_directory + gap + terminal_directory_character
         output_directory = base_output_directory + gap + terminal_directory_character
         dir_utils.mkdir(output_directory)
