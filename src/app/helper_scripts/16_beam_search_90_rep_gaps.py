@@ -47,7 +47,6 @@ def main():
 
     embedding_dim = 128
     latent_dim = 512
-    min_seed_length = 52
     prune_length = 64
     length_to_predict=750
 
