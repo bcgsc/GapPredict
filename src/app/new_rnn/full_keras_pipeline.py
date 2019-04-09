@@ -2,7 +2,7 @@ import argparse
 import os
 import sys
 
-arg_parser = argparse.ArgumentParser(description="Help placeholder")
+arg_parser = argparse.ArgumentParser(description="Help placeholder") #TODO
 arg_parser.add_argument('-o', nargs=1, help="output directory", required=True)
 arg_parser.add_argument('-fa', nargs=1, help="FASTA file for flanks and gaps, assumed that sequence 0 and 1 are flanks",
                         required=True)
