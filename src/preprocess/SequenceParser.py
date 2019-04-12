@@ -17,13 +17,13 @@ class RawSequenceParser(SequenceParser):
         pass
 
     def parse_fastq(self, id, sequence, optional_id, quality_string):
-        return super()._strip_terminal_newline(sequence)
+        return super()._strip_terminal_newline(sequence).upper()
 
     def parse_fasta(self, buf):
         sequence = ""
         for subsequence in buf[1:]:
             sequence += super()._strip_terminal_newline(subsequence)
-        return sequence
+        return sequence.upper()
 
 
 
