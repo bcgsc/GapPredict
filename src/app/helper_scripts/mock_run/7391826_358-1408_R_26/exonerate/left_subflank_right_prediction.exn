@@ -1,3 +1,0 @@
-Command line: [exonerate ./validation/7391826_358-1408_R_26/flanks/left_subflank.fasta ./validation/7391826_358-1408_R_26/predictions/top_one_rc_predict.fasta --ryo percent_identity:%pi\nquery_start:%qab\nquery_end:%qae\ntarget_start:%tab\ntarget_end:%tae\ntotal_bases_compared:%et\nmismatches:%em\nmatches:%ei\n --bestn 1 --showalignment false]
-Hostname: [hpce706]
--- completed exonerate analysis
