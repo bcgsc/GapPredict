@@ -15,9 +15,9 @@ import utils.directory_utils as dir_utils
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 primary_text_font_size=45
-secondary_text_font_size=30
+secondary_text_font_size=35
 linewidth=6
-rotation=75
+rotation=45
 
 def save_plot(data, path):
     plt.rc('xtick', labelsize=secondary_text_font_size)
@@ -70,7 +70,7 @@ def main():
     gap_types = ["fixed", "unfixed"]
 
     for gap_type in gap_types:
-        root = '/projects/btl/scratch/echen/April_2_Results_Backup/scratch/' + gap_type + terminal_char
+        root = '/projects/btl/scratch/echen/Apr_15_Backup/predict/' + gap_type + terminal_char
         output_folder = "/home/echen/Desktop/Projects/Sealer_NN/src/app/new_rnn/out/aggregate" + terminal_char + "gap_prediction_probability_aggregate" + terminal_char + gap_type + terminal_char
         dir_utils.mkdir(output_folder)
 
