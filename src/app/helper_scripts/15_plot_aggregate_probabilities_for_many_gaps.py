@@ -19,9 +19,10 @@ secondary_text_font_size=35
 linewidth=6
 rotation=45
 
-def save_plot(data, path):
+def save_plot(data, path, ylim=None):
     plt.rc('xtick', labelsize=secondary_text_font_size)
     plt.rc('ytick', labelsize=secondary_text_font_size)
+
     font = {
         'size': primary_text_font_size
     }
@@ -39,6 +40,8 @@ def save_plot(data, path):
 
     ax = sns.boxplot(data=data, x="algorithm", y="log-sum-probability", linewidth=linewidth, flierprops=flierprops)
     ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation)
+    if ylim is not None:
+        plt.ylim(ylim)
     plt.tight_layout()
     fig = plt.savefig(path)
     plt.close(fig)
@@ -165,7 +168,7 @@ def main():
 
         df_drilldown = df.loc[df['algorithm'] != "random"]
         path = output_folder + "flanks_aggregate_probability_drilldown.png"
-        save_plot(df_drilldown, path)
+        save_plot(df_drilldown, path, ylim=(-650,0))
 
         ####################################################################################################################
         ####GAPS######
@@ -221,7 +224,7 @@ def main():
 
         df[numeric_headers] = df[numeric_headers].apply(pd.to_numeric)
         path = output_folder + "gaps_aggregate_probability.png"
-        save_plot(df, path)
+        save_plot(df, path, ylim=(-750,0))
 
 if __name__ == "__main__":
     main()
