@@ -84,7 +84,7 @@ def plot_comparison_scatter(data, file_path):
     plt.close(fig)
 
 def plot_scatter(data, file_path):
-    cbar_text_font_size = 25
+    cbar_text_font_size = 35
     plt.rc('xtick', labelsize=secondary_text_font_size)
     plt.rc('ytick', labelsize=secondary_text_font_size)
     font = {
