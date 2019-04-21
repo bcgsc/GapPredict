@@ -43,8 +43,7 @@ def evaluate_gap(df, predict_from_left):
         prediction_length_considered = strict_gap_end if predict_from_left else prediction_length - strict_gap_end
         coverage = prediction_bases/prediction_length_considered
 
-        gap_flank_distance = abs(corrected_flank_start - corrected_gap_end)
-        preliminary_pass = 1 if (gap_flank_distance <= distance_threshold and row.flank_correctness >= correctness_threshold) else 0
+        preliminary_pass = 1 if row.flank_correctness >= correctness_threshold else 0
         gap_coverage.append(coverage)
         is_pass.append(preliminary_pass)
     coverage = pd.Series(data=np.array(gap_coverage))
