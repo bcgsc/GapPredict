@@ -32,7 +32,7 @@ def plot_scatter(data, file_path):
 
     plt.figure(figsize=figure_dimensions)
 
-    ax = sns.scatterplot(x="total_percent_id", y="coverage", data=data, s=100)
+    ax = sns.scatterplot(x="total_percent_id", y="coverage", data=data, s=200)
     plt.xlim((-0.05, 1.05))
     plt.ylim((-0.05, 1.05))
     plt.xlabel('prediction identity')
