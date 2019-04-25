@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
+import utils.directory_utils as utils
+
 correctness_threshold = 0.7
 distance_threshold = 20
 prediction_length = 750
@@ -17,7 +19,7 @@ else:
     base_path = "/home/echen/Desktop/Projects/Sealer_NN/src/app/helper_scripts/data_crunching/"
 
 def evaluate_gap(df, predict_from_left):
-    gap_coverage = []
+    query_coverage = []
     is_pass = []
     for i in range(len(df)):
         row = df.loc[i]
@@ -27,7 +29,7 @@ def evaluate_gap(df, predict_from_left):
         gap_start = row["query_start_gap"]
         gap_end = row["query_end_gap"]
         if np.isnan(gap_start) or np.isnan(gap_end):
-            gap_coverage.append(0)
+            query_coverage.append(0)
             is_pass.append(0)
             continue
 
@@ -44,19 +46,23 @@ def evaluate_gap(df, predict_from_left):
         coverage = prediction_bases/prediction_length_considered
 
         preliminary_pass = 1 if row.flank_correctness >= correctness_threshold else 0
-        gap_coverage.append(coverage)
+        query_coverage.append(coverage)
         is_pass.append(preliminary_pass)
-    coverage = pd.Series(data=np.array(gap_coverage))
+    coverage = pd.Series(data=np.array(query_coverage))
     gap_pass = pd.Series(data=np.array(is_pass))
     return coverage, gap_pass
 
 def transform_dataframe(df, predict_from_left):
     df['total_percent_id_gap'] = (df.matches_gap/df.total_length_gap).fillna(0)
+    df['target_gap_coverage'] = (df.target_alignment_length_gap/df.total_length_gap).fillna(0)
+    df['target_gap_correctness'] = (df.total_percent_id_gap * df.target_gap_coverage).fillna(0)
+
     df['total_percent_id_flank'] = (df.matches_flank/df.total_length_flank).fillna(0)
     df['flank_coverage'] = (df.target_alignment_length_flank/df.target_length_flank).fillna(0)
     df['flank_correctness'] = df.total_percent_id_flank * df.flank_coverage
     gap_coverage, gap_pass = evaluate_gap(df, predict_from_left)
-    df['gap_coverage'] = gap_coverage.fillna(0)
+
+    df['query_gap_coverage'] = gap_coverage.fillna(0)
     df['gap_pass'] = gap_pass
 
 def plot_comparison_scatter(data, file_path):
@@ -71,12 +77,38 @@ def plot_comparison_scatter(data, file_path):
 
     plt.figure(figsize=figure_dimensions)
 
-    points = plt.scatter(data["total_percent_id_gap"], data["total_percent_id"], s=200)
+    points = plt.scatter(data["target_gap_correctness"] * 100, data["target_correctness"] * 100, s=200)
 
-    plt.xlim((-0.05, 1.05))
-    plt.ylim((-0.05, 1.05))
-    plt.xlabel('GapPredict identity')
-    plt.ylabel('Sealer identity')
+    plt.xlim((-5, 105))
+    plt.ylim((-5, 105))
+    plt.xlabel('GapPredict % correctness')
+    plt.ylabel('Sealer % correctness')
+
+    plt.tight_layout()
+    fig = plt.savefig(file_path)
+    plt.close(fig)
+
+def plot_comparison_contour(data, file_path):
+    plt.rc('xtick', labelsize=secondary_text_font_size)
+    plt.rc('ytick', labelsize=secondary_text_font_size)
+    font = {
+        'size': primary_text_font_size
+    }
+    plt.rc('font', **font)
+
+    figure_dimensions=(13, 13)
+
+    plt.figure(figsize=figure_dimensions)
+
+    x = data["target_gap_correctness"] * 100
+    y = data["target_correctness"] * 100
+
+    sns.kdeplot(x, y, cmap="Blues", shade=True, shade_lowest=False)
+
+    plt.xlim((-5, 105))
+    plt.ylim((-5, 105))
+    plt.xlabel('GapPredict % correctness')
+    plt.ylabel('Sealer % correctness')
 
     plt.tight_layout()
     fig = plt.savefig(file_path)
@@ -95,15 +127,16 @@ def plot_scatter(data, file_path):
 
     plt.figure(figsize=figure_dimensions)
 
-    points = plt.scatter(data["total_percent_id_gap"], data["gap_coverage"], c=data["log-sum-probability"], alpha=0.8, s=200, cmap="Spectral")
+    points = plt.scatter(data["target_gap_correctness"]*100, data["query_gap_coverage"]*100, c=data["log-sum-probability"], alpha=0.8, s=200, cmap="Spectral")
     cbar = plt.colorbar(points, fraction=0.046, pad=0.04)
     cbar.ax.tick_params(labelsize=cbar_text_font_size)
+    cbar.set_label("log-sum probability")
 
     plt.clim(0, -750)
-    plt.xlim((-0.05, 1.05))
-    plt.ylim((-0.05, 1.05))
-    plt.xlabel('prediction identity')
-    plt.ylabel('prediction coverage')
+    plt.xlim((-5, 105))
+    plt.ylim((-5, 105))
+    plt.xlabel('target % correctness')
+    plt.ylabel('query % coverage')
 
     plt.tight_layout()
     fig = plt.savefig(file_path)
@@ -121,47 +154,27 @@ def plot_contour(data, file_path):
 
     plt.figure(figsize=figure_dimensions)
 
-    x = data["total_percent_id_gap"]
-    y = data["gap_coverage"]
+    x = data["target_gap_correctness"]*100
+    y = data["query_gap_coverage"]*100
 
     sns.kdeplot(x, y, cmap="Blues", shade=True, shade_lowest=False)
 
-    plt.xlim((-0.05, 1.05))
-    plt.ylim((-0.05, 1.05))
-    plt.xlabel('prediction identity')
-    plt.ylabel('prediction coverage')
+    plt.xlim((-5, 105))
+    plt.ylim((-5, 105))
+    plt.xlabel('target % correctness')
+    plt.ylabel('query % coverage')
 
     plt.tight_layout()
     fig = plt.savefig(file_path)
     plt.close(fig)
 
-
-# def plot_hist(data, file_path):
-#     plt.rc('xtick', labelsize=secondary_text_font_size)
-#     plt.rc('ytick', labelsize=secondary_text_font_size)
-#     font = {
-#         'size': primary_text_font_size
-#     }
-#     plt.rc('font', **font)
-#
-#     figure_dimensions=(13, 13)
-#
-#     plt.figure(figsize=figure_dimensions)
-#
-#     plt.hist(data['target_length_gap'], range=(0, 1500), bins=30)
-#
-#     plt.xlabel('gap length')
-#     plt.ylabel('frequency')
-#
-#     plt.tight_layout()
-#     fig = plt.savefig(file_path)
-#     plt.close(fig)
-
 def transform_sealer_dataframe(df):
     df['total_percent_id'] = (df.matches/df.total_length).fillna(0)
+    df['coverage'] = (df.target_alignment_length/df.target_length).fillna(0)
+    df['target_correctness'] = (df.total_percent_id * df.coverage).fillna(0)
 
 def clean_sealer_dataframe(df):
-    df['total_percent_id'] = df.total_percent_id.fillna(0)
+    df['target_correctness'] = df.target_correctness.fillna(0)
 
 def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
     gap_left_df = pd.read_csv(base_path + gap_left, index_col=0)
@@ -188,7 +201,7 @@ def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
     transform_dataframe(gap_left_full_df, True)
     transform_dataframe(gap_right_full_df, False)
 
-    columns_to_select = ['gap_id', 'is_fixed', 'flank_correctness', 'total_percent_id_gap', 'gap_coverage', 'gap_pass', 'log-sum-probability']
+    columns_to_select = ['gap_id', 'is_fixed', 'flank_correctness', 'target_gap_correctness', 'query_gap_coverage', 'gap_pass', 'log-sum-probability']
     full_dataframe = gap_left_full_df.append(gap_right_full_df, ignore_index=True)
     columns_to_plot = full_dataframe[columns_to_select]
 
@@ -204,7 +217,9 @@ def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
     print("Unfixed Pass = " + str(len(unfixed_pass)) + "/" + str(total_unfixed))
     print("Unfixed Fail = " + str(len(unfixed_fail)) + "/" + str(total_unfixed))
 
-    out_path = "E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\src\\app\\helper_scripts\\data_crunching\\viz\\" + id + "\\"
+    delimiter = utils.get_terminal_directory_character()
+
+    out_path = base_path + "viz" + delimiter + id + delimiter
     os.makedirs(out_path, exist_ok=True)
 
     plot_scatter(fixed_pass, out_path + "fixed_pass.png")
@@ -224,19 +239,15 @@ def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
     fixed_sealer = sealer_df[(sealer_df.is_fixed == 1)]
     unfixed_sealer = sealer_df[(sealer_df.is_fixed == 0)]
 
-    fixed_sealer_merged = pd.merge(fixed, fixed_sealer, on=["gap_id", "is_fixed"], how="left")[['gap_id', 'is_fixed', 'total_percent_id_gap', 'total_percent_id']]
-    unfixed_sealer_merged = pd.merge(unfixed, unfixed_sealer, on=["gap_id", "is_fixed"], how="left")[['gap_id', 'is_fixed', 'total_percent_id_gap', 'total_percent_id']]
+    fixed_sealer_merged = pd.merge(fixed, fixed_sealer, on=["gap_id", "is_fixed"], how="left")[['gap_id', 'is_fixed', 'target_gap_correctness', 'target_correctness']]
+    unfixed_sealer_merged = pd.merge(unfixed, unfixed_sealer, on=["gap_id", "is_fixed"], how="left")[['gap_id', 'is_fixed', 'target_gap_correctness', 'target_correctness']]
     clean_sealer_dataframe(fixed_sealer_merged)
     clean_sealer_dataframe(unfixed_sealer_merged)
 
     plot_comparison_scatter(fixed_sealer_merged, out_path + "fixed_sealer_compare.png")
     plot_comparison_scatter(unfixed_sealer_merged, out_path + "unfixed_sealer_compare.png")
-
-    # successful = full_dataframe[(full_dataframe.gap_pass == 1) & (full_dataframe.total_percent_id_gap >= 0.9) & (full_dataframe.gap_coverage >= 0.9)]
-    # unsuccessful = full_dataframe[(full_dataframe.gap_pass != 1) | (full_dataframe.total_percent_id_gap < 0.9) | (full_dataframe.gap_coverage < 0.9)]
-    #
-    # plot_hist(successful, out_path + "successful_hist.png")
-    # plot_hist(unsuccessful, out_path + "unsuccessful_hist.png")
+    plot_comparison_contour(fixed_sealer_merged, out_path + "fixed_sealer_compare_contour.png")
+    plot_comparison_contour(unfixed_sealer_merged, out_path + "unfixed_sealer_compare_contour.png")
 
 print("Beam Search")
 compute_metrics("gap_left_prediction_data.csv", "gap_right_prediction_data.csv", "left_subflank_right_prediction_data.csv", "right_subflank_left_prediction_data.csv", "beam_search")
