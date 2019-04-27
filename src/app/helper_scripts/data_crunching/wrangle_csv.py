@@ -77,36 +77,14 @@ def plot_comparison_scatter(data, file_path):
 
     plt.figure(figsize=figure_dimensions)
 
-    points = plt.scatter(data["target_gap_correctness"] * 100, data["target_correctness"] * 100, s=200)
-
-    plt.xlim((-5, 105))
-    plt.ylim((-5, 105))
-    plt.xlabel('GapPredict % correctness')
-    plt.ylabel('Sealer % correctness')
-
-    plt.tight_layout()
-    fig = plt.savefig(file_path)
-    plt.close(fig)
-
-def plot_comparison_contour(data, file_path):
-    plt.rc('xtick', labelsize=secondary_text_font_size)
-    plt.rc('ytick', labelsize=secondary_text_font_size)
-    font = {
-        'size': primary_text_font_size
-    }
-    plt.rc('font', **font)
-
-    figure_dimensions=(13, 13)
-
-    plt.figure(figsize=figure_dimensions)
-
     x = data["target_gap_correctness"] * 100
     y = data["target_correctness"] * 100
 
-    sns.kdeplot(x, y, cmap="Blues", shade=True, shade_lowest=False)
+    sns.kdeplot(x, y, cmap="Reds", shade=True, shade_lowest=False)
+    points = plt.scatter(x, y, s=200, alpha=0.8)
 
-    plt.xlim((-5, 105))
-    plt.ylim((-5, 105))
+    plt.xlim((-1, 101))
+    plt.ylim((-1, 101))
     plt.xlabel('GapPredict % correctness')
     plt.ylabel('Sealer % correctness')
 
@@ -127,40 +105,19 @@ def plot_scatter(data, file_path):
 
     plt.figure(figsize=figure_dimensions)
 
-    points = plt.scatter(data["target_gap_correctness"]*100, data["query_gap_coverage"]*100, c=data["log-sum-probability"], alpha=0.8, s=200, cmap="Spectral")
+    x = data["target_gap_correctness"]*100
+    y = data["query_gap_coverage"]*100
+
+    sns.kdeplot(x, y, cmap="Reds", shade=True, shade_lowest=False)
+    points = plt.scatter(x, y, c=data["log-sum-probability"], alpha=0.8, s=200, cmap="Spectral")
+
     cbar = plt.colorbar(points, fraction=0.046, pad=0.04)
     cbar.ax.tick_params(labelsize=cbar_text_font_size)
     cbar.set_label("log-sum probability")
 
     plt.clim(0, -750)
-    plt.xlim((-5, 105))
-    plt.ylim((-5, 105))
-    plt.xlabel('target % correctness')
-    plt.ylabel('query % coverage')
-
-    plt.tight_layout()
-    fig = plt.savefig(file_path)
-    plt.close(fig)
-
-def plot_contour(data, file_path):
-    plt.rc('xtick', labelsize=secondary_text_font_size)
-    plt.rc('ytick', labelsize=secondary_text_font_size)
-    font = {
-        'size': primary_text_font_size
-    }
-    plt.rc('font', **font)
-
-    figure_dimensions=(13, 13)
-
-    plt.figure(figsize=figure_dimensions)
-
-    x = data["target_gap_correctness"]*100
-    y = data["query_gap_coverage"]*100
-
-    sns.kdeplot(x, y, cmap="Blues", shade=True, shade_lowest=False)
-
-    plt.xlim((-5, 105))
-    plt.ylim((-5, 105))
+    plt.xlim((-1, 101))
+    plt.ylim((-1, 101))
     plt.xlabel('target % correctness')
     plt.ylabel('query % coverage')
 
@@ -227,11 +184,6 @@ def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
     plot_scatter(unfixed_pass, out_path + "unfixed_pass.png")
     plot_scatter(unfixed_fail, out_path + "unfixed_fail.png")
 
-    plot_contour(fixed_pass, out_path + "fixed_pass_contour.png")
-    plot_contour(fixed_fail, out_path + "fixed_fail_contour.png")
-    plot_contour(unfixed_pass, out_path + "unfixed_pass_contour.png")
-    plot_contour(unfixed_fail, out_path + "unfixed_fail_contour.png")
-
     sealer_df = pd.read_csv(base_path + "sealer_merged.csv", index_col=0)
     transform_sealer_dataframe(sealer_df)
     fixed = full_dataframe[(full_dataframe.is_fixed == 1)]
@@ -246,8 +198,6 @@ def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
 
     plot_comparison_scatter(fixed_sealer_merged, out_path + "fixed_sealer_compare.png")
     plot_comparison_scatter(unfixed_sealer_merged, out_path + "unfixed_sealer_compare.png")
-    plot_comparison_contour(fixed_sealer_merged, out_path + "fixed_sealer_compare_contour.png")
-    plot_comparison_contour(unfixed_sealer_merged, out_path + "unfixed_sealer_compare_contour.png")
 
 print("Beam Search")
 compute_metrics("gap_left_prediction_data.csv", "gap_right_prediction_data.csv", "left_subflank_right_prediction_data.csv", "right_subflank_left_prediction_data.csv", "beam_search")
