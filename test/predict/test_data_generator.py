@@ -5,7 +5,7 @@ from unittest import TestCase
 
 import numpy as np
 
-from predict.new_rnn.DataGenerator import DataGenerator
+from predict.DataGenerator import DataGenerator
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 from preprocess.SequenceImporter import SequenceImporter
 
