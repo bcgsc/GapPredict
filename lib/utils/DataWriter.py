@@ -41,7 +41,7 @@ class DataWriter:
         file.write(seq + "\n")
 
     def write_beam_search_results(self, predictions, flank_id):
-        file = open(self.root_path + "predict.fasta", "w+")
+        file = open(self.root_path + "lstm.fasta", "w+")
         for i in range(len(predictions)):
             self._write_fasta(flank_id + "_" + str(i), predictions[i], file)
         file.close()
