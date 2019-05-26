@@ -30,9 +30,9 @@ class DataGenerator(keras.utils.Sequence):
             directory_path = UTILS.clean_directory_string(base_path)
         else:
             if os.name == 'nt':
-                directory_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\lib\\predict\\new_rnn\\out\\'
+                directory_path = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\lib\\lstm\\new_rnn\\out\\'
             else:
-                directory_path = '/home/echen/Desktop/Projects/Sealer_NN/lib/predict/new_rnn/out/'
+                directory_path = '/home/echen/Desktop/Projects/Sealer_NN/lib/lstm/new_rnn/out/'
         self.output_file_path = directory_path + file_name
 
         self.reads = np.array(list(filter(lambda x:self._above_minimum_length(x), reads)))

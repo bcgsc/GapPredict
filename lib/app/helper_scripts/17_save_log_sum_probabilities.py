@@ -47,7 +47,7 @@ def main():
     predictions = ["forward", "reverse_complement"]  # forward = left, rc = right
 
     for gap_type in gap_types:
-        root = '/projects/btl/scratch/echen/Apr_15_Backup/predict/' + gap_type + terminal_char
+        root = '/projects/btl/scratch/echen/Apr_15_Backup/lstm/' + gap_type + terminal_char
         dir_utils.mkdir(output_folder)
 
         gap_ids = os.listdir(root)

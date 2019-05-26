@@ -4,11 +4,11 @@ from keras.layers import CuDNNLSTM, LSTM, Embedding, Dense
 from keras.models import Sequential
 
 from constants import EncodingConstants as CONSTANTS
-from predict.DataGenerator import DataGenerator
-from predict.TrainingMetric import TrainingMetric
+from lstm.DataGenerator import DataGenerator
+from lstm.TrainingMetric import TrainingMetric
 
 
-class SingleLSTMModel:
+class GapPredictModel:
     def _initialize_models(self):
         model = Sequential()
         if self.stateful:
@@ -58,7 +58,7 @@ class SingleLSTMModel:
         self.log_training = log_training
         self.callbacks = []
         if reference_sequences is not None:
-            from predict.ValidationMetric import ValidationMetric
+            from lstm.ValidationMetric import ValidationMetric
             self.validator = ValidationMetric(reference_sequences, self.min_seed_length, self.spacing,
                                               self.embedding_dim, self.latent_dim, self.epochs, self.patience,
                                                 early_stopping=self.early_stopping)

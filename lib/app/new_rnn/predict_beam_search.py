@@ -1,13 +1,14 @@
 import sys
 sys.path.append('../../')
 
-from predict.SingleLSTMModel import SingleLSTMModel
+from lstm.GapPredictModel import GapPredictModel
 from preprocess.SequenceImporter import SequenceImporter
 from preprocess.SequenceReverser import SequenceReverser
 from utils.DataWriter import DataWriter
 import constants.EncodingConstants as CONSTANTS
 import utils.directory_utils as UTILS
-import app.new_rnn.predict_helper as helper
+from preprocess.KmerLabelDecoder import KmerLabelDecoder
+from predict.BeamSearchPredictor import BeamSearchPredictor
 
 import tensorflow as tf
 
@@ -15,7 +16,7 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 session = tf.Session(config=config)
 
-def predict_arbitrary_length(weights_path, gap_id, fasta_path, embedding_dim, latent_dim, length_to_predict, prune_length, base_path=None):
+def predict_arbitrary_length(weights_path, gap_id, fasta_path, embedding_dim, latent_dim, length_to_predict, beam_length, base_path=None):
     importer = SequenceImporter()
     reverser = SequenceReverser()
 
@@ -24,7 +25,7 @@ def predict_arbitrary_length(weights_path, gap_id, fasta_path, embedding_dim, la
     left_flank = sequences[0]
     right_flank = reverser.reverse_complement(sequences[1])
 
-    model = SingleLSTMModel(min_seed_length=None, stateful=False, embedding_dim=embedding_dim,
+    model = GapPredictModel(min_seed_length=None, stateful=False, embedding_dim=embedding_dim,
                             latent_dim=latent_dim, with_gpu=True)
 
     model.load_weights(weights_path + 'my_model_weights.h5')
@@ -32,17 +33,17 @@ def predict_arbitrary_length(weights_path, gap_id, fasta_path, embedding_dim, la
     directory = "beam_search" + terminal_directory_character + "predict_gap" + terminal_directory_character
 
     flank_id = gap_id + "_" + "left_forward"
-    predict(model, left_flank, length_to_predict, prune_length, flank_id, base_path=base_path, directory=directory + "forward")
+    predict(model, left_flank, length_to_predict, beam_length, flank_id, base_path=base_path, directory=directory + "forward")
     flank_id = gap_id + "_" + "right_reverse_complement"
-    predict(model, right_flank, length_to_predict, prune_length, flank_id, base_path=base_path, directory=directory + "reverse_complement")
+    predict(model, right_flank, length_to_predict, beam_length, flank_id, base_path=base_path, directory=directory + "reverse_complement")
 
-def predict_reference(weights_path, gap_id, fasta_path, embedding_dim, latent_dim, min_seed_length, prune_length, base_path=None):
+def predict_reference(weights_path, gap_id, fasta_path, embedding_dim, latent_dim, min_seed_length, beam_length, base_path=None):
     importer = SequenceImporter()
     reverser = SequenceReverser()
 
     sequences = importer.import_fasta([fasta_path])[0:2]
 
-    model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=False, embedding_dim=embedding_dim,
+    model = GapPredictModel(min_seed_length=min_seed_length, stateful=False, embedding_dim=embedding_dim,
                             latent_dim=latent_dim, with_gpu=True)
 
     model.load_weights(weights_path + 'my_model_weights.h5')
@@ -65,18 +66,20 @@ def predict_reference(weights_path, gap_id, fasta_path, embedding_dim, latent_di
         reverse_complement_seed = reverser.reverse_complement(sequence)[:min_seed_length]
         directionality = "forward"
         flank_id = gap_id + "_" + flank + "_" + directionality
-        predict(model, forward_seed, prediction_length, prune_length, flank_id, base_path=base_path, directory=static_path + directionality)
+        predict(model, forward_seed, prediction_length, beam_length, flank_id, base_path=base_path, directory=static_path + directionality)
         directionality = "reverse_complement"
         flank_id = gap_id + "_" + flank + "_" + directionality
-        predict(model,reverse_complement_seed, prediction_length, prune_length, flank_id, base_path=base_path, directory=static_path + directionality)
+        predict(model, reverse_complement_seed, prediction_length, beam_length, flank_id, base_path=base_path, directory=static_path + directionality)
 
-def predict(model, seed, prediction_length, prune_length, flank_id, base_path=None, directory=None):
-    predicted_strings_with_seed, lg_sum_probabilities = helper.predict_next_n_bases_beam_search(model, seed, prediction_length, prune_length)
-    viz = DataWriter(root_directory=base_path, directory=directory)
-    viz.save_probabilities(lg_sum_probabilities, fig_id="beam_search")
+def predict(model, seed, prediction_length, beam_length, flank_id, base_path=None, directory=None):
+    predictor = BeamSearchPredictor(model)
+    predicted_strings_with_seed, lg_sum_probabilities = predictor.predict_next_n_bases(seed, prediction_length, beam_length)
+    writer = DataWriter(root_directory=base_path, directory=directory)
+    writer.save_probabilities(lg_sum_probabilities, fig_id="beam_search")
+    decoder = KmerLabelDecoder()
 
     predictions_as_strings = []
     for i in range(len(predicted_strings_with_seed)):
-        string = "".join(CONSTANTS.REVERSE_INTEGER_ENCODING[predicted_strings_with_seed[i].astype(int)]) #TODO would be nice to have this as a decoder class
+        string = decoder.decode(predicted_strings_with_seed[i])
         predictions_as_strings.append(string)
-    viz.write_beam_search_results(predictions_as_strings, flank_id)
+    writer.write_beam_search_results(predictions_as_strings, flank_id)

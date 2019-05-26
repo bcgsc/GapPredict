@@ -8,7 +8,7 @@ from keras.losses import categorical_crossentropy
 import constants.EncodingConstants as CONSTANTS
 from onehot.OneHotVector import OneHotVectorDecoder
 from onehot.OneHotVector import OneHotVectorEncoder
-from predict.SingleLSTMModel import SingleLSTMModel
+from lstm.GapPredictModel import GapPredictModel
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 from preprocess.SequenceMatchCalculator import SequenceMatchCalculator
 
@@ -36,8 +36,8 @@ class ValidationMetric(Callback):
             self.best_epoch = -1
 
         batch_size = len(self.reference_seqs) if self.equal_lengths else 1
-        self.validation_model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=True, batch_size=batch_size, embedding_dim=embedding_dim, latent_dim=latent_dim,
-                                with_gpu=True)
+        self.validation_model = GapPredictModel(min_seed_length=min_seed_length, stateful=True, batch_size=batch_size, embedding_dim=embedding_dim, latent_dim=latent_dim,
+                                                with_gpu=True)
 
     def _init_reference_characters(self, reference_seqs):
         reference_characters = []

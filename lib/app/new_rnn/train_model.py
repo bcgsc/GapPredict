@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import utils.directory_utils as dir_utils
-from predict.SingleLSTMModel import SingleLSTMModel
+from lstm.GapPredictModel import GapPredictModel
 from preprocess.SequenceImporter import SequenceImporter
 from preprocess.SequenceReverser import SequenceReverser
 
@@ -103,12 +103,12 @@ def train_model(base_directory, min_seed_length, reference, reads, epochs, batch
                     inner_directory = "BS_" + str(batch_size) + "_ED_" + str(embedding_dim) + "_LD_" + str(latent_dim) \
                                       + "_E_" + str(epochs) + "_R_" + str(i)
 
-                    viz_path = weights_path + inner_directory + terminal_directory_character
+                    writer_path = weights_path + inner_directory + terminal_directory_character
 
                     dir_utils.mkdir(weights_path)
-                    dir_utils.mkdir(viz_path)
+                    dir_utils.mkdir(writer_path)
 
-                    model = SingleLSTMModel(min_seed_length=min_seed_length, stateful=False,
+                    model = GapPredictModel(min_seed_length=min_seed_length, stateful=False,
                                             batch_size=batch_size,
                                             epochs=epochs, embedding_dim=embedding_dim, latent_dim=latent_dim,
                                             with_gpu=with_gpu, log_samples=log_samples,
@@ -130,7 +130,7 @@ def train_model(base_directory, min_seed_length, reference, reads, epochs, batch
                     training_loss = history.history['loss']
                     if early_stopping:
                         best_epoch = model.get_best_epoch()
-                    _plot_training_validation(epochs, accuracy, loss, training_accuracy, training_loss, lengths, viz_path, legend=legend, best_epoch=best_epoch)
+                    _plot_training_validation(epochs, accuracy, loss, training_accuracy, training_loss, lengths, writer_path, legend=legend, best_epoch=best_epoch)
 
 def main():
     if os.name == 'nt':

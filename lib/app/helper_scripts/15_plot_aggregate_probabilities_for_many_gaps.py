@@ -73,7 +73,7 @@ def main():
     gap_types = ["fixed", "unfixed"]
 
     for gap_type in gap_types:
-        root = '/projects/btl/scratch/echen/Apr_15_Backup/predict/' + gap_type + terminal_char
+        root = '/projects/btl/scratch/echen/Apr_15_Backup/lstm/' + gap_type + terminal_char
         output_folder = "/home/echen/Desktop/Projects/Sealer_NN/lib/app/new_rnn/out/aggregate" + terminal_char + "gap_prediction_probability_aggregate" + terminal_char + gap_type + terminal_char
         dir_utils.mkdir(output_folder)
 
