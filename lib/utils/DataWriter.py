@@ -55,9 +55,9 @@ class DataWriter:
         self._write_fasta(fig_id + "_right_flank_reverse_complement_LD_" + str(latent_dim), rc_right_flank, file)
         file.close()
 
-    def save_probabilities(self, probabilities, fig_id=None):
-        if fig_id is not None:
-            id_string = fig_id + "_"
+    def save_probabilities(self, probabilities, file_id=None):
+        if file_id is not None:
+            id_string = file_id + "_"
         else:
             id_string = ""
         path = self.root_path + id_string + "predicted_probabilities"

@@ -75,7 +75,7 @@ def predict(model, seed, prediction_length, beam_length, flank_id, base_path=Non
     predictor = BeamSearchPredictor(model)
     predicted_strings_with_seed, lg_sum_probabilities = predictor.predict_next_n_bases(seed, prediction_length, beam_length)
     writer = DataWriter(root_directory=base_path, directory=directory)
-    writer.save_probabilities(lg_sum_probabilities, fig_id="beam_search")
+    writer.save_probabilities(lg_sum_probabilities, file_id="beam_search")
     decoder = KmerLabelDecoder()
 
     predictions_as_strings = []

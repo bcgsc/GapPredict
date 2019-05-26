@@ -9,6 +9,7 @@ import utils.directory_utils as UTILS
 from predict.GuidedPredictor import GuidedPredictor
 from predict.RandomPredictor import RandomPredictor
 from predict.BeamSearchPredictor import BeamSearchPredictor
+from predict.TeacherForceProbabilityPredictor import TeacherForceProbabilityPredictor
 
 def predict_arbitrary_length(weights_path, gap_id, fasta_path, embedding_dim, latent_dim, length_to_predict, base_path=None):
     importer = SequenceImporter()
@@ -78,8 +79,10 @@ def predict_flanks(stateful_model, stateless_model, min_seed_length, sequence, b
     guided_predictor = GuidedPredictor(stateful_model)
     greedy_predictor = BeamSearchPredictor(stateless_model)
     random_predictor = RandomPredictor(stateful_model)
+    teacher_force_predictor = TeacherForceProbabilityPredictor(stateful_model)
 
     predicted_string_with_seed, basewise_probabilities = guided_predictor.regenerate_sequence(min_seed_length, sequence)
+    teacher_force_probabilities = teacher_force_predictor.get_probabilities(min_seed_length, sequence)
 
     seed = sequence[:min_seed_length]
     length_to_predict = len(sequence) - min_seed_length
@@ -88,9 +91,11 @@ def predict_flanks(stateful_model, stateless_model, min_seed_length, sequence, b
 
     predicted_string_random_with_seed, random_probability_vector = random_predictor.predict_random_sequence(seed, length_to_predict)
 
+
     writer.save_probabilities(basewise_probabilities)
-    writer.save_probabilities(basewise_probabilities_greedy, fig_id="greedy")
-    writer.save_probabilities(random_probability_vector, fig_id="random")
+    writer.save_probabilities(basewise_probabilities_greedy, file_id="greedy")
+    writer.save_probabilities(random_probability_vector, file_id="random")
+    writer.save_probabilities(teacher_force_probabilities, file_id="teacher_force")
     return predicted_string_with_seed
 
 def predict_gaps(model, seed, prediction_length, base_path=None, directory=None):
