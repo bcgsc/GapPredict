@@ -4,7 +4,6 @@ sys.path.append('../../')
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 import utils.directory_utils as dir_utils
 from lstm.GapPredictModel import GapPredictModel
 from preprocess.SequenceImporter import SequenceImporter
@@ -87,7 +86,6 @@ def train_model(base_directory, min_seed_length, reference, reads, epochs, batch
     lengths = np.array(list(map(lambda x: len(x), reference_sequences)))
 
     with_gpu=True
-    #TODO: more parameters to bring out maybe
     log_samples=log_samples
     log_training=False
     early_stopping=True
@@ -131,29 +129,3 @@ def train_model(base_directory, min_seed_length, reference, reads, epochs, batch
                     if early_stopping:
                         best_epoch = model.get_best_epoch()
                     _plot_training_validation(epochs, accuracy, loss, training_accuracy, training_loss, lengths, writer_path, legend=legend, best_epoch=best_epoch)
-
-def main():
-    if os.name == 'nt':
-        base_directory = 'E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\lib\\app\\new_rnn\\out\\training_metrics\\'
-    else:
-        base_directory = '/home/echen/Desktop/Projects/Sealer_NN/lib/app/new_rnn/out/training_metrics/'
-
-    min_seed_length = 52
-    seed_range_upper = -1
-    reference = '../data/real_gaps/sealer_filled/7465348_13506-14596.fasta'
-    reads = '../data/real_gaps/sealer_filled/7465348_13506-14596.fastq'
-
-    # (128, 1024, 1024) probably don't go further than this
-    # doubling latent_dim seems to increase # parameters by ~3X
-    # doubling embedding_dim seems to increase # parameters by ~1.5X
-
-    batch_sizes = [128]
-    rnn_dims = [512]
-    embedding_dims = [128]
-    epochs = 1000
-    replicates = 1
-    patience = 200
-    train_model(base_directory, min_seed_length, reference, reads, epochs, batch_sizes, rnn_dims, embedding_dims, replicates, patience, seed_range_upper)
-
-if __name__ == "__main__":
-    main()

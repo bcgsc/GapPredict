@@ -1,11 +1,7 @@
-import sys
-sys.path.append('../../')
-
 from lstm.GapPredictModel import GapPredictModel
 from preprocess.SequenceImporter import SequenceImporter
 from preprocess.SequenceReverser import SequenceReverser
 from utils.DataWriter import DataWriter
-import constants.EncodingConstants as CONSTANTS
 import utils.directory_utils as UTILS
 from preprocess.KmerLabelDecoder import KmerLabelDecoder
 from predict.BeamSearchPredictor import BeamSearchPredictor

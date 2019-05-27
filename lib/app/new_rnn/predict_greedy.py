@@ -1,6 +1,3 @@
-import sys
-sys.path.append('../../')
-
 from lstm.GapPredictModel import GapPredictModel
 from preprocess.SequenceImporter import SequenceImporter
 from preprocess.SequenceReverser import SequenceReverser
