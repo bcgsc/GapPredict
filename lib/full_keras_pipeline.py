@@ -1,8 +1,7 @@
 import argparse
 import os
-import sys
 
-arg_parser = argparse.ArgumentParser(description="Help placeholder") #TODO
+arg_parser = argparse.ArgumentParser(description="GapPredict - LSTM Character Level Language Model for Gap Filling a Single Gap")
 arg_parser.add_argument('-o', nargs=1, help="output directory", required=True)
 arg_parser.add_argument('-fa', nargs=1, help="FASTA file for flanks and gaps, assumed that sequence 0 and 1 are flanks",
                         required=True)
@@ -12,13 +11,13 @@ arg_parser.add_argument('-ed', type=int, nargs=1, default=[128], help="number of
 arg_parser.add_argument('-bs', type=int, nargs=1, default=[128], help="batch sizes")
 arg_parser.add_argument('-r', type=int, nargs=1, default=[1], help="# replicates of models to train")
 arg_parser.add_argument('-e', type=int, nargs=1, default=[1000], help="training epochs")
-arg_parser.add_argument('-sl', type=int, nargs=1, default=[26], help="minimum seed length for training")
+arg_parser.add_argument('-sl', type=int, nargs=1, default=[52], help="minimum seed length for training")
 arg_parser.add_argument('-sr', type=int, nargs=1, default=[None], help="maximum seed extension for training, leave as default to go as long as the read")
 arg_parser.add_argument('-gpu', type=int, nargs=1, default=[0], help="GPU device ID to use")
 arg_parser.add_argument('-pl', type=int, nargs=1, default=[750], help="prediction length")
 arg_parser.add_argument('-es', type=int, nargs=1, default=[200], help="early stopping patience epochs")
 arg_parser.add_argument('-os', type=int, nargs=1, default=[0], help="replicate offset")
-arg_parser.add_argument('-pr', type=int, nargs=1, default=[64], help="beam length")
+arg_parser.add_argument('-bl', type=int, nargs=1, default=[64], help="beam length")
 
 args = arg_parser.parse_args()
 
@@ -27,15 +26,10 @@ gpu = str(args.gpu[0])
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = gpu
 
-if os.name == 'nt':
-    sys.path.append('E:\\Users\\Documents\\School_Year_18-19\\Term_1\\CPSC_449\\Sealer_NN\\lib\\')
-else:
-    sys.path.append('/home/echen/Desktop/Projects/Sealer_NN/lib/')
-
 import utils.directory_utils as dir_utils
-from app.new_rnn.train_model import train_model
-import app.new_rnn.predict_greedy as greedy
-import app.new_rnn.predict_beam_search as beam_search
+import train_model as train
+import predict_greedy as greedy
+import predict_beam_search as beam_search
 from keras import backend as K
 import tensorflow as tf
 
@@ -61,7 +55,7 @@ def main(args):
     patience = args.es[0]
     seed_range_upper = args.sr[0]
     replicate_offset = args.os[0]
-    prune_length = args.pr[0]
+    beam_length = args.bl[0]
 
     terminal_directory_character = dir_utils.get_terminal_directory_character()
     gap_id = ref_file.split(terminal_directory_character)[-1].split(".")[0]
@@ -74,13 +68,13 @@ def main(args):
 
         dir_utils.mkdir(output_directory)
 
-        train_model(output_directory, min_seed_length, ref_file, read_file, epochs, [batch_size], [rnn_dim], [embedding_dim], 1, patience, seed_range_upper)
+        train.train_model(output_directory, min_seed_length, ref_file, read_file, epochs, [batch_size], [rnn_dim], [embedding_dim], 1, patience, seed_range_upper)
         greedy.predict_reference(output_directory, gap_id, ref_file, embedding_dim, rnn_dim, min_seed_length, base_path=output_directory)
         greedy.predict_arbitrary_length(output_directory, gap_id, ref_file, embedding_dim, rnn_dim, prediction_length, base_path=output_directory)
         beam_search.predict_reference(output_directory, gap_id, ref_file, embedding_dim, rnn_dim, min_seed_length,
-                          prune_length, base_path=output_directory)
+                          beam_length, base_path=output_directory)
         beam_search.predict_arbitrary_length(output_directory, gap_id, ref_file, embedding_dim, rnn_dim, prediction_length,
-                                 prune_length, base_path=output_directory)
+                                 beam_length, base_path=output_directory)
 
         reset_states()
 
