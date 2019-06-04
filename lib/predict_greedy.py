@@ -3,6 +3,7 @@ from preprocess.SequenceImporter import SequenceImporter
 from preprocess.SequenceReverser import SequenceReverser
 from utils.DataWriter import DataWriter
 import utils.directory_utils as UTILS
+from preprocess.KmerLabelDecoder import KmerLabelDecoder
 from predict.GuidedPredictor import GuidedPredictor
 from predict.RandomPredictor import RandomPredictor
 from predict.BeamSearchPredictor import BeamSearchPredictor
@@ -58,8 +59,8 @@ def predict_reference(weights_path, gap_id, fasta_path, embedding_dim, latent_di
         elif i == 1:
             static_path = first_directory + "right_flank" + terminal_directory_character
 
-        forward_predict = predict_flanks(stateful_model, stateless_model, min_seed_length, sequence, base_path=base_path, directory=static_path + "forward", plots=plots)
-        reverse_predict = predict_flanks(stateful_model, stateless_model, min_seed_length, reverser.reverse_complement(sequence), base_path=base_path, directory=static_path + "reverse_complement", plots=plots)
+        forward_predict = predict_flanks(stateful_model, stateless_model, min_seed_length, sequence, base_path=base_path, directory=static_path + "forward")
+        reverse_predict = predict_flanks(stateful_model, stateless_model, min_seed_length, reverser.reverse_complement(sequence), base_path=base_path, directory=static_path + "reverse_complement")
 
         if i == 0:
             forward_left_flank = forward_predict
@@ -88,7 +89,6 @@ def predict_flanks(stateful_model, stateless_model, min_seed_length, sequence, b
 
     predicted_string_random_with_seed, random_probability_vector = random_predictor.predict_random_sequence(seed, length_to_predict)
 
-
     writer.save_probabilities(basewise_probabilities)
     writer.save_probabilities(basewise_probabilities_greedy, file_id="greedy")
     writer.save_probabilities(random_probability_vector, file_id="random")
@@ -97,9 +97,10 @@ def predict_flanks(stateful_model, stateless_model, min_seed_length, sequence, b
 
 def predict_gaps(model, seed, prediction_length, base_path=None, directory=None):
     predictor = BeamSearchPredictor(model)
+    decoder = KmerLabelDecoder()
     predicted_string_with_seed, basewise_probabilities = predictor.predict_next_n_bases_greedy(seed, prediction_length)
 
     writer = DataWriter(root_directory=base_path, directory=directory)
     writer.save_probabilities(basewise_probabilities)
 
-    return predicted_string_with_seed
+    return decoder.decode(predicted_string_with_seed)

@@ -24,9 +24,8 @@ class TestBeamSearchPredictor(TestCase):
         self.assertEqual("AGTCCGACC", decoded_prediction2)
 
     def test_predict_next_n_bases_greedy(self):
-        sequences, probabilities = self.predictor.predict_next_n_bases_greedy(self.seed, self.prediction_length)
-        np.testing.assert_allclose(probabilities, np.array([-1.6]), atol=0.1)
+        sequence, probability = self.predictor.predict_next_n_bases_greedy(self.seed, self.prediction_length)
+        self.assertAlmostEqual(probability, -1.6, 1)
 
-        self.assertEqual(len(sequences), 1)
-        decoded_prediction = self.decoder.decode(sequences[0])
+        decoded_prediction = self.decoder.decode(sequence)
         self.assertEqual("AGTCCGAAA", decoded_prediction)

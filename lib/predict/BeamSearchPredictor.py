@@ -46,4 +46,5 @@ class BeamSearchPredictor:
 
     def predict_next_n_bases_greedy(self, seed, prediction_length):
         beam_length = 1
-        return self.predict_next_n_bases(seed, prediction_length, beam_length)
+        sequences, probabilities = self.predict_next_n_bases(seed, prediction_length, beam_length)
+        return sequences[0], probabilities[0]
