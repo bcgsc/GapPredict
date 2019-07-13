@@ -13,7 +13,7 @@ arg_parser.add_argument('-sl', type=int, nargs=1, default=[52], help="minimum se
 arg_parser.add_argument('-gpu', type=int, nargs=1, default=[0], help="GPU device ID to use")
 arg_parser.add_argument('-pl', type=int, nargs=1, default=[750], help="prediction length")
 arg_parser.add_argument('-p', type=int, nargs=1, default=[1], help="partition to take")
-arg_parser.add_argument('-pr', type=int, nargs=1, default=[64], help="prune length")
+arg_parser.add_argument('-bl', type=int, nargs=1, default=[64], help="beam length")
 
 args = arg_parser.parse_args()
 
@@ -46,7 +46,7 @@ def main(args):
     replicates = args.r[0]
     prediction_length = args.pl[0]
     partition = args.p[0]
-    prune_length = args.pr[0]
+    prune_length = args.bl[0]
 
     terminal_directory_character = dir_utils.get_terminal_directory_character()
 
