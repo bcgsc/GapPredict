@@ -1,4 +1,6 @@
 # GapPredict
+**Note**: This is the pre-release branch. It has minimal changes from when we conducted our analysis on GapPredict's ability to predict draft genome gaps in case the release branch refactorings may have caused any bugs. The release branch code and directory structure should be cleaner to read and understand.
+
 ## About
 GapPredict is an LSTM character-level language model that can be used for gap filling de novo assemblies. GapPredict can predict the bases of a single gap using reads mapping to known flanking sequences of the gap. 
 
@@ -8,6 +10,8 @@ In its current implementation, GapPredict will predict a user-defined number of 
 You can install GapPredict by cloning or downloading the .zip file directly from GitHub.
 
 `git clone git@github.com:bcgsc/GapPredict.git`
+
+Be sure to check-out the `Pre-Release` branch.
 
 GapPredict uses Python3.6 and packages outlined in requirements.txt (https://github.com/bcgsc/GapPredict/blob/master/requirements.txt). These packages can be quickly installed by running:
 
@@ -28,7 +32,7 @@ GapPredict requires two input files - a FASTA file containing the sequences of t
 We used BioBloomTools BioBloomMIMaker and BioBloomMICategorizer [2] to obtain reads from the full set of reads used in the de novo assembly that map only to our gap's flanks.
 
 ## Gap Prediction With GapPredict
-To run GapPredict, navigate to the `lib` directory and call:
+To run GapPredict, navigate to the `src/app/new_rnn` directory and call:
 
 `python full_keras_pipeline.py -o <output directory> -fa <FASTA path> -fq <FASTQ path>`
 
@@ -36,11 +40,11 @@ For help, call:
 
 `python full_keras_pipeline.py --help`
 
-We've provided sample FASTA and FASTQ files in `lib/data/real_gaps/sealer_filled` and `lib/data/real_gaps/sealer_unfilled`. Gaps in `lib/data/real_gaps/sealer_filled` have been filled by Sealer, so we've also included Sealer's output for the actual gap sequence to use as a reference. The human reference genome (HG38) must be used to obtain a reference sequence for gaps in `lib/data/real_gaps/sealer_unfilled` (in addition to gaps in `lib/data/real_gaps/sealer_filled`).
+We've provided sample FASTA and FASTQ files in `src/app/data/real_gaps/sealer_filled` and `src/app/data/real_gaps/sealer_unfilled`. Gaps in `src/app/data/real_gaps/sealer_filled` have been filled by Sealer, so we've also included Sealer's output for the actual gap sequence to use as a reference. The human reference genome (HG38) must be used to obtain a reference sequence for gaps in `src/app/data/real_gaps/sealer_unfilled` (in addition to gaps in `src/app/data/real_gaps/sealer_filled`).
 
-eg. `python full_keras_pipeline.py -o <output directory> -fa .../lib/data/real_gaps/sealer_filled/7391826_358-1408.fasta -fq .../lib/data/real_gaps/sealer_filled/7391826_358-1408.fastq`
+eg. `python full_keras_pipeline.py -o <output directory> -fa ...src/app/data/real_gaps/sealer_filled/7391826_358-1408.fasta -fq ...src/app/data/real_gaps/sealer_filled/7391826_358-1408.fastq`
 
-Where `...` is the absolute path to the `lib` directory.
+Where `...` is the absolute path to the `src` directory.
 ## GapPredict Outputs
 GapPredict outputs the following directory structure:
 
@@ -59,11 +63,13 @@ Root directory (\<gap ID\>_R_\<replicate number\>)
       * **predicted_probabilities.npy** - P x 4 matrix (where P is the length predicted) containing the probability vector output by the GapPredict model for each predicted base
 * **regenerate_seq** - contains results from predicting the left flank and the right flank from both the forward and reverse complement direction using the greedy algorithm (beam search with a beam length of 1)
     * **flank_predict.fasta** - contains the left flank and right flank predicted from both the forward and reverse complement directions (4 sequences total)
-    * inner directories specifying the left/right flank and which direction the flank was predicted from
-      * **greedy_predicted_probabilities.npy** - contains the log-sum probability for the greedy prediction
-      * **predicted_probabilities.npy** - P x 4 matrix (where P is the length predicted) containing the probability vector output by the GapPredict model for each predicted base
-      * **random_predicted_probabilities.npy** - vector of length P with the probability for each randomly chosen base
-      * **teacher_force_predicted_probabilities.npy** - vector of length P with the probability of each base chosen to match the actual reference sequence
+    * inner directory specifying the left/right flank
+      * **bidirectional_align.txt** - ignore this file
+      * inner directory specifying which direction the flank was predicted from
+        * **greedy_predicted_probabilities.npy** - should be the exact same file as **predicted_probabilities.npy**
+        * **predicted_probabilities.npy** - P x 4 matrix (where P is the length predicted) containing the probability vector output by the GapPredict model for each predicted base
+        * **random_predicted_probabilities.npy** - vector of length P with the probability for each randomly chosen base
+        * **align.txt**, **greedy_align.txt**, **random_align.txt** - ignore these files
 * **BS_\<batch size\>_ED_\<embedding dimensions\>_LD_\<LSTM cells\>_E_\<epochs\>_R_\<replicate\>** - contains model training results
   * contains graphs for training loss, training accuracy, validation loss, and validation accuracy in addition to the matrix containing these metrics at each epoch
     * validation loss and validation accuracy are a V x E matrix where E is number of epochs and V is number of sequences in the validation set, and contains the respective metric for each of the V sequences
