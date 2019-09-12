@@ -14,9 +14,6 @@ We've divided our pipeline into 9 steps:
 8) Running Sealer on each gap using reads mapping only to a given gap's flanks ([link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/8_sealer_gap_filling_in_isolation))
 9) Aligning Sealer's output from step 8) to the HG38 reference sequence for each gap (our source of truth) ([link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/9_sealer_local_alignment))
 
-## Pipeline Diagram
-**TODO: add this here**
-
 ## Caveats
 Several scripts are likely not runnable out-of-the-box depending on how your PATH is set up. We also went through some refactoring of our scripts to better automate the process - ideally nothing broke as a result.
 
