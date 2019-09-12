@@ -77,6 +77,11 @@ Root directory (\<gap ID\>_R_\<replicate number\>)
 * **gap_predict_align.fa** - contains the sequences for the greedy prediction of the gap from both the left and right flanks (including the flank seeds), and the sequences from the input FASTA file 
 * **my_model_weights.h5** - contains GapPredict model parameters and can be loaded into a GapPredict model
 
+## Pipeline Reproduction Steps
+Refer to this [link](https://github.com/bcgsc/GapPredict/tree/Pre-Release/scripts).
+
 ## Citations
 1.	Slater GSC, and Birney E. 2005. Automated generation of heuristics for biological sequence comparison. BMC Bioinform 6:31. 
 2.	Chu J, Sadeghi S, Raymond A, Jackman SD, Nip KM, Mar R, Mohamadi H, Butterfield YS, Robertson AG, and Birol I. BioBloom tools: fast, accurate, and memory-efficient host species sequence screening using bloom filters. Bioinformatics 30(23):3402-3404.
+3. D. Paulino, R. L. Warren, B. P. Vandervalk, A. Raymond, S. D. Jackman, and I. Birol. “Sealer: a scalable gap-closing application for finishing draft genomes”, BMC Bioinform., vol. 16, no. 230, Jul. 2015.
+
