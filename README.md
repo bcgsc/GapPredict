@@ -34,15 +34,15 @@ We used BioBloomTools BioBloomMIMaker and BioBloomMICategorizer [2] to obtain re
 ## Gap Prediction With GapPredict
 To run GapPredict, navigate to the `src/app/new_rnn` directory and call:
 
-`python full_keras_pipeline.py -o <output directory> -fa <FASTA path> -fq <FASTQ path>`
+`python GapPredict.py -o <output directory> -fa <FASTA path> -fq <FASTQ path>`
 
 For help, call:
 
-`python full_keras_pipeline.py --help`
+`python GapPredict.py --help`
 
 We've provided sample FASTA and FASTQ files in `src/app/data/real_gaps/sealer_filled` and `src/app/data/real_gaps/sealer_unfilled`. Gaps in `src/app/data/real_gaps/sealer_filled` have been filled by Sealer, so we've also included Sealer's output for the actual gap sequence to use as a reference. The human reference genome (HG38) must be used to obtain a reference sequence for gaps in `src/app/data/real_gaps/sealer_unfilled` (in addition to gaps in `src/app/data/real_gaps/sealer_filled`).
 
-eg. `python full_keras_pipeline.py -o <output directory> -fa ...src/app/data/real_gaps/sealer_filled/7391826_358-1408.fasta -fq ...src/app/data/real_gaps/sealer_filled/7391826_358-1408.fastq`
+eg. `python GapPredict.py -o <output directory> -fa ...src/app/data/real_gaps/sealer_filled/7391826_358-1408.fasta -fq ...src/app/data/real_gaps/sealer_filled/7391826_358-1408.fastq`
 
 Where `...` is the absolute path to the `src` directory.
 ## GapPredict Outputs

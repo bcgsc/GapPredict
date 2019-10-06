@@ -8,4 +8,4 @@ lib_dir=$1; shift
 fasta=$1; shift
 fastq=$1; shift
 outdir=$1; shift
-python3.6 ${lib_dir}/full_keras_pipeline.py -fa ${fasta} -fq ${fastq} -o ${outdir}
+python3.6 ${lib_dir}/GapPredict.py -fa ${fasta} -fq ${fastq} -o ${outdir}
