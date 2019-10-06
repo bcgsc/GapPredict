@@ -48,8 +48,8 @@ def plot_box(data, file_path):
     ax = sns.boxplot(data=data, x="fixed_status", y="target_correctness", linewidth=linewidth, flierprops=flierprops)
     ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation)
     plt.ylim((-5, 101))
-    plt.xlabel('Gap Reads Source')
-    plt.ylabel('Target Correctness (%)')
+    plt.xlabel('Gap reads source')
+    plt.ylabel('Target correctness (%)')
 
     plt.tight_layout()
     fig = plt.savefig(file_path)

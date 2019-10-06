@@ -92,8 +92,8 @@ def plot_comparison_scatter(data, file_path):
 
     plt.xlim((-1, 101))
     plt.ylim((-1, 101))
-    plt.xlabel('GapPredict Correctness (%)')
-    plt.ylabel('Sealer Correctness (%)')
+    plt.xlabel('GapPredict correctness (%)')
+    plt.ylabel('Sealer correctness (%)')
 
     plt.tight_layout()
     fig = plt.savefig(file_path)
@@ -122,8 +122,8 @@ def plot_scatter(data, file_path):
 
     plt.xlim((-1, 101))
     plt.ylim((-1, 101))
-    plt.xlabel('Target Correctness (%)')
-    plt.ylabel('Query Coverage (%)')
+    plt.xlabel('Target correctness (%)')
+    plt.ylabel('Query coverage (%)')
 
     plt.tight_layout()
     fig = plt.savefig(file_path)
