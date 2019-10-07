@@ -21,6 +21,6 @@ every gap. In addition, if multiple GPUs are available, you can partition the se
 * the output directory is where you want your trained model artifacts to be stored
 
 The default parameters for GapPredict are the same parameters that we used during our analyses, so only the input FASTA, input FASTQ, and output directory need to be supplied
-If you're training independent partitions using multiple GPUs, add a `-gpu <gpu number>` option to the `full_keras_pipeline.py` call.
+If you're training independent partitions using multiple GPUs, add a `-gpu <gpu number>` option to the `GapPredict.py` call.
 
 Ensure that predictions for gaps which Sealer could not fill all go in one directory, and predictions for gaps which Sealer could fill all go in another directory.
