@@ -72,7 +72,7 @@ Root directory (\<gap ID\>_R_\<replicate number\>)
 * **my_model_weights.h5** - contains GapPredict model parameters and can be loaded into a GapPredict model
 
 ## Pipeline Reproduction Steps
-Refer to this [link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts).
+Refer to this [link](https://github.com/bcgsc/GapPredict/tree/v1.0doc/scripts).
 
 ## Citations
 1.	G. S. C. Slater and E. Birney. “Automated generation of heuristics for biological sequence comparison BMC Bioinform. Bioinform., vol. 6, no. 31, Feb. 2005.
