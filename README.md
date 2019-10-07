@@ -40,7 +40,7 @@ For help, call:
 
 `python GapPredict.py --help`
 
-We've provided sample FASTA and FASTQ files in `src/app/data/real_gaps/sealer_filled` and `src/app/data/real_gaps/sealer_unfilled`. Gaps in `src/app/data/real_gaps/sealer_filled` have been filled by Sealer, so we've also included Sealer's output for the actual gap sequence to use as a reference. The human reference genome (HG38) must be used to obtain a reference sequence for gaps in `src/app/data/real_gaps/sealer_unfilled` (in addition to gaps in `src/app/data/real_gaps/sealer_filled`).
+We've provided sample FASTA and FASTQ files in `src/app/data/real_gaps/sealer_filled` and `src/app/data/real_gaps/sealer_unfilled`. Gaps in `src/app/data/real_gaps/sealer_filled` have been filled by Sealer [3], a state-of-the-art gap-filling tool, so we've also included Sealer's output for the actual gap sequence to use as a reference. The human reference genome (HG38) must be used to obtain a reference sequence for gaps in `src/app/data/real_gaps/sealer_unfilled` (in addition to gaps in `src/app/data/real_gaps/sealer_filled`).
 
 eg. `python GapPredict.py -o <output directory> -fa ...src/app/data/real_gaps/sealer_filled/7391826_358-1408.fasta -fq ...src/app/data/real_gaps/sealer_filled/7391826_358-1408.fastq`
 
@@ -78,7 +78,7 @@ Root directory (\<gap ID\>_R_\<replicate number\>)
 * **my_model_weights.h5** - contains GapPredict model parameters and can be loaded into a GapPredict model
 
 ## Pipeline Reproduction Steps
-Refer to this [link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts).
+Refer to this [link](https://github.com/bcgsc/GapPredict/tree/v1.0doc/scripts).
 
 ## Citations
 1.	G. S. C. Slater and E. Birney. “Automated generation of heuristics for biological sequence comparison BMC Bioinform. Bioinform., vol. 6, no. 31, Feb. 2005.
