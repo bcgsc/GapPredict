@@ -29,7 +29,7 @@ In order to train models and predict efficiently, a GPU is mandatory. Steps to i
 ## Input Data Preparation
 GapPredict requires two input files - a FASTA file containing the sequences of the left and right flanks of your gap, and a FASTQ file containing reads mapping to your gap flanks. The length of the flanks can be arbitrary, however in our tests, we used uniform lengths of 500 bp.
 
-We used BioBloomTools BioBloomMIMaker and BioBloomMICategorizer [2] to obtain reads from the full set of reads used in the de novo assembly that map only to our gap's flanks.
+We used BioBloomTools BioBloomMIMaker [2], followed by BioBloomTools BioBloomMICategorizer [2] to obtain reads from the full set of reads used in the de novo assembly that map only to our gap's flanks.
 
 ## Gap Prediction With GapPredict
 To run GapPredict, navigate to the `src/app/new_rnn` directory and call:
@@ -78,10 +78,9 @@ Root directory (\<gap ID\>_R_\<replicate number\>)
 * **my_model_weights.h5** - contains GapPredict model parameters and can be loaded into a GapPredict model
 
 ## Pipeline Reproduction Steps
-Refer to this [link](https://github.com/bcgsc/GapPredict/tree/Pre-Release/scripts).
+Refer to this [link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts).
 
 ## Citations
-1.	Slater GSC, and Birney E. 2005. Automated generation of heuristics for biological sequence comparison. BMC Bioinform 6:31. 
-2.	Chu J, Sadeghi S, Raymond A, Jackman SD, Nip KM, Mar R, Mohamadi H, Butterfield YS, Robertson AG, and Birol I. BioBloom tools: fast, accurate, and memory-efficient host species sequence screening using bloom filters. Bioinformatics 30(23):3402-3404.
-3. D. Paulino, R. L. Warren, B. P. Vandervalk, A. Raymond, S. D. Jackman, and I. Birol. “Sealer: a scalable gap-closing application for finishing draft genomes”, BMC Bioinform., vol. 16, no. 230, Jul. 2015.
-
+1.	G. S. C. Slater and E. Birney. “Automated generation of heuristics for biological sequence comparison BMC Bioinform. Bioinform., vol. 6, no. 31, Feb. 2005.
+2.	J. Chu, H. Mohamadi, E. Erhan, J. Tse, R. Chiu, S. Yeo, and I. Birol. “Improving on hash-based probabilistic sequence classification using multiple spaced seeds and multi-index Bloom filters”, bioRxiv:434795, Oct. 2018.
+3.  D. Paulino, R. L. Warren, B. P. Vandervalk, A. Raymond, S. D. Jackman, and I. Birol. “Sealer: a scalable gap closing application for finishing draft genomes", BMC Bioinform., vol. 16, no. 230, Jul. 2015.
