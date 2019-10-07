@@ -30,15 +30,15 @@ We used BioBloomTools BioBloomMIMaker and BioBloomMICategorizer [2] to obtain re
 ## Gap Prediction With GapPredict
 To run GapPredict, navigate to the `lib` directory and call:
 
-`python full_keras_pipeline.py -o <output directory> -fa <FASTA path> -fq <FASTQ path>`
+`python GapPredict.py -o <output directory> -fa <FASTA path> -fq <FASTQ path>`
 
 For help, call:
 
-`python full_keras_pipeline.py --help`
+`python GapPredict.py --help`
 
 We've provided sample FASTA and FASTQ files in `lib/data/real_gaps/sealer_filled` and `lib/data/real_gaps/sealer_unfilled`. Gaps in `lib/data/real_gaps/sealer_filled` have been filled by Sealer, so we've also included Sealer's output for the actual gap sequence to use as a reference. The human reference genome (HG38) must be used to obtain a reference sequence for gaps in `lib/data/real_gaps/sealer_unfilled` (in addition to gaps in `lib/data/real_gaps/sealer_filled`).
 
-eg. `python full_keras_pipeline.py -o <output directory> -fa .../lib/data/real_gaps/sealer_filled/7391826_358-1408.fasta -fq .../lib/data/real_gaps/sealer_filled/7391826_358-1408.fastq`
+eg. `python GapPredict.py -o <output directory> -fa .../lib/data/real_gaps/sealer_filled/7391826_358-1408.fasta -fq .../lib/data/real_gaps/sealer_filled/7391826_358-1408.fastq`
 
 Where `...` is the absolute path to the `lib` directory.
 ## GapPredict Outputs
@@ -71,6 +71,10 @@ Root directory (\<gap ID\>_R_\<replicate number\>)
 * **gap_predict_align.fa** - contains the sequences for the greedy prediction of the gap from both the left and right flanks (including the flank seeds), and the sequences from the input FASTA file 
 * **my_model_weights.h5** - contains GapPredict model parameters and can be loaded into a GapPredict model
 
+## Pipeline Reproduction Steps
+Refer to this [link](https://github.com/bcgsc/GapPredict/tree/master/scripts).
+
 ## Citations
 1.	Slater GSC, and Birney E. 2005. Automated generation of heuristics for biological sequence comparison. BMC Bioinform 6:31. 
 2.	Chu J, Sadeghi S, Raymond A, Jackman SD, Nip KM, Mar R, Mohamadi H, Butterfield YS, Robertson AG, and Birol I. BioBloom tools: fast, accurate, and memory-efficient host species sequence screening using bloom filters. Bioinformatics 30(23):3402-3404.
+3. D. Paulino, R. L. Warren, B. P. Vandervalk, A. Raymond, S. D. Jackman, and I. Birol. “Sealer: a scalable gap-closing application for finishing draft genomes”, BMC Bioinform., vol. 16, no. 230, Jul. 2015.

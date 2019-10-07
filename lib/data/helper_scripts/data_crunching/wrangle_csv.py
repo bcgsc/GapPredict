@@ -1,5 +1,6 @@
 import os
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -10,13 +11,18 @@ import utils.directory_utils as utils
 correctness_threshold = 0.7
 distance_threshold = 20
 prediction_length = 750
-primary_text_font_size = 45
-secondary_text_font_size = 35
+primary_text_font_size = 55
+secondary_text_font_size = 45
 
-if os.name == 'nt':
-    base_path = "E:\\Users\\Documents\\School Year 18-19\\Term 1\\CPSC 449\\Sealer_NN\\lib\\app\\helper_scripts\\data_crunching\\"
-else:
-    base_path = "/home/echen/Desktop/Projects/Sealer_NN/lib/app/helper_scripts/data_crunching/"
+axiswidth = 3
+ticksize = 15
+mpl.rcParams['axes.linewidth'] = axiswidth
+mpl.rcParams['xtick.major.size'] = ticksize
+mpl.rcParams['xtick.major.width'] = axiswidth
+mpl.rcParams['ytick.major.size'] = ticksize
+mpl.rcParams['ytick.major.width'] = axiswidth
+
+base_path = "E:\\Users\\Documents\\School_Year_18-19\\Term_1\\CPSC_449\\Sealer_NN\\lib\\data\\helper_scripts\\data_crunching\\"
 
 def evaluate_gap(df, predict_from_left):
     query_coverage = []
@@ -80,20 +86,20 @@ def plot_comparison_scatter(data, file_path):
     x = data["target_gap_correctness"] * 100
     y = data["target_correctness"] * 100
 
-    sns.kdeplot(x, y, cmap="Reds", shade=True, shade_lowest=False)
-    points = plt.scatter(x, y, s=200, alpha=0.8)
+    sns.kdeplot(x, y)
+    sns.kdeplot(x, y, cmap="Reds", shade=True, shade_lowest=False, cbar=True)
+    plt.scatter(x, y, s=200, alpha=0.8)
 
     plt.xlim((-1, 101))
     plt.ylim((-1, 101))
-    plt.xlabel('GapPredict % correctness')
-    plt.ylabel('Sealer % correctness')
+    plt.xlabel('GapPredict correctness (%)')
+    plt.ylabel('Sealer correctness (%)')
 
     plt.tight_layout()
     fig = plt.savefig(file_path)
     plt.close(fig)
 
 def plot_scatter(data, file_path):
-    cbar_text_font_size = 35
     plt.rc('xtick', labelsize=secondary_text_font_size)
     plt.rc('ytick', labelsize=secondary_text_font_size)
     font = {
@@ -108,18 +114,16 @@ def plot_scatter(data, file_path):
     x = data["target_gap_correctness"]*100
     y = data["query_gap_coverage"]*100
 
-    sns.kdeplot(x, y, cmap="Reds", shade=True, shade_lowest=False)
-    points = plt.scatter(x, y, c=data["log-sum-probability"], alpha=0.8, s=200, cmap="Spectral")
+    sns.kdeplot(x, y)
+    ax = sns.kdeplot(x, y, cmap="Reds", shade=True, shade_lowest=False, cbar=True)
+    ax.figure.axes[-1].tick_params(axis='both', which='major', labelsize=35)
 
-    cbar = plt.colorbar(points, fraction=0.046, pad=0.04)
-    cbar.ax.tick_params(labelsize=cbar_text_font_size)
-    cbar.set_label("log-sum probability")
+    plt.scatter(x, y, alpha=0.8, s=200)
 
-    plt.clim(0, -750)
     plt.xlim((-1, 101))
     plt.ylim((-1, 101))
-    plt.xlabel('target % correctness')
-    plt.ylabel('query % coverage')
+    plt.xlabel('Target correctness (%)')
+    plt.ylabel('Query coverage (%)')
 
     plt.tight_layout()
     fig = plt.savefig(file_path)
@@ -165,14 +169,22 @@ def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
     fixed_pass = columns_to_plot[(columns_to_plot.is_fixed == 1) & (columns_to_plot.gap_pass == 1)]
     fixed_fail = columns_to_plot[(columns_to_plot.is_fixed == 1) & (columns_to_plot.gap_pass == 0)]
     total_fixed = len(fixed_pass) + len(fixed_fail)
+    fixed_zero_pass = fixed_pass[(fixed_pass.query_gap_coverage < 0.05) & (fixed_pass.target_gap_correctness < 0.05)]
+    fixed_zero_fail = fixed_fail[(fixed_fail.query_gap_coverage < 0.05) & (fixed_fail.target_gap_correctness < 0.05)]
     print("Fixed Pass = " + str(len(fixed_pass)) + "/" + str(total_fixed))
     print("Fixed Fail = " + str(len(fixed_fail)) + "/" + str(total_fixed))
+    print("Fixed Zero Pass = " + str(len(fixed_zero_pass)) + "/" + str(len(fixed_pass)))
+    print("Fixed Zero Fail = " + str(len(fixed_zero_fail)) + "/" + str(len(fixed_fail)))
 
     unfixed_pass = columns_to_plot[(columns_to_plot.is_fixed == 0) & (columns_to_plot.gap_pass == 1)]
     unfixed_fail = columns_to_plot[(columns_to_plot.is_fixed == 0) & (columns_to_plot.gap_pass == 0)]
+    unfixed_zero_pass = unfixed_pass[(unfixed_pass.query_gap_coverage < 0.05) & (unfixed_pass.target_gap_correctness < 0.05)]
+    unfixed_zero_fail = unfixed_fail[(unfixed_fail.query_gap_coverage < 0.05) & (unfixed_fail.target_gap_correctness < 0.05)]
     total_unfixed = len(unfixed_pass) + len(unfixed_fail)
     print("Unfixed Pass = " + str(len(unfixed_pass)) + "/" + str(total_unfixed))
     print("Unfixed Fail = " + str(len(unfixed_fail)) + "/" + str(total_unfixed))
+    print("Unfixed Zero Pass = " + str(len(unfixed_zero_pass)) + "/" + str(len(unfixed_pass)))
+    print("Unfixed Zero Fail = " + str(len(unfixed_zero_fail)) + "/" + str(len(unfixed_fail)))
 
     delimiter = utils.get_terminal_directory_character()
 
