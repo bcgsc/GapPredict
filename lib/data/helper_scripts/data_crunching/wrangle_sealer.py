@@ -48,7 +48,7 @@ def plot_box(data, file_path):
     ax = sns.boxplot(data=data, x="fixed_status", y="target_correctness", linewidth=linewidth, flierprops=flierprops)
     ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation)
     plt.ylim((-5, 101))
-    plt.xlabel('Gap reads source')
+    plt.xlabel('Set Classification')
     plt.ylabel('Target correctness (%)')
 
     plt.tight_layout()
@@ -67,10 +67,10 @@ fixed = columns_to_plot[(columns_to_plot.is_fixed == 1)]
 unfixed = columns_to_plot[(columns_to_plot.is_fixed == 0)]
 joined_fixed = pd.merge(fixed, gap_fill_df, on=["gap_id", "is_fixed"], how="right")
 joined_fixed = joined_fixed[~np.isnan(joined_fixed.target_correctness)]
-joined_fixed["fixed_status"] = "All"
+joined_fixed["fixed_status"] = "Set 1"
 joined_unfixed = pd.merge(unfixed, gap_fill_df, on=["gap_id", "is_fixed"], how="right")
 joined_unfixed = joined_unfixed[~np.isnan(joined_unfixed.target_correctness)]
-joined_unfixed["fixed_status"] = "Individual"
+joined_unfixed["fixed_status"] = "Set 2"
 full_data = joined_fixed.append(joined_unfixed, ignore_index=True)
 
 delimiter = utils.get_terminal_directory_character()
