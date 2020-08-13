@@ -71,7 +71,7 @@ def transform_dataframe(df, predict_from_left):
     df['query_gap_coverage'] = gap_coverage.fillna(0)
     df['gap_pass'] = gap_pass
 
-def plot_comparison_scatter(data, file_path):
+def plot_comparison_scatter(data, file_path, app_name):
     plt.rc('xtick', labelsize=secondary_text_font_size)
     plt.rc('ytick', labelsize=secondary_text_font_size)
     font = {
@@ -93,7 +93,7 @@ def plot_comparison_scatter(data, file_path):
     plt.xlim((-1, 101))
     plt.ylim((-1, 101))
     plt.xlabel('GapPredict correctness (%)')
-    plt.ylabel('Sealer correctness (%)')
+    plt.ylabel(app_name + ' correctness (%)')
 
     plt.tight_layout()
     fig = plt.savefig(file_path)
@@ -129,12 +129,12 @@ def plot_scatter(data, file_path):
     fig = plt.savefig(file_path)
     plt.close(fig)
 
-def transform_sealer_dataframe(df):
+def transform_comparison_dataframe(df):
     df['total_percent_id'] = (df.matches/df.total_length).fillna(0)
     df['coverage'] = (df.target_alignment_length/df.target_length).fillna(0)
     df['target_correctness'] = (df.total_percent_id * df.coverage).fillna(0)
 
-def clean_sealer_dataframe(df):
+def clean_dataframe(df):
     df['target_correctness'] = df.target_correctness.fillna(0)
 
 def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
@@ -197,7 +197,7 @@ def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
     plot_scatter(unfixed_fail, out_path + "unfixed_fail.png")
 
     sealer_df = pd.read_csv(base_path + "sealer_merged.csv", index_col=0)
-    transform_sealer_dataframe(sealer_df)
+    transform_comparison_dataframe(sealer_df)
     fixed = full_dataframe[(full_dataframe.is_fixed == 1)]
     unfixed = full_dataframe[(full_dataframe.is_fixed == 0)]
     fixed_sealer = sealer_df[(sealer_df.is_fixed == 1)]
@@ -205,11 +205,28 @@ def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
 
     fixed_sealer_merged = pd.merge(fixed, fixed_sealer, on=["gap_id", "is_fixed"], how="left")[['gap_id', 'is_fixed', 'target_gap_correctness', 'target_correctness']]
     unfixed_sealer_merged = pd.merge(unfixed, unfixed_sealer, on=["gap_id", "is_fixed"], how="left")[['gap_id', 'is_fixed', 'target_gap_correctness', 'target_correctness']]
-    clean_sealer_dataframe(fixed_sealer_merged)
-    clean_sealer_dataframe(unfixed_sealer_merged)
+    clean_dataframe(fixed_sealer_merged)
+    clean_dataframe(unfixed_sealer_merged)
 
-    plot_comparison_scatter(fixed_sealer_merged, out_path + "fixed_sealer_compare.png")
-    plot_comparison_scatter(unfixed_sealer_merged, out_path + "unfixed_sealer_compare.png")
+    plot_comparison_scatter(fixed_sealer_merged, out_path + "fixed_sealer_compare.png", "Sealer")
+    plot_comparison_scatter(unfixed_sealer_merged, out_path + "unfixed_sealer_compare.png", "Sealer")
+
+    gappadder_df = pd.read_csv(base_path + "gappadder.csv", index_col=0)
+    transform_comparison_dataframe(gappadder_df)
+    fixed = full_dataframe[(full_dataframe.is_fixed == 1)]
+    unfixed = full_dataframe[(full_dataframe.is_fixed == 0)]
+    fixed_sealer = gappadder_df[(gappadder_df.is_fixed == 1)]
+    unfixed_sealer = gappadder_df[(gappadder_df.is_fixed == 0)]
+
+    fixed_gappadder_merged = pd.merge(fixed, fixed_sealer, on=["gap_id", "is_fixed"], how="left")[
+        ['gap_id', 'is_fixed', 'target_gap_correctness', 'target_correctness']]
+    unfixed_gappadder_merged = pd.merge(unfixed, unfixed_sealer, on=["gap_id", "is_fixed"], how="left")[
+        ['gap_id', 'is_fixed', 'target_gap_correctness', 'target_correctness']]
+    clean_dataframe(fixed_gappadder_merged)
+    clean_dataframe(unfixed_gappadder_merged)
+
+    plot_comparison_scatter(fixed_gappadder_merged, out_path + "fixed_gappadder_compare.png", "GAPPadder")
+    plot_comparison_scatter(unfixed_gappadder_merged, out_path + "unfixed_gappadder_compare.png", "GAPPadder")
 
 print("Beam Search")
 compute_metrics("gap_left_prediction_data.csv", "gap_right_prediction_data.csv", "left_subflank_right_prediction_data.csv", "right_subflank_left_prediction_data.csv", "beam_search")
