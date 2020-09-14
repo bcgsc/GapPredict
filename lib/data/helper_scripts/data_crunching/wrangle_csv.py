@@ -72,6 +72,7 @@ def transform_dataframe(df, predict_from_left):
     df['gap_pass'] = gap_pass
 
 def plot_comparison_scatter(data, file_path, app_name):
+    #TODO: 4) same x and y axis lengths
     plt.rc('xtick', labelsize=secondary_text_font_size)
     plt.rc('ytick', labelsize=secondary_text_font_size)
     font = {
@@ -87,11 +88,15 @@ def plot_comparison_scatter(data, file_path, app_name):
     y = data["target_correctness"] * 100
 
     sns.kdeplot(x, y)
-    sns.kdeplot(x, y, cmap="Reds", shade=True, shade_lowest=False, cbar=True)
-    plt.scatter(x, y, s=200, alpha=0.8)
+    sns.kdeplot(x, y, cmap="Reds", shade=True, shade_lowest=False, cbar=True, cbar_kws={"format": "%.4f", "label": "Density"})
 
-    plt.xlim((-1, 101))
-    plt.ylim((-1, 101))
+    plt.scatter(x, y, s=200, alpha=0.8)
+    plt.grid(b=True, axis="both", which="major", color="0.6", linestyle='--', linewidth=3)
+
+    plt.xlim((0, 100))
+    plt.xticks(np.arange(0, 101, step=20))
+    plt.ylim((0, 100))
+    plt.yticks(np.arange(0, 101, step=20))
     plt.xlabel('GapPredict correctness (%)')
     plt.ylabel(app_name + ' correctness (%)')
 
@@ -115,13 +120,16 @@ def plot_scatter(data, file_path):
     y = data["query_gap_coverage"]*100
 
     sns.kdeplot(x, y)
-    ax = sns.kdeplot(x, y, cmap="Reds", shade=True, shade_lowest=False, cbar=True)
+    ax = sns.kdeplot(x, y, cmap="Reds", shade=True, shade_lowest=False, cbar=True, cbar_kws={"format": "%.4f", "label": "Density"})
     ax.figure.axes[-1].tick_params(axis='both', which='major', labelsize=35)
 
     plt.scatter(x, y, alpha=0.8, s=200)
+    plt.grid(b=True, axis="both", which="major", color="0.6", linestyle='--', linewidth=3)
 
-    plt.xlim((-1, 101))
-    plt.ylim((-1, 101))
+    plt.xlim((0, 100))
+    plt.xticks(np.arange(0, 101, step=20))
+    plt.ylim((0, 100))
+    plt.yticks(np.arange(0, 101, step=20))
     plt.xlabel('Target correctness (%)')
     plt.ylabel('Query coverage (%)')
 
