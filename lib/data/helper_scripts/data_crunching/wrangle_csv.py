@@ -72,7 +72,6 @@ def transform_dataframe(df, predict_from_left):
     df['gap_pass'] = gap_pass
 
 def plot_comparison_scatter(data, file_path, app_name):
-    #TODO: 4) same x and y axis lengths
     plt.rc('xtick', labelsize=secondary_text_font_size)
     plt.rc('ytick', labelsize=secondary_text_font_size)
     font = {
@@ -80,7 +79,7 @@ def plot_comparison_scatter(data, file_path, app_name):
     }
     plt.rc('font', **font)
 
-    figure_dimensions=(13, 13)
+    figure_dimensions=(17, 13)
 
     plt.figure(figsize=figure_dimensions)
 
@@ -112,7 +111,7 @@ def plot_scatter(data, file_path):
     }
     plt.rc('font', **font)
 
-    figure_dimensions=(13, 13)
+    figure_dimensions=(17, 13)
 
     plt.figure(figsize=figure_dimensions)
 
