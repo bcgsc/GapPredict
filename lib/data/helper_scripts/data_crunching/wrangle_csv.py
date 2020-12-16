@@ -180,8 +180,9 @@ def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
     fixed_zero_fail = fixed_fail[(fixed_fail.query_gap_coverage < 0.05) & (fixed_fail.target_gap_correctness < 0.05)]
     print("Fixed Pass = " + str(len(fixed_pass)) + "/" + str(total_fixed))
     print("Fixed Fail = " + str(len(fixed_fail)) + "/" + str(total_fixed))
-    print("Fixed Zero Pass = " + str(len(fixed_zero_pass)) + "/" + str(len(fixed_pass)))
-    print("Fixed Zero Fail = " + str(len(fixed_zero_fail)) + "/" + str(len(fixed_fail)))
+    print("Fixed Zero Pass = " + str(len(fixed_zero_pass)) + "/" + str(len(fixed_pass))) # set 1 gaps which "passed" but failed to fill the gap well
+    print("Fixed Zero Fail = " + str(len(fixed_zero_fail)) + "/" + str(len(fixed_fail))) # set 1 gaps which "failed" but failed to fill the gap well
+    print()
 
     unfixed_pass = columns_to_plot[(columns_to_plot.is_fixed == 0) & (columns_to_plot.gap_pass == 1)]
     unfixed_fail = columns_to_plot[(columns_to_plot.is_fixed == 0) & (columns_to_plot.gap_pass == 0)]
@@ -190,9 +191,34 @@ def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
     total_unfixed = len(unfixed_pass) + len(unfixed_fail)
     print("Unfixed Pass = " + str(len(unfixed_pass)) + "/" + str(total_unfixed))
     print("Unfixed Fail = " + str(len(unfixed_fail)) + "/" + str(total_unfixed))
-    print("Unfixed Zero Pass = " + str(len(unfixed_zero_pass)) + "/" + str(len(unfixed_pass)))
-    print("Unfixed Zero Fail = " + str(len(unfixed_zero_fail)) + "/" + str(len(unfixed_fail)))
+    print("Unfixed Zero Pass = " + str(len(unfixed_zero_pass)) + "/" + str(len(unfixed_pass))) # set 2 gaps which "passed" but failed to fill the gap well
+    print("Unfixed Zero Fail = " + str(len(unfixed_zero_fail)) + "/" + str(len(unfixed_fail))) # set 2 gaps which "failed" but failed to fill the gap well
+    print()
 
+    #group by
+    group_by_columns = ["gap_id", "is_fixed", "gap_pass"]
+    columns_to_group = columns_to_plot[group_by_columns]
+
+    fixed_group = columns_to_group[columns_to_group.is_fixed == 1]
+    fixed_group_agg = fixed_group.groupby(by="gap_id").sum()
+    no_pass_fixed = fixed_group_agg[fixed_group_agg.gap_pass == 0]
+    at_least_one_pass_fixed = fixed_group_agg[fixed_group_agg.gap_pass > 0]
+    both_pass_fixed = fixed_group_agg[fixed_group_agg.gap_pass == 2]
+    print("Fixed Neither Pass = " + str(len(no_pass_fixed)) + "/" + str(len(fixed_group_agg)))
+    print("Fixed At Least One Pass = " + str(len(at_least_one_pass_fixed)) + "/" + str(len(fixed_group_agg)))
+    print("Fixed Both Pass = " + str(len(both_pass_fixed)) + "/" + str(len(fixed_group_agg)))
+    print()
+
+    unfixed_group = columns_to_group[columns_to_group.is_fixed == 0]
+    unfixed_group_agg = unfixed_group.groupby(by="gap_id").sum()
+    no_pass_unfixed = unfixed_group_agg[unfixed_group_agg.gap_pass == 0]
+    at_least_one_pass_unfixed = unfixed_group_agg[unfixed_group_agg.gap_pass > 0]
+    both_pass_unfixed = unfixed_group_agg[unfixed_group_agg.gap_pass == 2]
+    print("Unfixed Neither Pass = " + str(len(no_pass_unfixed)) + "/" + str(len(unfixed_group_agg)))
+    print("Unfixed At Least One Pass = " + str(len(at_least_one_pass_unfixed)) + "/" + str(len(unfixed_group_agg)))
+    print("Unfixed Both Pass = " + str(len(both_pass_unfixed)) + "/" + str(len(unfixed_group_agg)))
+    print()
+    
     delimiter = utils.get_terminal_directory_character()
 
     out_path = base_path + "viz" + delimiter + id + delimiter
