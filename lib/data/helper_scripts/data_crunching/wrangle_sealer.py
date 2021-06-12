@@ -81,3 +81,8 @@ os.makedirs(out_path, exist_ok=True)
 plot_box(full_data, out_path + "sealer.png")
 print("Fixed = " + str(len(joined_fixed)))
 print("Unfixed = " + str(len(joined_unfixed)))
+
+gap_id = ['gap_id']
+fixed_intersection = pd.merge(fixed, gap_fill_df, on=["gap_id", "is_fixed"])
+id_col = fixed_intersection[gap_id]
+id_col.to_csv("E:\\Users\\Documents\\sealer_set1.txt");

@@ -169,6 +169,17 @@ def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
     transform_dataframe(gap_left_full_df, True)
     transform_dataframe(gap_right_full_df, False)
 
+    if id == "beam_search":
+        gap_id = ['gap_id']
+        gap_left_pass_fixed = gap_left_full_df[(gap_left_full_df.is_fixed == 1) & (gap_left_full_df.gap_pass == 1)][gap_id]
+        gap_left_pass_unfixed = gap_left_full_df[(gap_left_full_df.is_fixed == 0) & (gap_left_full_df.gap_pass == 1)][gap_id]
+        gap_right_pass_fixed = gap_right_full_df[(gap_right_full_df.is_fixed == 1) & (gap_right_full_df.gap_pass == 1)][gap_id]
+        gap_right_pass_unfixed = gap_right_full_df[(gap_right_full_df.is_fixed == 0) & (gap_right_full_df.gap_pass == 1)][gap_id]
+        gap_left_pass_fixed.to_csv("E:\\Users\\Documents\\left_fixed.txt");
+        gap_left_pass_unfixed.to_csv("E:\\Users\\Documents\\left_unfixed.csv");
+        gap_right_pass_fixed.to_csv("E:\\Users\\Documents\\right_fixed.txt");
+        gap_right_pass_unfixed.to_csv("E:\\Users\\Documents\\right_unfixed.csv");
+
     columns_to_select = ['gap_id', 'is_fixed', 'flank_correctness', 'target_gap_correctness', 'query_gap_coverage', 'gap_pass', 'log-sum-probability']
     full_dataframe = gap_left_full_df.append(gap_right_full_df, ignore_index=True)
     columns_to_plot = full_dataframe[columns_to_select]
