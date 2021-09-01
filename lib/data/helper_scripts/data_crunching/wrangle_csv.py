@@ -136,6 +136,38 @@ def plot_scatter(data, file_path):
     fig = plt.savefig(file_path)
     plt.close(fig)
 
+def plot_box(data, file_path):
+    primary_text_font_size = 55
+    secondary_text_font_size = 45
+    linewidth = 6
+    rotation = 0
+    plt.rc('xtick', labelsize=secondary_text_font_size)
+    plt.rc('ytick', labelsize=secondary_text_font_size)
+    font = {
+        'size': primary_text_font_size
+    }
+    plt.rc('font', **font)
+
+    figure_dimensions=(13, 13)
+
+    plt.figure(figsize=figure_dimensions)
+
+    flierprops = {
+        'markersize': 10,
+        'markerfacecolor': 'red',
+        'marker': 'o'
+    }
+
+    ax = sns.boxplot(data=data, x="fixed_status", y="target_gap_correctness_percent", linewidth=linewidth, flierprops=flierprops)
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation)
+    plt.ylim((-5, 101))
+    plt.xlabel('Set Classification')
+    plt.ylabel('Target correctness (%)')
+
+    plt.tight_layout()
+    fig = plt.savefig(file_path)
+    plt.close(fig)
+
 def transform_comparison_dataframe(df):
     df['total_percent_id'] = (df.matches/df.total_length).fillna(0)
     df['coverage'] = (df.target_alignment_length/df.target_length).fillna(0)
@@ -271,6 +303,57 @@ def compute_metrics(gap_left, gap_right, left_subflank, right_subflank, id):
 
     plot_comparison_scatter(fixed_gappadder_merged, out_path + "fixed_gappadder_compare.png", "GAPPadder")
     plot_comparison_scatter(unfixed_gappadder_merged, out_path + "unfixed_gappadder_compare.png", "GAPPadder")
+
+    all_fixed = columns_to_plot[(columns_to_plot.is_fixed == 1)]
+    all_unfixed = columns_to_plot[(columns_to_plot.is_fixed == 0)]
+    all_fixed["fixed_status"] = "Set 1"
+    all_unfixed["fixed_status"] = "Set 2"
+    all_fixed["target_gap_correctness_percent"] = all_fixed.target_gap_correctness * 100
+    all_unfixed["target_gap_correctness_percent"] = all_unfixed.target_gap_correctness * 100
+    gappredict_boxplot_data = all_fixed.append(all_unfixed, ignore_index=True)
+    plot_box(gappredict_boxplot_data, out_path + "gappredict_target_correctness.png")
+
+    all_fixed_pass = all_fixed[(all_fixed.gap_pass == 1)]
+    all_fixed_fail = all_fixed[(all_fixed.gap_pass == 0)]
+    all_unfixed_pass = all_unfixed[(all_unfixed.gap_pass == 1)]
+    all_unfixed_fail = all_unfixed[(all_unfixed.gap_pass == 0)]
+
+    print("Set 1 Mean: " + str(all_fixed["target_gap_correctness_percent"].mean()))
+    print("Set 1 Pass Mean: " + str(all_fixed_pass["target_gap_correctness_percent"].mean()))
+    print("Set 1 Fail Mean: " + str(all_fixed_fail["target_gap_correctness_percent"].mean()))
+    print("Set 1 Median: " + str(all_fixed["target_gap_correctness_percent"].median()))
+    print("Set 1 Pass Median: " + str(all_fixed_pass["target_gap_correctness_percent"].median()))
+    print("Set 1 Fail Median: " + str(all_fixed_fail["target_gap_correctness_percent"].median()))
+    print()
+
+    print("Set 1 Unique Gaps: " + str(len(pd.unique(all_fixed["gap_id"]))))
+    print("Set 1 Total Predictions: " + str(len(all_fixed)))
+    print("Set 1 Pass Unique Gaps: " + str(len(pd.unique(all_fixed_pass["gap_id"]))))
+    print("Set 1 Pass Total Predictions: " + str(len(all_fixed_pass)))
+    print("Set 1 Fail Unique Gaps: " + str(len(pd.unique(all_fixed_fail["gap_id"]))))
+    print("Set 1 Fail Total Predictions: " + str(len(all_fixed_fail)))
+    print()
+
+    print("Set 2 Mean: " + str(all_unfixed["target_gap_correctness_percent"].mean()))
+    print("Set 2 Pass Mean: " + str(all_unfixed_pass["target_gap_correctness_percent"].mean()))
+    print("Set 2 Fail Mean: " + str(all_unfixed_fail["target_gap_correctness_percent"].mean()))
+    print("Set 2 Median: " + str(all_unfixed["target_gap_correctness_percent"].median()))
+    print("Set 2 Pass Median: " + str(all_unfixed_pass["target_gap_correctness_percent"].median()))
+    print("Set 2 Fail Median: " + str(all_unfixed_fail["target_gap_correctness_percent"].median()))
+    print()
+
+    print("Set 2 Unique Gaps: " + str(len(pd.unique(all_unfixed["gap_id"]))))
+    print("Set 2 Total Predictions: " + str(len(all_unfixed)))
+    print("Set 2 Pass Unique Gaps: " + str(len(pd.unique(all_unfixed_pass["gap_id"]))))
+    print("Set 2 Pass Total Predictions: " + str(len(all_unfixed_pass)))
+    print("Set 2 Fail Unique Gaps: " + str(len(pd.unique(all_unfixed_fail["gap_id"]))))
+    print("Set 2 Fail Total Predictions: " + str(len(all_unfixed_fail)))
+    print()
+
+    #pd.unique(all_fixed[(all_fixed.target_gap_correctness >= 0.9) & (all_fixed.query_gap_coverage >= 0.9)].gap_id)
+    #pd.unique(all_fixed[(all_fixed.target_gap_correctness >= 0.9) & (all_fixed.query_gap_coverage >= 0.9) & (all_fixed.gap_pass == 1)].gap_id)
+    #pd.unique(all_unfixed[(all_unfixed.target_gap_correctness >= 0.9) & (all_unfixed.query_gap_coverage >= 0.9)].gap_id)
+    #pd.unique(all_unfixed[(all_unfixed.target_gap_correctness >= 0.9) & (all_unfixed.query_gap_coverage >= 0.9) & (all_unfixed.gap_pass == 1)].gap_id)
 
 print("Beam Search")
 compute_metrics("gap_left_prediction_data.csv", "gap_right_prediction_data.csv", "left_subflank_right_prediction_data.csv", "right_subflank_left_prediction_data.csv", "beam_search")
