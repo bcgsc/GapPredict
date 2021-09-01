@@ -81,3 +81,13 @@ os.makedirs(out_path, exist_ok=True)
 plot_box(full_data, out_path + "gappadder.png")
 print("Fixed = " + str(len(joined_fixed)))
 print("Unfixed = " + str(len(joined_unfixed)))
+
+print("Set 1 Mean: " + str(joined_fixed["target_correctness"].mean()))
+print("Set 1 Median: " + str(joined_fixed["target_correctness"].median()))
+print("Set 2 Mean: " + str(joined_unfixed["target_correctness"].mean()))
+print("Set 2 Median: " + str(joined_unfixed["target_correctness"].median()))
+
+gap_id = ['gap_id']
+fixed_intersection = pd.merge(fixed, gap_fill_df, on=["gap_id", "is_fixed"])
+id_col = fixed_intersection[gap_id]
+id_col.to_csv("E:\\Users\\Documents\\gappadder_set1.txt");
