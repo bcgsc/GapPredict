@@ -78,3 +78,4 @@ Refer to this [link](https://github.com/bcgsc/GapPredict/tree/v1.0doc/scripts).
 1.	G. S. C. Slater and E. Birney. “Automated generation of heuristics for biological sequence comparison BMC Bioinform. Bioinform., vol. 6, no. 31, Feb. 2005.
 2.	J. Chu, H. Mohamadi, E. Erhan, J. Tse, R. Chiu, S. Yeo, and I. Birol. “Improving on hash-based probabilistic sequence classification using multiple spaced seeds and multi-index Bloom filters”, bioRxiv:434795, Oct. 2018.
 3.  D. Paulino, R. L. Warren, B. P. Vandervalk, A. Raymond, S. D. Jackman, and I. Birol. “Sealer: a scalable gap closing application for finishing draft genomes", BMC Bioinform., vol. 16, no. 230, Jul. 2015.
+4.  E. Chen, J. Chu, J. Zhang, R. L. Warren, I. Birol. "GapPredict - A Language Model for Resolving Gaps in Draft Genome Assemblies", _IEEE/ACM Transactions on Computational Biology and Bioinformatics_. [doi:10.1109/TCBB.2021.3109557](http://dx.doi.org/10.1109/TCBB.2021.3109557)
