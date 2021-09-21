@@ -3,7 +3,7 @@
 ## Pre-requisites
 The following software should be installed and added to your PATH
 * Python 3.6
-* Exonerate 2.2.0 ([https://www.ebi.ac.uk/about/vertebrate-genomics/software/exonerate](link))
+* Exonerate 2.2.0 ([link](https://www.ebi.ac.uk/about/vertebrate-genomics/software/exonerate))
 
 Also, ensure you complete [step 8](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/8_sealer_gap_filling_in_isolation). You do not need to have [step 5](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/5_model_training) completed.
 

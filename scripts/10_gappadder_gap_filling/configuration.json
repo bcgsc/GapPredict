@@ -1,0 +1,77 @@
+{
+	"draft_genome": {
+		"fa": "<path to human scaffolds>/human-scaffolds.fa"
+	},
+	"raw_reads": [
+		{
+			"left": "<path to reads>/NA12878_S1_L001_R1_001.fastq.gz",
+			"right": "<path to reads>/NA12878_S1_L001_R2_001.fastq.gz"
+		},
+		{
+			"left": "<path to reads>/NA12878_S1_L002_R1_001.fastq.gz",
+			"right": "<path to reads>/NA12878_S1_L002_R2_001.fastq.gz"
+		}
+	],
+	"alignments": [
+		{
+			"bam": "<path to BWA-mem output>/reads_L001.sorted.bam",
+			"is": "475",
+			"std": "117"
+		},
+		{
+			"bam": "<path to BWA-mem output>/reads_L002.sorted.bam",
+			"is": "476",
+			"std": "118"
+		}
+	],
+	"software_path": {
+		"bwa": "bwa",
+		"samtools": "samtools",
+		"velvet": "<path to velvet>/velvet/1.2.10/bin/",
+		"kmc": "",
+		"TERefiner": "./TERefiner_1",
+		"ContigsMerger": "./ContigsMerger"
+	},
+	"parameters": {
+		"working_folder": "<output directory>/",
+		"min_gap_size": "20",
+		"flank_length": "500",
+		"nthreads": "16",
+		"verbose": "1"
+	},
+	"kmer_length": [
+		{
+			"k": 30,
+			"k_velvet": [
+				{
+					"k": 29
+				},
+				{
+					"k": 27
+				}
+			]
+		},
+		{
+			"k": 40,
+			"k_velvet": [
+				{
+					"k": 39
+				},
+				{
+					"k": 37
+				}
+			]
+		},
+		{
+			"k": 50,
+			"k_velvet": [
+				{
+					"k": 49
+				},
+				{
+					"k": 47
+				}
+			]
+		}
+	]
+}

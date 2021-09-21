@@ -1,6 +1,4 @@
 #!/bin/bash
-PATH=/gsc/btl/linuxbrew/bin/:$PATH
-
 if [ $# -lt 2 ]; then
 	echo "Usage: $(basename $0) <sealer output dir> <flanks and gaps dir>"
 	exit 1

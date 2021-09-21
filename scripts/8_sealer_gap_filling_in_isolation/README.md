@@ -6,7 +6,7 @@ The following software should be installed and added to your PATH
   * based on the k-mer length parameter we used, a max-k configuration of 256 is suggested
 * Python 3.6
 
-Also, ensure you complete [step 6](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/4_random_gap_sampling). You do not need to have [step 5](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/5_model_training) completed.
+Also, ensure you complete [step 6](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/6_gap_extraction_from_reference). You do not need to have [step 5](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/5_model_training) completed.
 
 ## Overview
 This step makes Sealer try to fill all of the sampled gaps (both the ones that Sealer was able to fill and unable to fill back in step 2) again using Bloom
