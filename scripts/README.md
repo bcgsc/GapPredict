@@ -13,10 +13,13 @@ We've divided our pipeline into 9 steps:
 7) Aligning GapPredict's predictions to the HG38 reference sequence for each gap (our source of truth) ([link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/7_gappredict_local_alignment))
 8) Running Sealer on each gap using reads mapping only to a given gap's flanks ([link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/8_sealer_gap_filling_in_isolation))
 9) Aligning Sealer's output from step 8) to the HG38 reference sequence for each gap (our source of truth) ([link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/9_sealer_local_alignment))
+10) Running GAPPadder on each gap ([link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/10_gappadder_gap_filling))
+11) Aligning GAPPadder's output from step 10) to the HG38 reference sequence for each gap (our source of truth) ([link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/11_gappadder_local_alignment))
+12) Using QUAST to evaluate the outputs from Sealer, GAPPadder, and GapPredict against the HG38 reference ([link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/12_quast))
 
 ## Caveats
 Several scripts are likely not runnable out-of-the-box depending on how your PATH is set up. We also went through some refactoring of our scripts to better automate the process - ideally nothing broke as a result.
 
-Step 5) ([link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/5_model_training)) will almost certainly need some manual editing of the scripts depending on your computing system's resources.
+Step 5 ([link](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/5_model_training)) will almost certainly need some manual editing of the scripts depending on your computing system's resources.
 
-We decided to make 9 steps in the pipeline to give checkpoints and better isolate any errors that may occur.
+We decided to make 12 steps in the pipeline to give checkpoints and better isolate any errors that may occur.

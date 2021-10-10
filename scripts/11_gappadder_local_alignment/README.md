@@ -3,7 +3,7 @@
 ## Pre-requisites
 The following software should be installed and added to your PATH
 * Python 3.6
-* Exonerate 2.2.0 ([https://www.ebi.ac.uk/about/vertebrate-genomics/software/exonerate](link))
+* Exonerate 2.2.0 ([link](https://www.ebi.ac.uk/about/vertebrate-genomics/software/exonerate))
 * BWA 0.7.17 ([link](https://github.com/lh3/bwa/releases/tag/v0.7.17))
 * SAMtools 1.9 ([link](https://github.com/samtools/samtools/releases/tag/1.9))
 

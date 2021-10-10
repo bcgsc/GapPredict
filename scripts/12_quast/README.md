@@ -3,7 +3,7 @@
 ## Pre-requisites
 The following software should be installed and added to your PATH
 * Python 3.6
-* QUAST 5.0.2 ([http://bioinf.spbau.ru/quast](link))
+* QUAST 5.0.2 ([link](http://bioinf.spbau.ru/quast))
 
 Also, ensure you complete all previous steps, as this step aggregates all data.
 
@@ -20,10 +20,10 @@ Each of the four gap pooling scripts follow a similar usage pattern:
 * The gap ID path is the path to a text file where each line contains the ID of a gap to fetch
   * We used the CSVs parsed from Exonerate results in order to obtain the necessary set 1 gaps
 * The set 1 gap prediction path is the path to where each tool output its results:
-  * For the reference, this is the `fixed` directory from [https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/6_gap_extraction_from_reference](step 6)
-  * For GapPredict, this is the `validation/fixed` directory from [https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/7_gappredict_local_alignment](step 7) 
-  * For Sealer, this is the `sealer_out/fixed` directory from [https://github.com/bcgsc/GapPredict/tree/v1.0doc/scripts/8_sealer_gap_filling_in_isolation](step 8)
-  * For GAPPadder, this is the `align/fixed` directory from [](step 10) (TODO)
+  * For the reference, this is the `fixed` directory from [step 6](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/6_gap_extraction_from_reference)
+  * For GapPredict, this is the `validation/fixed` directory from [step 7] (https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/7_gappredict_local_alignment)
+  * For Sealer, this is the `sealer_out/fixed` directory from [step 8](https://github.com/bcgsc/GapPredict/tree/v1.0doc/scripts/8_sealer_gap_filling_in_isolation)
+  * For GAPPadder, this is the `align/fixed` directory from [step 11](https://github.com/bcgsc/GapPredict/tree/Reproduction_Steps/scripts/11_gappadder_local_alignment)
 
 Finally run the following:
 
