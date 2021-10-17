@@ -68,9 +68,14 @@ def main(args):
 
         dir_utils.mkdir(output_directory)
 
+        print("Training model")
         train.train_model(output_directory, min_seed_length, ref_file, read_file, epochs, [batch_size], [rnn_dim], [embedding_dim], 1, patience, seed_range_upper)
+
+        print("Greedy prediction")
         greedy.predict_reference(output_directory, gap_id, ref_file, embedding_dim, rnn_dim, min_seed_length, base_path=output_directory)
         greedy.predict_arbitrary_length(output_directory, gap_id, ref_file, embedding_dim, rnn_dim, prediction_length, base_path=output_directory)
+
+        print("Beam search prediction")
         beam_search.predict_reference(output_directory, gap_id, ref_file, embedding_dim, rnn_dim, min_seed_length,
                           beam_length, base_path=output_directory)
         beam_search.predict_arbitrary_length(output_directory, gap_id, ref_file, embedding_dim, rnn_dim, prediction_length,
