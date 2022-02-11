@@ -5,6 +5,8 @@ GapPredict is an LSTM character-level language model that can be used for gap fi
 In its current implementation, GapPredict will predict a user-defined number of bases after both the left flank and the right flank of the gap. If the user chooses a sufficiently long prediction length, then GapPredict may be able to predict both the gap and the reciprocal flank. A downstream local alignment tool (eg. Exonerate [1]) can be then used to align, say, the first 100 bases of the reciprocal flank to the prediction. If these 100 bases align with high % identity and % coverage (eg. >90%), then it is likely the preceding bases are a good prediction of the actual gap.
 
 ## Installing GapPredict
+Please ensure you are using Python3.7. Dependencies were last tested with Python3.7.9.
+
 You can install GapPredict by cloning or downloading the .zip file directly from GitHub.
 
 `git clone git@github.com:bcgsc/GapPredict.git`
