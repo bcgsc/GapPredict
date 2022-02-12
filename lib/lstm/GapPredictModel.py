@@ -1,7 +1,7 @@
-import keras.optimizers as optimizers
+import tensorflow.keras.optimizers as optimizers
 #from keras.utils import plot_model
-from keras.layers import CuDNNLSTM, LSTM, Embedding, Dense
-from keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Embedding, Dense
+from tensorflow.keras.models import Sequential
 
 from constants import EncodingConstants as CONSTANTS
 from lstm.DataGenerator import DataGenerator
@@ -18,10 +18,8 @@ class GapPredictModel:
         else:
             model.add(Embedding(input_dim=self.one_hot_encoding_length,
                                 output_dim=self.embedding_dim, input_length=None))
-        if self.with_gpu:
-            model.add(CuDNNLSTM(self.latent_dim, stateful=self.stateful, input_shape=(None, self.embedding_dim)))
-        else:
-            model.add(LSTM(self.latent_dim, stateful=self.stateful, input_shape=(None, self.embedding_dim)))
+
+        model.add(LSTM(self.latent_dim, stateful=self.stateful, input_shape=(None, self.embedding_dim)))
         model.add(Dense(self.one_hot_decoding_length, activation='softmax'))
         self.model = model
 
@@ -37,7 +35,7 @@ class GapPredictModel:
         encoding_length = self.encoding.shape[1]
 
         self.stateful = stateful
-        self.with_gpu = with_gpu
+        self.with_gpu = with_gpu # deprecated
         self.batch_size = batch_size  # Batch size for training.
         self.epochs = epochs  # Number of epochs to train for.
         self.latent_dim = latent_dim  # Latent dimensionality of the encoding space.
