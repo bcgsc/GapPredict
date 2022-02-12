@@ -1,9 +1,9 @@
 import math
 
 import numpy as np
-from keras import backend as K
-from keras.callbacks import Callback
-from keras.losses import categorical_crossentropy
+from tensorflow.keras import backend as K
+from tensorflow.keras.callbacks import Callback
+from tensorflow.keras.losses import categorical_crossentropy
 
 import constants.EncodingConstants as CONSTANTS
 from onehot.OneHotVector import OneHotVectorDecoder

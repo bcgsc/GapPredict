@@ -30,14 +30,15 @@ import utils.directory_utils as dir_utils
 import train_model as train
 import predict_greedy as greedy
 import predict_beam_search as beam_search
-from keras import backend as K
+from tensorflow.keras import backend as K
 import tensorflow as tf
 
 def reset_states():
     K.clear_session()
-    tf.reset_default_graph()
+    tf.compat.v1.reset_default_graph()
 
 def main(args):
+    print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
     base_output_directory = dir_utils.clean_directory_string(args.o[0])
 
     dir_utils.mkdir(base_output_directory)

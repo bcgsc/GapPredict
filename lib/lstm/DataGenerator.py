@@ -1,6 +1,6 @@
 import os
 
-import keras.utils
+import tensorflow.keras.utils
 import numpy as np
 
 import utils.directory_utils as UTILS
@@ -9,7 +9,7 @@ from onehot.OneHotVector import OneHotVectorEncoder
 from preprocess.KmerLabelEncoder import KmerLabelEncoder
 
 
-class DataGenerator(keras.utils.Sequence):
+class DataGenerator(tensorflow.keras.utils.Sequence):
     def __init__(self, reads, min_seed_length, batch_size=64, spacing=0, log_samples=False, log_training=False,
                  seed_range_upper=None, base_path=None):
         self.batch_size = batch_size
